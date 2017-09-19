@@ -1,0 +1,34 @@
+{
+  "name": "brander",
+  "version": "0.1.0",
+  "description": "Tool for generating branding assets",
+  "homepage": "https://github.com/NotNinja/brander",
+  "bugs": {
+    "url": "https://github.com/NotNinja/brander/issues"
+  },
+  "author": {
+    "name": "Alasdair Mercer",
+    "email": "mercer.alasdair@gmail.com",
+    "url": "https://not.ninja"
+  },
+  "license": "MIT",
+  "keywords": [
+    "brand",
+    "tool"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NotNinja/brander.git"
+  },
+  "bin": {
+    "brander": "bin/brander"
+  },
+  "main": "src/brander.js",
+  "scripts": {
+    "ci": "npm run test",
+    "test": "eslint \"src/**/*.js\""
+  },
+  "engines": {
+    "node": ">=6"
+  },
+}
