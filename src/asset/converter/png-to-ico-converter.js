@@ -60,7 +60,7 @@ class PNGToICOConverter extends Converter {
     const input = await this[_readSources](asset, options);
     const output = await toIco(input, { sizes, resize });
 
-    await fs.writeFile(target, output);
+    await fs.writeFile(asset.resolve(target), output);
   }
 
   /**
