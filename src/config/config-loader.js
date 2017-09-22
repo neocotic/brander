@@ -100,7 +100,7 @@ class ConfigLoader {
    */
   async load(filePath) {
     if (!filePath) {
-      filePath = this[_findFilePath]();
+      filePath = await this[_findFilePath]();
     }
     if (!filePath) {
       throw new Error('Unable to find configuration file!');
@@ -146,7 +146,7 @@ class ConfigLoader {
   }
 
   async [_findFilePath]() {
-    for (const fileName of this.getfileNames()) {
+    for (const fileName of this.getFileNames()) {
       const filePath = path.resolve(this[_baseDir], fileName);
 
       try {
