@@ -59,6 +59,25 @@ class Config {
    * TODO: document
    *
    * @param {string} name -
+   * @return {?Asset}
+   * @public
+   */
+  asset(name) {
+    const assets = this[_data].assets || {};
+
+    for (const [ key, value ] of assets) {
+      if (key === name) {
+        return new Asset(key, value || {}, this);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} name -
    * @return {Category}
    * @public
    */
