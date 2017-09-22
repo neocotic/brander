@@ -30,6 +30,7 @@ const SVGO = require('svgo');
 const Formats = require('../formats');
 const Optimizer = require('./optimizer');
 
+const _generate = Symbol('generate');
 const _svgo = Symbol('svgo');
 
 /**
@@ -59,7 +60,15 @@ class SVGOptimizer extends Optimizer {
     const target = options.target ? asset.evaluate(options.target) : Formats.buildCorrespondingFileName(source,
       options.sourceFormat, { suffix: '.min' });
     const input = await fs.readFile(asset.resolve(source), 'utf8');
-    const output = await this[_svgo].optimize(input);
+    const output = await new Promise((resolve, reject) => {
+      this[_svgo].optimize(input, (result) => {
+        if (result.error) {
+          reject(result.error);
+        } else {
+          resolve(result.data);
+        }
+      });
+    });
 
     await fs.writeFile(asset.resolve(target), output.data);
   }
