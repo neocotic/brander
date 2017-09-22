@@ -59,7 +59,7 @@ class Asset {
     this[_name] = name;
     this[_data] = data;
     this[_config] = config;
-    this[_baseDir] = config.resolve(config.option('assets.dir', 'assets'), data.path || name);
+    this[_baseDir] = config.resolve(config.option('assets.dir', 'assets'), data.path ? this.evaluate(data.path) : name);
   }
 
   /**
