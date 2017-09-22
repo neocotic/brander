@@ -65,7 +65,7 @@ class Config {
   asset(name) {
     const assets = this[_data].assets || {};
 
-    for (const [ key, value ] of assets) {
+    for (const [ key, value ] of Object.entries(assets)) {
       if (key === name) {
         return new Asset(key, value || {}, this);
       }
@@ -84,7 +84,7 @@ class Config {
   category(name) {
     const categories = this[_data].categories || {};
 
-    for (const [ key, value ] of categories) {
+    for (const [ key, value ] of Object.entries(categories)) {
       if (key === name) {
         return new Category(key, value || {}, this);
       }
