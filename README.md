@@ -41,10 +41,14 @@ TODO: Complete
 {
   "name": "my-brand",
   "title": "My Brand", // Optional: defaults to name
+  "categories": { // Optional
+    "logo": "Logo"
+  },
   "assets": {
-    "logo": {
-      "title": "Logo", // Optional: defaults to name
-      "path": "logo/base", // Optional: defaults to name
+    "logo-base": {
+      "title": "Base", // Optional: defaults to name
+      "category": "logo", // Optional
+      "path": "<%= asset.category.name %>/<%= asset.name %>", // Optional: defaults to name
       "convert": [
         {
           "source": "my-brand-logo.svg",

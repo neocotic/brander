@@ -28,6 +28,7 @@ const _ = require('lodash');
 const path = require('path');
 
 const Asset = require('../asset/asset');
+const Category = require('./category');
 
 const _baseDir = Symbol('baseDir');
 const _data = Symbol('data');
@@ -52,6 +53,25 @@ class Config {
     this[_filePath] = filePath;
     this[_data] = data;
     this[_baseDir] = path.dirname(filePath);
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} name -
+   * @return {Category}
+   * @public
+   */
+  category(name) {
+    const categories = this[_data].categories || {};
+
+    for (const [ key, value ] of categories) {
+      if (key === name) {
+        return new Category(key, value);
+      }
+    }
+
+    return new Category(name);
   }
 
   /**
@@ -112,6 +132,17 @@ class Config {
   get assets() {
     return Object.entries(this[_data].assets || {})
       .map(([ key, value ]) => new Asset(key, value || {}, this));
+  }
+
+  /**
+   * TODO: document
+   *
+   * @return {Category[]}
+   * @public
+   */
+  get categories() {
+    return Object.entries(this[_data].categories || {})
+      .map(([ key, value ]) => new Category(key, value));
   }
 
   /**

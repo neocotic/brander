@@ -115,6 +115,18 @@ class Asset {
   }
 
   /**
+   * TODO: document
+   *
+   * @return {?Category}
+   * @public
+   */
+  get category() {
+    const { category } = this[_data];
+
+    return category ? this[_config].category(category) : null;
+  }
+
+  /**
    * Returns the {@link Config} for this {@link Asset}.
    *
    * @return {Config} The configuration.
