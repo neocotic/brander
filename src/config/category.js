@@ -24,8 +24,9 @@
 
 // TODO: complete
 
+const _config = Symbol('config');
+const _data = Symbol('data');
 const _name = Symbol('name');
-const _title = Symbol('title');
 
 /**
  * TODO: document
@@ -35,17 +36,27 @@ const _title = Symbol('title');
 class Category {
 
   /**
-   * Creates an instance of {@link Category} with the specified <code>name</code>.
+   * TODO: document
    *
-   * Optionally, <code>title</code> can be specified to be used when presenting the category.
-   *
-   * @param {string} name - the name to be used
-   * @param {string} [title] - the title to be used
+   * @param {string} name -
+   * @param {Object} data -
+   * @param {Config} config -
    * @public
    */
-  constructor(name, title) {
+  constructor(name, data, config) {
     this[_name] = name;
-    this[_title] = title;
+    this[_data] = data;
+    this[_config] = config;
+  }
+
+  /**
+   * Returns the {@link Config} for this {@link Category}.
+   *
+   * @return {Config} The configuration.
+   * @public
+   */
+  get config() {
+    return this[_config];
   }
 
   /**
@@ -71,7 +82,7 @@ class Category {
    * @public
    */
   get title() {
-    return this[_title] || this[_name];
+    return this[_data].title || this[_name];
   }
 
 }

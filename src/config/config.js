@@ -67,11 +67,11 @@ class Config {
 
     for (const [ key, value ] of categories) {
       if (key === name) {
-        return new Category(key, value);
+        return new Category(key, value || {}, this);
       }
     }
 
-    return new Category(name);
+    return new Category(name, {}, this);
   }
 
   /**
@@ -142,7 +142,7 @@ class Config {
    */
   get categories() {
     return Object.entries(this[_data].categories || {})
-      .map(([ key, value ]) => new Category(key, value));
+      .map(([ key, value ]) => new Category(key, value || {}, this));
   }
 
   /**

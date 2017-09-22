@@ -42,7 +42,9 @@ TODO: Complete
   "name": "my-brand",
   "title": "My Brand", // Optional: defaults to name
   "categories": { // Optional
-    "logo": "Logo"
+    "logo": {
+      "title": "Logo"
+    }
   },
   "assets": {
     "logo-base": {
