@@ -78,7 +78,8 @@ class SVGToPNGConverter extends Converter {
   async [_generate](asset, options, input, size) {
     const dimensions = Sizes.stringify(size);
     const target = options.target ? asset.evaluate(options.target, { size: dimensions })
-      : Formats.buildCorrespondingFileName(options.source, options.targetFormat, { suffix: dimensions });
+      : Formats.buildCorrespondingFileName(options.source, options.targetFormat,
+        { suffix: dimensions ? `-${dimensions}` : null });
     const output = await svg2png(input, Object.assign({}, size));
 
     await fs.writeFile(asset.resolve(target), output);
