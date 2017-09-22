@@ -17,6 +17,7 @@ organisation.
 [![Release](https://img.shields.io/npm/v/brander.svg?style=flat-square)](https://www.npmjs.com/package/brander)
 
 * [Install](#install)
+* [Configuration](#configuration)
 * [API](#api)
 * [Bugs](#bugs)
 * [Contributors](#contributors)
@@ -28,6 +29,81 @@ Install using [npm](https://www.npmjs.com):
 
 ``` bash
 $ npm install --save brander
+```
+
+You'll need to have at least [Node.js](https://nodejs.org) 8 or newer.
+
+## Configuration
+
+TODO: Complete
+
+``` json
+{
+  "name": "my-brand",
+  "title": "My Brand", // Optional: defaults to name
+  "assets": {
+    "logo": {
+      "title": "Logo", // Optional: defaults to name
+      "path": "logo/base", // Optional: defaults to name
+      "convert": [
+        {
+          "source": "my-brand-logo.svg",
+          "sourceFormat": "svg", // Optional: derived
+          "target": "my-brand-logo-<%= size %>.png", // Optional (if targetFormat is provided): derived
+          "targetFormat": "png", // Optional (if target is provided): derived
+          "sizes": [ // Optional: derived
+            "16x16",
+            "32x32",
+            "64x64",
+            "72x72",
+            "96x96",
+            "120x120",
+            "144x144",
+            "168x168",
+            "256x256",
+            "512x512"
+          ]
+          ...
+        },
+        {
+          "source": "my-brand-logo-256x256.png", // Can be array of source files (must match sizes)
+          "sourceFormat": "png",
+          "target": "my-brand-logo.ico",
+          "targetFormat": "ico",
+          "sizes": [ // Optional
+            "16x16",
+            "24x24",
+            "32x32",
+            "48x48",
+            "64x64",
+            "128x128",
+            "256x256"
+          ]
+        }
+      ],
+      "optimize": [
+        {
+          "source": "my-brand-logo.svg",
+          "sourceFormat": "svg", // Optional: derived
+          "target": "my-brand-logo.min.svg" // Optional: derived
+        }
+      ]
+    },
+    ...
+  },
+  "docs": {
+    ...
+  },
+  "options": {
+    "assets": {
+      "dir": "..." // defaults to "assets"
+    },
+    "docs": {
+      "dir": "..." // defaults to "docs"
+    }
+    ...
+  }
+}
 ```
 
 ## API

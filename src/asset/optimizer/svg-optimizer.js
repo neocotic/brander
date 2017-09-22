@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
@@ -24,32 +22,58 @@
 
 'use strict';
 
-/* eslint-disable no-process-exit */
-
 // TODO: complete
 
-const { EOL } = require('os');
-const program = require('commander');
+const fs = require('fs-extra');
+const SVGO = require('svgo');
 
-const Brander = require('../src/brander');
-const ConfigLoader = require('../src/config/config-loader');
-const { version } = require('../package.json');
+const Formats = require('../formats');
+const Optimizer = require('./optimizer');
 
-(async() => {
-  // TODO: add more CLI options? e.g. assets-only, docs-only, config option overrides
-  program
-    .version(version)
-    .usage('[options]')
-    .option('-c, --config <path>', 'use configuration from this file')
-    .parse(process.argv);
+const _svgo = Symbol('svgo');
 
-  try {
-    const configLoader = new ConfigLoader();
-    const config = await configLoader.load(program.config);
-    const brander = new Brander(config);
-    await brander.generate();
-  } catch (e) {
-    process.stderr.write(`${e.stack}${EOL}`);
-    process.exit(1);
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class SVGOptimizer extends Optimizer {
+
+  /**
+   * TODO: document
+   *
+   * @public
+   */
+  constructor() {
+    super();
+
+    this[_svgo] = new SVGO();
   }
-})();
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async optimize(asset, options) {
+    const source = asset.evaluate(options.source);
+    const target = options.target ? asset.evaluate(options.target) : Formats.buildCorrespondingFileName(source,
+      options.sourceFormat, { suffix: '.min' });
+    const input = await fs.readFile(asset.resolve(source), 'utf8');
+    const output = await this[_svgo].optimize(input);
+
+    await fs.writeFile(asset.resolve(target), output.data);
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  supports(options) {
+    return options.sourceFormat === 'svg';
+  }
+
+}
+
+Optimizer.register(new SVGOptimizer());
+
+module.exports = SVGOptimizer;

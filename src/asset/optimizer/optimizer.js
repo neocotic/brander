@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
@@ -24,32 +22,27 @@
 
 'use strict';
 
-/* eslint-disable no-process-exit */
-
 // TODO: complete
 
-const { EOL } = require('os');
-const program = require('commander');
+const Generator = require('../generator');
 
-const Brander = require('../src/brander');
-const ConfigLoader = require('../src/config/config-loader');
-const { version } = require('../package.json');
+const instances = new Set();
 
-(async() => {
-  // TODO: add more CLI options? e.g. assets-only, docs-only, config option overrides
-  program
-    .version(version)
-    .usage('[options]')
-    .option('-c, --config <path>', 'use configuration from this file')
-    .parse(process.argv);
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class Optimizer extends Generator {
 
-  try {
-    const configLoader = new ConfigLoader();
-    const config = await configLoader.load(program.config);
-    const brander = new Brander(config);
-    await brander.generate();
-  } catch (e) {
-    process.stderr.write(`${e.stack}${EOL}`);
-    process.exit(1);
+  /**
+   * @inheritdoc
+   * @override
+   */
+  static getInstances() {
+    return instances;
   }
-})();
+
+}
+
+module.exports = Optimizer;

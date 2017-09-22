@@ -25,71 +25,63 @@
 // TODO: complete
 
 const _ = require('lodash');
-
-const _config = Symbol('config');
+const path = require('path');
 
 /**
  * TODO: document
  *
  * @public
  */
-class Brander {
+class Formats {
 
   /**
    * TODO: document
    *
-   * @param {Config} config -
+   * @param {string} fileName -
+   * @param {string} format -
+   * @param {Formats~BuildCorrespondingFileNameOptions} [options] -
+   * @return {string}
    * @public
    */
-  constructor(config) {
-    this[_config] = config;
+  static buildCorrespondingFileName(fileName, format, options) {
+    options = Object.assign({ prefix: '', suffix: '' }, options);
+    fileName = path.basename(fileName, path.extname(fileName));
+
+    return `${options.prefix}${fileName}${options.suffix}.${format}`;
   }
 
   /**
    * TODO: document
    *
-   * @return {Promise.<Error>}
+   * @param {string} fileName -
+   * @return {?string}
    * @public
    */
-  async generate() {
-    await this.generateAssets();
-    await this.generateDocs();
+  static deriveFromFileName(fileName) {
+    return Formats.sanitize(path.extname(fileName).substring(1));
   }
 
   /**
    * TODO: document
    *
-   * @return {Promise.<Error>}
+   * @param {string} format -
+   * @return {string}
    * @public
    */
-  async generateAssets() {
-    const assets = _.sortBy(this[_config].assets, [ 'name' ]);
+  static sanitize(format) {
+    format = _.trim(format);
 
-    for (const asset of assets) {
-      await asset.generate();
-    }
-  }
-
-  /**
-   * TODO: document
-   *
-   * @return {Promise.<Error>}
-   * @public
-   */
-  async generateDocs() {
-    // TODO: complete
-  }
-
-  /**
-   * TODO: document
-   *
-   * @return {Config}
-   * @public
-   */
-  get config() {
-    return this[_config];
+    return format ? format.toLowerCase() : null;
   }
 
 }
 
-module.exports = Brander;
+module.exports = Formats;
+
+/**
+ * TODO: document
+ *
+ * @typedef {Object} Formats~BuildCorrespondingFileNameOptions
+ * @property {string} [prefix] -
+ * @property {string} [suffix] -
+ */

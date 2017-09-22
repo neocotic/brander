@@ -24,72 +24,75 @@
 
 // TODO: complete
 
-const _ = require('lodash');
-
-const _config = Symbol('config');
+const rSize = /^\s*(\d+)\s*[xX]\s*(\d+)\s*$/;
 
 /**
  * TODO: document
  *
  * @public
  */
-class Brander {
+class Sizes {
 
   /**
    * TODO: document
    *
-   * @param {Config} config -
+   * @param {string} size -
+   * @return {boolean}
    * @public
    */
-  constructor(config) {
-    this[_config] = config;
+  static isValid(size) {
+    return size && rSize.test(size);
   }
 
   /**
    * TODO: document
    *
-   * @return {Promise.<Error>}
+   * @param {string} size -
+   * @return {Sizes~Dimensions}
    * @public
    */
-  async generate() {
-    await this.generateAssets();
-    await this.generateDocs();
-  }
-
-  /**
-   * TODO: document
-   *
-   * @return {Promise.<Error>}
-   * @public
-   */
-  async generateAssets() {
-    const assets = _.sortBy(this[_config].assets, [ 'name' ]);
-
-    for (const asset of assets) {
-      await asset.generate();
+  static parse(size) {
+    const match = size.match(rSize);
+    if (!match) {
+      throw new Error(`Unable to read dimensions from size: ${size}`);
     }
+
+    return {
+      width: parseInt(match[1], 10),
+      height: parseInt(match[2], 10)
+    };
   }
 
   /**
    * TODO: document
    *
-   * @return {Promise.<Error>}
+   * @param {string} size -
+   * @return {string}
    * @public
    */
-  async generateDocs() {
-    // TODO: complete
+  static santize(size) {
+    return Sizes.stringify(Sizes.parse(size));
   }
 
   /**
    * TODO: document
    *
-   * @return {Config}
+   * @param {Sizes~Dimensions} dimensions -
+   * @return {string}
    * @public
    */
-  get config() {
-    return this[_config];
+  static stringify(dimensions) {
+    return dimensions ? `${dimensions.width}x${dimensions.height}` : null;
   }
 
 }
 
-module.exports = Brander;
+module.exports = Sizes;
+
+/**
+ * TODO: document
+ *
+ * @typedef {Object} Sizes~Dimensions
+ * @property {number} height -
+ * @property {number} width -
+ */

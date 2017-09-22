@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * Copyright (C) 2017 Alasdair Mercer, !ninja
  *
@@ -24,32 +22,7 @@
 
 'use strict';
 
-/* eslint-disable no-process-exit */
+const Optimizer = require('./optimizer');
+require('./svg-optimizer');
 
-// TODO: complete
-
-const { EOL } = require('os');
-const program = require('commander');
-
-const Brander = require('../src/brander');
-const ConfigLoader = require('../src/config/config-loader');
-const { version } = require('../package.json');
-
-(async() => {
-  // TODO: add more CLI options? e.g. assets-only, docs-only, config option overrides
-  program
-    .version(version)
-    .usage('[options]')
-    .option('-c, --config <path>', 'use configuration from this file')
-    .parse(process.argv);
-
-  try {
-    const configLoader = new ConfigLoader();
-    const config = await configLoader.load(program.config);
-    const brander = new Brander(config);
-    await brander.generate();
-  } catch (e) {
-    process.stderr.write(`${e.stack}${EOL}`);
-    process.exit(1);
-  }
-})();
+module.exports = Optimizer;
