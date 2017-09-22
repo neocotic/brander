@@ -54,7 +54,7 @@ class SVGOptimizer extends Optimizer {
    * @inheritdoc
    * @override
    */
-  async optimize(asset, options) {
+  async generate(asset, options) {
     const source = asset.evaluate(options.source);
     const target = options.target ? asset.evaluate(options.target) : Formats.buildCorrespondingFileName(source,
       options.sourceFormat, { suffix: '.min' });

@@ -46,7 +46,7 @@ class PNGToICOConverter extends Converter {
    * @inheritdoc
    * @override
    */
-  async convert(asset, options) {
+  async generate(asset, options) {
     const { source } = options;
     const sizes = _.isEmpty(options.sizes) ? defaultSizes : _.map(options.sizes, 'width');
     const resize = typeof source === 'string';

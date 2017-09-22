@@ -32,7 +32,7 @@ const Converter = require('./converter');
 const Formats = require('../formats');
 const Sizes = require('../sizes');
 
-const _convert = Symbol('convert');
+const _generate = Symbol('generate');
 
 /**
  * TODO: document
@@ -45,7 +45,7 @@ class SVGToPNGConverter extends Converter {
    * @inheritdoc
    * @override
    */
-  async convert(asset, options) {
+  async generate(asset, options) {
     const { sizes } = options;
     let { source } = options;
 
@@ -59,10 +59,10 @@ class SVGToPNGConverter extends Converter {
     const input = await fs.readFile(asset.resolve(source));
 
     if (_.isEmpty(sizes)) {
-      await this[_convert](asset, options, input);
+      await this[_generate](asset, options, input);
     } else {
       for (const size of sizes) {
-        await this[_convert](asset, options, input, size);
+        await this[_generate](asset, options, input, size);
       }
     }
   }
@@ -75,7 +75,7 @@ class SVGToPNGConverter extends Converter {
     return options.sourceFormat === 'svg' && options.targetFormat === 'png';
   }
 
-  async [_convert](asset, options, input, size) {
+  async [_generate](asset, options, input, size) {
     const dimensions = Sizes.stringify(size);
     const target = options.target ? asset.evaluate(options.target, { size: dimensions })
       : Formats.buildCorrespondingFileName(options.source, options.targetFormat, { suffix: dimensions });
