@@ -70,7 +70,7 @@ class SVGOptimizer extends Optimizer {
       });
     });
 
-    await fs.writeFile(asset.resolve(target), output.data);
+    await fs.writeFile(asset.resolve(target), output);
   }
 
   /**
