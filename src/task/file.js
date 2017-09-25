@@ -43,22 +43,15 @@ class File {
    * Optionally, <code>evaluated</code> should be set to <code>true</code> if <code>dir</code> and <code>name</code>
    * have already been evaluated (e.g. via {@link Config#evaluate}) to avoid double-evaluation.
    *
-   * An error will occur if neither <code>dir</code>, <code>name</code>, or <code>format</code> have been provided.
-   *
    * @param {?string} dir - the parent directory path to be used (may be <code>null</code>)
    * @param {?string} name - the name to be used (may be <code>null</code>)
    * @param {?string} format - the format to be used (may be <code>null</code>)
    * @param {Config} config - the {@link Config} to be used
    * @param {boolean} [evaluated] - <code>true</code> if <code>dir</code> and <code>name</code> have already been
    * evaluated; otherwise <code>false</code>
-   * @throws {Error} If neither <code>dir</code>, <code>name</code>, or <code>format</code> have been provided.
    * @public
    */
   constructor(dir, name, format, config, evaluated = false) {
-    if (!(dir || name || format)) {
-      throw new Error('At least one configuration must be provided: "dir", "name", "format"');
-    }
-
     this[_dir] = dir;
     this[_name] = name;
     this[_format] = format;
@@ -85,7 +78,7 @@ class File {
       return null;
     }
 
-    return excludeExtension ? path.basename(name, this.extension || '') : path.basename(name);
+    return excludeExtension ? path.basename(name, this.extension() || '') : path.basename(name);
   }
 
   /**
