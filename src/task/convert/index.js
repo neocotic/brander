@@ -22,7 +22,5 @@
 
 'use strict';
 
-const Optimizer = require('./optimizer');
-require('./svg-optimizer');
-
-module.exports = Optimizer;
+require('./convert-png-to-ico-task');
+require('./convert-svg-to-png-task');

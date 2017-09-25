@@ -22,15 +22,14 @@
 
 'use strict';
 
-// TODO: complete
-
 const fs = require('fs-extra');
+const path = require('path');
 const SVGO = require('svgo');
 
-const Formats = require('../formats');
-const Optimizer = require('./optimizer');
+const File = require('../file');
+const Task = require('../task');
 
-const _generate = Symbol('generate');
+const _execute = Symbol('execute');
 const _svgo = Symbol('svgo');
 
 /**
@@ -38,7 +37,7 @@ const _svgo = Symbol('svgo');
  *
  * @public
  */
-class SVGOptimizer extends Optimizer {
+class OptimizeSVGTask extends Task {
 
   /**
    * TODO: document
@@ -55,11 +54,27 @@ class SVGOptimizer extends Optimizer {
    * @inheritdoc
    * @override
    */
-  async generate(asset, options) {
-    const source = asset.evaluate(options.source);
-    const target = options.target ? asset.evaluate(options.target) : Formats.buildCorrespondingFileName(source,
-      options.sourceFormat, { suffix: '.min' });
-    const input = await fs.readFile(asset.resolve(source), 'utf8');
+  async execute(context) {
+    for (const inputFile of context.inputFiles) {
+      await this[_execute](inputFile, context);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  supports(context) {
+    return context.inputFiles[0].format === 'svg';
+  }
+
+  async [_execute](inputFile, context) {
+    const outputFile = (context.outputFile || new File(null, null, null, context.config))
+      .defaults(inputFile.dir, '<%= file.base(true) %>.min.svg', inputFile.format)
+      .evaluate({ file: inputFile });
+    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+    const input = await fs.readFile(inputFilePath, 'utf8');
     const output = await new Promise((resolve, reject) => {
       this[_svgo].optimize(input, (result) => {
         if (result.error) {
@@ -70,19 +85,11 @@ class SVGOptimizer extends Optimizer {
       });
     });
 
-    await fs.writeFile(asset.resolve(target), output);
-  }
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  supports(options) {
-    return options.sourceFormat === 'svg';
+    await fs.writeFile(outputFilePath, output);
   }
 
 }
 
-Optimizer.register(new SVGOptimizer());
+Task.register('optimize', new OptimizeSVGTask());
 
-module.exports = SVGOptimizer;
+module.exports = OptimizeSVGTask;

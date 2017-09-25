@@ -22,27 +22,4 @@
 
 'use strict';
 
-// TODO: complete
-
-const Generator = require('../generator');
-
-const instances = new Set();
-
-/**
- * TODO: document
- *
- * @public
- */
-class Converter extends Generator {
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  static getInstances() {
-    return instances;
-  }
-
-}
-
-module.exports = Converter;
+require('./optimize-svg-task');

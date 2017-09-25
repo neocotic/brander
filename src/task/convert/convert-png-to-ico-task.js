@@ -22,16 +22,14 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
 const fs = require('fs-extra');
+const path = require('path');
 const toIco = require('to-ico');
 
-const Converter = require('./converter');
-const Formats = require('../formats');
+const Task = require('../task');
 
-const _readSources = Symbol('readSources');
+const _readInputs = Symbol('readInputs');
 
 const defaultSizes = [ 16, 24, 32, 48, 64, 128, 256 ];
 
@@ -40,45 +38,47 @@ const defaultSizes = [ 16, 24, 32, 48, 64, 128, 256 ];
  *
  * @public
  */
-class PNGToICOConverter extends Converter {
+class ConvertPNGToICOTask extends Task {
 
   /**
    * @inheritdoc
    * @override
    */
-  async generate(asset, options) {
-    const { source } = options;
-    const sizes = _.isEmpty(options.sizes) ? defaultSizes : _.map(options.sizes, 'width');
-    const resize = typeof source === 'string';
+  async execute(context) {
+    const { inputFiles } = context;
+    const [ inputFile ] = inputFiles;
+    const outputFile = context.outputFile
+      .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
+      .evaluate({ file: inputFile });
+    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const resize = context.inputFiles.length === 1;
+    const sizes = _.isEmpty(context.option('sizes')) ? defaultSizes : _.map(context.option('sizes'), 'width');
 
-    if (Array.isArray(source) && source.length !== sizes.length) {
-      throw new Error(`source[${source.length}] must contain same number as sizes[${sizes.length}]`);
+    if (!resize && inputFiles.length !== sizes.length) {
+      throw new Error('"input.files" configuration must resolve to same number as the "options.sizes" configuration: ' +
+        `expected ${sizes.length}, actual: ${inputFiles.length}`);
     }
 
-    const target = options.target ? asset.evaluate(options.target)
-      : Formats.buildCorrespondingFileName(_.castArray(source)[0], options.targetFormat);
-    const input = await this[_readSources](asset, options);
-    const output = await toIco(input, { sizes, resize });
+    const inputs = await this[_readInputs](inputFiles);
+    const output = await toIco(inputs, { sizes, resize });
 
-    await fs.writeFile(asset.resolve(target), output);
+    await fs.writeFile(outputFilePath, output);
   }
 
   /**
    * @inheritdoc
    * @override
    */
-  supports(options) {
-    return options.sourceFormat === 'png' && options.targetFormat === 'ico';
+  supports(context) {
+    return context.inputFiles[0].format === 'png' && context.outputFile.format === 'ico';
   }
 
-  async [_readSources](asset, options) {
+  async [_readInputs](inputFiles) {
     const inputs = [];
-    const sources = _.castArray(options.source);
 
-    for (let source of sources) {
-      source = asset.evaluate(source);
-
-      const input = await fs.readFile(asset.resolve(source));
+    for (const inputFile of inputFiles) {
+      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const input = await fs.readFile(inputFilePath);
       inputs.push(input);
     }
 
@@ -87,6 +87,6 @@ class PNGToICOConverter extends Converter {
 
 }
 
-Converter.register(new PNGToICOConverter());
+Task.register('convert', new ConvertPNGToICOTask());
 
-module.exports = PNGToICOConverter;
+module.exports = ConvertPNGToICOTask;

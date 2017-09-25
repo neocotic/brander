@@ -22,17 +22,14 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
 const path = require('path');
-
-const Asset = require('../asset/asset');
-const Category = require('./category');
 
 const _baseDir = Symbol('baseDir');
 const _data = Symbol('data');
 const _filePath = Symbol('filePath');
+const _name = Symbol('name');
+const _title = Symbol('title');
 
 /**
  * TODO: document
@@ -53,44 +50,8 @@ class Config {
     this[_filePath] = filePath;
     this[_data] = data;
     this[_baseDir] = path.dirname(filePath);
-  }
-
-  /**
-   * TODO: document
-   *
-   * @param {string} name -
-   * @return {?Asset}
-   * @public
-   */
-  asset(name) {
-    const assets = this[_data].assets || {};
-
-    for (const [ key, value ] of Object.entries(assets)) {
-      if (key === name) {
-        return new Asset(key, value || {}, this);
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * TODO: document
-   *
-   * @param {string} name -
-   * @return {Category}
-   * @public
-   */
-  category(name) {
-    const categories = this[_data].categories || {};
-
-    for (const [ key, value ] of Object.entries(categories)) {
-      if (key === name) {
-        return new Category(key, value || {}, this);
-      }
-    }
-
-    return new Category(name, {}, this);
+    this[_name] = _.trim(data.name);
+    this[_title] = _.trim(data.title) || this[_name];
   }
 
   /**
@@ -108,6 +69,10 @@ class Config {
    * @public
    */
   evaluate(expression, additionalData) {
+    if (!expression) {
+      return '';
+    }
+
     const compiled = _.template(expression);
 
     return compiled(Object.assign({ config: this }, additionalData));
@@ -120,7 +85,7 @@ class Config {
    * the desired option is missing from those options, it will be returned instead. Otherwise, this method will return
    * <code>undefined</code>.
    *
-   * @param {string|string[]} name - the be paths or path segments to the property on the options object within the data
+   * @param {string|string[]} name - the paths or path segments to the property on the options object within the data
    * whose value is to be returned
    * @param {*} [defaultValue] - the value to be returned for <code>undefined</code> resolved values.
    * @return {*} The resolved option value.
@@ -139,29 +104,7 @@ class Config {
    * @public
    */
   resolve(...paths) {
-    return path.resolve(this[_baseDir], ...paths);
-  }
-
-  /**
-   * TODO: document
-   *
-   * @return {Asset[]}
-   * @public
-   */
-  get assets() {
-    return Object.entries(this[_data].assets || {})
-      .map(([ key, value ]) => new Asset(key, value || {}, this));
-  }
-
-  /**
-   * TODO: document
-   *
-   * @return {Category[]}
-   * @public
-   */
-  get categories() {
-    return Object.entries(this[_data].categories || {})
-      .map(([ key, value ]) => new Category(key, value || {}, this));
+    return path.resolve(this.baseDir, ...paths);
   }
 
   /**
@@ -194,7 +137,30 @@ class Config {
    * @public
    */
   get name() {
-    return this[_data].name;
+    return this[_name];
+  }
+
+  /**
+   * Returns the raw data for all tasks defined within this {@link Config}.
+   *
+   * The array will be empty if the "tasks" configuration is null, empty, or missing entirely.
+   *
+   * An error will occur if the "tasks" configuration is present but is not an array.
+   *
+   * @return {Object[]} The raw task data.
+   * @throws {Error} If the "tasks" configuration is not an array.
+   * @public
+   */
+  get tasks() {
+    const { tasks } = this[_data];
+    if (!tasks) {
+      return [];
+    }
+    if (!Array.isArray(tasks)) {
+      throw new Error('"tasks" configuration can only be an array');
+    }
+
+    return _.cloneDeep(tasks);
   }
 
   /**
@@ -207,7 +173,7 @@ class Config {
    * @public
    */
   get title() {
-    return this[_data].title || this[_data].name;
+    return this[_title];
   }
 
 }

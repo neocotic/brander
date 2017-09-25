@@ -22,9 +22,7 @@
 
 'use strict';
 
-// TODO: complete
-
-const _ = require('lodash');
+const TaskExecutor = require('./task/task-executor');
 
 const _config = Symbol('config');
 
@@ -36,9 +34,9 @@ const _config = Symbol('config');
 class Brander {
 
   /**
-   * TODO: document
+   * Creates an instance of {@link Brander} with the <code>config</code> provided.
    *
-   * @param {Config} config -
+   * @param {Config} config - the {@link Config} to be used
    * @public
    */
   constructor(config) {
@@ -46,9 +44,11 @@ class Brander {
   }
 
   /**
-   * TODO: document
+   * Generates the assets and documentation based on the configuration for this {@link Brander}.
    *
-   * @return {Promise.<Error>}
+   * An error will occur if a problem arises while generating the assets or documentation.
+   *
+   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
    * @public
    */
   async generate() {
@@ -57,23 +57,26 @@ class Brander {
   }
 
   /**
-   * TODO: document
+   * Generates the assets based on the configuration for this {@link Brander}.
    *
-   * @return {Promise.<Error>}
+   * An error will occur if a problem arises while generating the assets.
+   *
+   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of assets.
    * @public
    */
   async generateAssets() {
-    const assets = _.sortBy(this[_config].assets, [ 'name' ]);
+    const { config } = this;
+    const executor = await TaskExecutor.create(config);
 
-    for (const asset of assets) {
-      await asset.generate();
-    }
+    await executor.execute();
   }
 
   /**
-   * TODO: document
+   * Generates the documentation based on the configuration for this {@link Brander}.
    *
-   * @return {Promise.<Error>}
+   * An error will occur if a problem arises while generating the documentation.
+   *
+   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of documentation.
    * @public
    */
   async generateDocs() {
@@ -81,9 +84,9 @@ class Brander {
   }
 
   /**
-   * TODO: document
+   * Returns the {@link Config} for this {@link Brander}.
    *
-   * @return {Config}
+   * @return {Config} The configuration.
    * @public
    */
   get config() {

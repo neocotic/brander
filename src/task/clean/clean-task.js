@@ -22,8 +22,39 @@
 
 'use strict';
 
-const Converter = require('./converter');
-require('./png-to-ico-converter');
-require('./svg-to-png-converter');
+const fs = require('fs-extra');
+const path = require('path');
 
-module.exports = Converter;
+const Task = require('../task');
+
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class CleanTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async execute(context) {
+    for (const inputFile of context.inputFiles) {
+      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      await fs.remove(inputFilePath);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  supports(context) {
+    return true;
+  }
+
+}
+
+Task.register('clean', new CleanTask());
+
+module.exports = CleanTask;

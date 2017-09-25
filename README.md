@@ -40,63 +40,86 @@ TODO: Complete
 ``` json
 {
   "name": "my-brand",
-  "title": "My Brand", // Optional: defaults to name
-  "categories": { // Optional
-    "logo": {
-      "title": "Logo"
-    }
-  },
-  "assets": {
-    "logo-base": {
-      "title": "Base", // Optional: defaults to name
-      "category": "logo", // Optional
-      "path": "<%= asset.category.name %>/<%= asset.name %>", // Optional: defaults to name
-      "convert": [
-        {
-          "source": "my-brand-logo.svg",
-          "sourceFormat": "svg", // Optional: derived
-          "target": "my-brand-logo-<%= size %>.png", // Optional (if targetFormat is provided): derived
-          "targetFormat": "png", // Optional (if target is provided): derived
-          "sizes": [ // Optional: derived
-            "16x16",
-            "32x32",
-            "64x64",
-            "72x72",
-            "96x96",
-            "120x120",
-            "144x144",
-            "168x168",
-            "256x256",
-            "512x512"
-          ]
-          ...
-        },
-        {
-          "source": "my-brand-logo-256x256.png", // Can be array of source files (must match sizes)
-          "sourceFormat": "png",
-          "target": "my-brand-logo.ico",
-          "targetFormat": "ico",
-          "sizes": [ // Optional
-            "16x16",
-            "24x24",
-            "32x32",
-            "48x48",
-            "64x64",
-            "128x128",
-            "256x256"
-          ]
-        }
-      ],
-      "optimize": [
-        {
-          "source": "my-brand-logo.svg",
-          "sourceFormat": "svg", // Optional: derived
-          "target": "my-brand-logo.min.svg" // Optional: derived
-        }
-      ]
+  "title": "My Brand",
+  "tasks": [
+    {
+      "task": "clean",
+      "input": {
+        "files": [
+          "logo/**/*.png",
+          "logo/**/*.min.svg"
+        ]
+      }
     },
-    ...
-  },
+    {
+      "task": "convert",
+      "input": {
+        "dir": "", // Optional: defaults to Config#options.assets.dir, is resolved relative to same directory
+        "files": "logo/**/my-brand-logo*.svg",
+        "format": "svg" // Optional: derived per input.files
+      },
+      "output": {
+        "dir": "<%= file.dir %>", // Optional: defaults to corresponding input file dir
+        "files": "<%= file.base(true) %>-<%= size %>.png", // Optional: if format is provided (uses default provided by task)
+        "format": "png" // Optional: derived from output.files if provided
+      },
+      "options": { // Optional
+        "sizes": [ // Optional: derived
+          16,
+          "32",
+          "64x64",
+          "72x72",
+          "96x96",
+          "120x120",
+          "144x144",
+          "168x168",
+          "256x256",
+          "512x512"
+        ]
+      }
+    },
+    {
+      "task": "convert",
+      "input": {
+        "files": [
+          "logo/**/my-brand-logo*-16x16.png",
+          "logo/**/my-brand-logo*-24x24.png",
+          "logo/**/my-brand-logo*-32x32.png",
+          "logo/**/my-brand-logo*-48x48.png",
+          "logo/**/my-brand-logo*-64x64.png",
+          "logo/**/my-brand-logo*-128x128.png",
+          "logo/**/my-brand-logo*-256x256.png"
+        ],
+        "format": "png" // Optional: derived per input.files
+      },
+      "output": {
+        "files": "<%= file.base(true) %>.ico",
+        "format": "ico" // Optional: derived from output.files if provided
+      },
+      "options": {
+        "groupBy": "<%= file.dir %>",
+        "sizes": [ // Optional
+          16,
+          24,
+          32,
+          48,
+          64,
+          128,
+          256
+        ]
+      }
+    },
+    {
+      "task": "optimize",
+      "input": {
+        "files": "logo/**/*.svg",
+        "format": "svg" // Optional: derived per input.files
+      },
+      "output": { // Optional
+        "files": "<%= file.base(true) %>.min.svg" // Optional: default provided by task
+      }
+    }
+  ],
   "docs": {
     ...
   },

@@ -22,47 +22,36 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
 const fs = require('fs-extra');
+const path = require('path');
 const svg2png = require('svg2png');
 
-const Converter = require('./converter');
-const Formats = require('../formats');
-const Sizes = require('../sizes');
+const Task = require('../task');
 
-const _generate = Symbol('generate');
+const _execute = Symbol('execute');
 
 /**
  * TODO: document
  *
  * @public
  */
-class SVGToPNGConverter extends Converter {
+class ConvertSVGToPNGTask extends Task {
 
   /**
    * @inheritdoc
    * @override
    */
-  async generate(asset, options) {
-    const { sizes } = options;
-    let { source } = options;
+  async execute(context) {
+    const sizes = context.option('sizes');
 
-    if (Array.isArray(source)) {
-      throw new Error('source cannot be an array');
-    }
-
-    source = asset.evaluate(source);
-    options = Object.assign(_.cloneDeep(options), { source });
-
-    const input = await fs.readFile(asset.resolve(source));
-
-    if (_.isEmpty(sizes)) {
-      await this[_generate](asset, options, input);
-    } else {
-      for (const size of sizes) {
-        await this[_generate](asset, options, input, size);
+    for (const inputFile of context.inputFiles) {
+      if (_.isEmpty(sizes)) {
+        await this[_execute](inputFile, null, context);
+      } else {
+        for (const size of sizes) {
+          await this[_execute](inputFile, size, context);
+        }
       }
     }
   }
@@ -71,22 +60,24 @@ class SVGToPNGConverter extends Converter {
    * @inheritdoc
    * @override
    */
-  supports(options) {
-    return options.sourceFormat === 'svg' && options.targetFormat === 'png';
+  supports(context) {
+    return context.inputFiles[0].format === 'svg' && context.outputFile.format === 'png';
   }
 
-  async [_generate](asset, options, input, size) {
-    const dimensions = Sizes.stringify(size);
-    const target = options.target ? asset.evaluate(options.target, { size: dimensions })
-      : Formats.buildCorrespondingFileName(options.source, options.targetFormat,
-        { suffix: dimensions ? `-${dimensions}` : null });
-    const output = await svg2png(input, Object.assign({}, size));
+  async [_execute](inputFile, size, context) {
+    const outputFile = context.outputFile
+      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.png', inputFile.format)
+      .evaluate({ file: inputFile, size });
+    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+    const input = await fs.readFile(inputFilePath);
+    const output = await svg2png(input, Object.assign(size ? { width: size.width, height: size.height } : null));
 
-    await fs.writeFile(asset.resolve(target), output);
+    await fs.writeFile(outputFilePath, output);
   }
 
 }
 
-Converter.register(new SVGToPNGConverter());
+Task.register('convert', new ConvertSVGToPNGTask());
 
-module.exports = SVGToPNGConverter;
+module.exports = ConvertSVGToPNGTask;
