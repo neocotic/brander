@@ -36,7 +36,7 @@ class TaskExecutor {
   /**
    * Creates an instance of {@link TaskExecutor} with the <code>contexts</code> provided.
    *
-   * {@link TaskExecutor.create} should be used to create instances.
+   * {@link TaskService#createExecutor} should be used to create instances.
    *
    * @param {TaskContext[]} contexts - the task contexts to be used
    * @protected
