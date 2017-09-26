@@ -22,12 +22,7 @@
 
 'use strict';
 
-const Task = require('./task');
-const TaskContext = require('./task-context');
-require('./clean');
-require('./convert');
-require('./optimize');
-require('./package');
+const TaskService = require('./task-service');
 
 const _contexts = Symbol('contexts');
 
@@ -37,23 +32,6 @@ const _contexts = Symbol('contexts');
  * @public
  */
 class TaskExecutor {
-
-  /**
-   * Creates an instance of {@link TaskExecutor} using {@link TaskContext} instances that are parsed from the tasks data
-   * within the specified <code>config</code>.
-   *
-   * An error will occur if the tasks data within <code>config</code> is malformed or incomplete or if a problem occurs
-   * while attempting to find input files.
-   *
-   * @param {Config} config - the {@link Config} to be used
-   * @return {Promise.<Error, TaskExecutor>} A <code>Promise</code> for asynchronous parsing.
-   * @public
-   */
-  static async create(config) {
-    const contexts = await TaskContext.parse(config);
-
-    return new TaskExecutor(contexts);
-  }
 
   /**
    * Creates an instance of {@link TaskExecutor} with the <code>contexts</code> provided.
@@ -77,9 +55,11 @@ class TaskExecutor {
    * @public
    */
   async execute() {
+    const taskService = TaskService.getInstance();
+
     for (const context of this[_contexts]) {
       const { type } = context;
-      const tasks = Task.getTasks(type);
+      const tasks = await taskService.findByType(type);
       if (tasks.length === 0) {
         throw new Error(`"task" configuration is invalid: ${type}`);
       }

@@ -95,6 +95,4 @@ class OptimizeSVGTask extends OptimizeTask {
 
 }
 
-OptimizeTask.register(new OptimizeSVGTask());
-
 module.exports = OptimizeSVGTask;

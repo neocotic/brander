@@ -91,6 +91,4 @@ class ConvertPNGToICOTask extends ConvertTask {
 
 }
 
-ConvertTask.register(new ConvertPNGToICOTask());
-
 module.exports = ConvertPNGToICOTask;

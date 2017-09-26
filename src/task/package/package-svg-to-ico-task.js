@@ -94,6 +94,4 @@ class PackageSVGToICOTask extends PackageTask {
 
 }
 
-PackageTask.register(new PackageSVGToICOTask());
-
 module.exports = PackageSVGToICOTask;

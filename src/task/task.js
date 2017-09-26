@@ -24,71 +24,12 @@
 
 const pollock = require('pollock');
 
-const typeMap = new Map();
-
 /**
  * TODO: document
  *
  * @public
  */
-class Task {
-
-  /**
-   * Unregisters all tasks.
-   *
-   * Use with caution as, in order to make {@link TaskExecutor} fully functional again, tasks will will need to be
-   * (re-)registered.
-   *
-   * @return {void}
-   * @public
-   */
-  static clear() {
-    typeMap.clear();
-  }
-
-  /**
-   * Returns all tasks that have been registered for the specified <code>type</code>.
-   *
-   * An empty array will be returned if no tasks have been registered for <code>type</code>.
-   *
-   * @param {?string} type - the type of tasks to be returned (may be <code>null</code>)
-   * @return {Task[]} All registered tasks for <code>type</code>.
-   * @public
-   */
-  static getTasks(type) {
-    const tasks = typeMap.get(type);
-
-    return tasks ? Array.from(tasks) : [];
-  }
-
-  /**
-   * Registers the specified <code>task</code>.
-   *
-   * This needs to be done per {@link Task} implementation, otherwise they will not be detected by the
-   * {@link TaskExecutor} which looks up tasks via {@link Task#getTasks}.
-   *
-   * Nothing happens if <code>task</code> is not specified.
-   *
-   * @param {?Task} task - the {@link Task} instance to be registered (may be <code>null</code>)
-   * @return {void}
-   * @public
-   */
-  static register(task) {
-    if (!task) {
-      return;
-    }
-
-    const type = task.getType();
-    let tasks = typeMap.get(type);
-    if (!tasks) {
-      tasks = new Set();
-      typeMap.set(type, tasks);
-    }
-
-    tasks.add(task);
-  }
-
-}
+class Task {}
 
 /**
  * Executes this {@link Task} using the specified <code>context</code>.
@@ -112,8 +53,8 @@ pollock(Task, 'execute', { promise: true });
 /**
  * Returns the type of this {@link Task}.
  *
- * The type is used to categorize tasks when they are registered so that they can be easily and quickly looked up via
- * {@link Task#getTasks}.
+ * The type is used to categorize tasks when they are added to the {@link TaskService} so that they can be easily and
+ * quickly looked up.
  *
  * All implementations of {@link Task} <b>must</b> override this method.
  *

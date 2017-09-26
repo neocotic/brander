@@ -62,7 +62,7 @@ class TaskContext {
    *
    * @param {Config} config - the {@link Config} whose tasks data is to be parsed
    * @return {Promise.<Error, TaskContext[]>} A <code>promise</code> for asynchronous parsing and file system
-   * traversals.
+   * traversals that is resolved with each {@link TaskContext}.
    * @public
    */
   static async parse(config) {

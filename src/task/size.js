@@ -45,7 +45,8 @@ class Size {
    * <code>image</code> can either be a <code>Buffer</code> containing image data or the path of an image file.
    *
    * @param {Buffer|string} image - the image whose dimensions are to be captured in the returned {@link Size}
-   * @return {Promise.<Error, Size>} A <code>Promise</code> for the asynchronous image parsing and file reading.
+   * @return {Promise.<Error, Size>} A <code>Promise</code> for the asynchronous image parsing and file reading that is
+   * resolved with the <code>image</code> {@link Size}.
    * @public
    */
   static async fromImage(image) {

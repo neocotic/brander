@@ -119,6 +119,4 @@ class PackagePNGToICOTask extends PackageTask {
 
 }
 
-PackageTask.register(new PackagePNGToICOTask());
-
 module.exports = PackagePNGToICOTask;

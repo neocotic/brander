@@ -94,6 +94,4 @@ class PackageAnyToZIPTask extends PackageTask {
 
 }
 
-PackageTask.register(new PackageAnyToZIPTask());
-
 module.exports = PackageAnyToZIPTask;

@@ -22,7 +22,7 @@
 
 'use strict';
 
-const TaskExecutor = require('./task/task-executor');
+const TaskService = require('./task/task-service');
 
 const _config = Symbol('config');
 
@@ -66,7 +66,8 @@ class Brander {
    */
   async generateAssets() {
     const { config } = this;
-    const executor = await TaskExecutor.create(config);
+    const taskService = TaskService.getInstance();
+    const executor = await taskService.createExecutor(config);
 
     await executor.execute();
   }

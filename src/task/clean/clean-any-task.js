@@ -59,6 +59,4 @@ class CleanAnyTask extends CleanTask {
 
 }
 
-CleanTask.register(new CleanAnyTask());
-
 module.exports = CleanAnyTask;

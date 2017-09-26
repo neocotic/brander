@@ -89,6 +89,4 @@ class ConvertSVGToICOTask extends ConvertTask {
 
 }
 
-ConvertTask.register(new ConvertSVGToICOTask());
-
 module.exports = ConvertSVGToICOTask;

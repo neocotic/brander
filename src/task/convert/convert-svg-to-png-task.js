@@ -83,6 +83,4 @@ class ConvertSVGToPNGTask extends ConvertTask {
 
 }
 
-ConvertTask.register(new ConvertSVGToPNGTask());
-
 module.exports = ConvertSVGToPNGTask;
