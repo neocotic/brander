@@ -80,7 +80,7 @@ class Brander {
    * @public
    */
   async generateDocs() {
-    // TODO: complete
+    // FIXME: implement documentation generation
   }
 
   /**

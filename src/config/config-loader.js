@@ -32,7 +32,7 @@ const _baseDir = Symbol('baseDir');
 const _findFilePath = Symbol('findFilePath');
 
 /**
- * TODO: Document
+ * TODO: document
  *
  * @public
  */

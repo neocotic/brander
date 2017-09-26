@@ -144,7 +144,6 @@ TODO: Complete
 If you have any problems with Brander or would like to see changes currently in development you can do so
 [here](https://github.com/NotNinja/brander/issues).
 
-
 ## Contributors
 
 If you want to contribute, you're a legend! Information on how you can do so can be found in

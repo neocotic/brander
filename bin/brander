@@ -26,8 +26,6 @@
 
 /* eslint-disable no-process-exit */
 
-// TODO: complete
-
 const { EOL } = require('os');
 const program = require('commander');
 
@@ -36,7 +34,6 @@ const ConfigLoader = require('../src/config/config-loader');
 const { version } = require('../package.json');
 
 (async() => {
-  // TODO: add more CLI options? e.g. assets-only, docs-only, config option overrides
   program
     .version(version)
     .usage('[options]')
