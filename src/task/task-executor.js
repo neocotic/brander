@@ -22,9 +22,8 @@
 
 'use strict';
 
-const TaskService = require('./task-service');
-
 const _contexts = Symbol('contexts');
+const _taskService = Symbol('taskService');
 
 /**
  * TODO: document
@@ -34,15 +33,17 @@ const _contexts = Symbol('contexts');
 class TaskExecutor {
 
   /**
-   * Creates an instance of {@link TaskExecutor} with the <code>contexts</code> provided.
+   * Creates an instance of {@link TaskExecutor} with the specified <code>contexts</code> and <code>taskService</code>.
    *
    * {@link TaskService#createExecutor} should be used to create instances.
    *
    * @param {TaskContext[]} contexts - the task contexts to be used
+   * @param {TaskService} taskService - the {@link TaskService} to be used
    * @protected
    */
-  constructor(contexts) {
+  constructor(contexts, taskService) {
     this[_contexts] = contexts;
+    this[_taskService] = taskService;
   }
 
   /**
@@ -55,11 +56,9 @@ class TaskExecutor {
    * @public
    */
   async execute() {
-    const taskService = TaskService.getInstance();
-
     for (const context of this[_contexts]) {
       const { type } = context;
-      const tasks = await taskService.findByType(type);
+      const tasks = await this[_taskService].findByType(type);
       if (tasks.length === 0) {
         throw new Error(`"task" configuration has no associated tasks: ${type}`);
       }

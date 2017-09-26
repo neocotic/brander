@@ -129,7 +129,7 @@ class TaskService {
   async createExecutor(config) {
     const contexts = await TaskContext.parse(config);
 
-    return new TaskExecutor(contexts);
+    return new TaskExecutor(contexts, this);
   }
 
   /**
