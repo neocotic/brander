@@ -42,7 +42,8 @@ const _isOutputRequired = Symbol('isOutputRequired');
 const _options = Symbol('options');
 const _outputFile = Symbol('outputFile');
 const _parseOptions = Symbol('parseOptions');
-const _type = Symbol('typetype, ');
+const _type = Symbol('type');
+const _validateSingleFormat = Symbol('validateSingleFormat');
 
 /**
  * TODO: document
@@ -145,15 +146,6 @@ class TaskContext {
       throw new Error('"task" configuration is required');
     }
 
-    // TODO: Perform format check after grouping
-    const formats = _.chain(inputFiles)
-      .map('format')
-      .uniq()
-      .value();
-    if (formats.length !== 1) {
-      throw new Error('"input.files" configuration must map to a single format');
-    }
-
     const { groupBy } = options;
     const groups = _.groupBy(inputFiles, (file) => {
       switch (typeof groupBy) {
@@ -166,7 +158,9 @@ class TaskContext {
       }
     });
 
-    for (const groupFiles of Object.values(groups)) {
+    for (const [ groupName, groupFiles ] of Object.entries(groups)) {
+      TaskContext[_validateSingleFormat](groupName, groupFiles);
+
       const outputFile = TaskContext[_buildOutputFile](data, config);
       if (!outputFile && TaskContext[_isOutputRequired](type)) {
         throw new Error(`"output" configuration is required for "${type}" tasks`);
@@ -208,6 +202,24 @@ class TaskContext {
     }
 
     return options;
+  }
+
+  static [_validateSingleFormat](group, inputFiles) {
+    const formats = _.chain(inputFiles)
+      .map('format')
+      .uniq()
+      .value();
+
+    if (formats.length !== 1) {
+      let message = '"input.files" configuration must map to a single format ';
+      if (group != null) {
+        message += `within resolved group: "${group}"`;
+      } else {
+        message += '- consider specifying the "options.groupBy" configuration';
+      }
+
+      throw new Error(message);
+    }
   }
 
   /**
