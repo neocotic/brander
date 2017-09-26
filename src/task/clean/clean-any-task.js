@@ -54,7 +54,7 @@ class CleanAnyTask extends Task {
     for (const inputFile of context.inputFiles) {
       const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
 
-      await removeFile(inputFilePath);
+      await removeFile(inputFilePath, { glob: false });
     }
   }
 
