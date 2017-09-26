@@ -23,4 +23,5 @@
 'use strict';
 
 require('./convert-png-to-ico-task');
+require('./convert-svg-to-ico-task');
 require('./convert-svg-to-png-task');

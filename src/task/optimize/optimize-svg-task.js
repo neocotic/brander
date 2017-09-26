@@ -22,12 +22,16 @@
 
 'use strict';
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const SVGO = require('svgo');
+const util = require('util');
 
 const File = require('../file');
-const Task = require('../task');
+const OptimizeTask = require('./optimize-task');
+
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 const _svgo = Symbol('svgo');
@@ -37,10 +41,10 @@ const _svgo = Symbol('svgo');
  *
  * @public
  */
-class OptimizeSVGTask extends Task {
+class OptimizeSVGTask extends OptimizeTask {
 
   /**
-   * TODO: document
+   * Creates an instance of {@link OptimizeSVGTask}.
    *
    * @public
    */
@@ -74,7 +78,8 @@ class OptimizeSVGTask extends Task {
       .evaluate({ file: inputFile });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
     const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
-    const input = await fs.readFile(inputFilePath, 'utf8');
+
+    const input = await readFile(inputFilePath, 'utf8');
     const output = await new Promise((resolve, reject) => {
       this[_svgo].optimize(input, (result) => {
         if (result.error) {
@@ -85,11 +90,11 @@ class OptimizeSVGTask extends Task {
       });
     });
 
-    await fs.writeFile(outputFilePath, output);
+    await writeFile(outputFilePath, output);
   }
 
 }
 
-Task.register('optimize', new OptimizeSVGTask());
+OptimizeTask.register(new OptimizeSVGTask());
 
 module.exports = OptimizeSVGTask;

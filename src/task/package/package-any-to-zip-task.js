@@ -22,47 +22,37 @@
 
 'use strict';
 
-const _ = require('lodash');
+const archiver = require('archiver');
 const fs = require('fs');
 const path = require('path');
-const toIco = require('to-ico');
 const util = require('util');
+const zlib = require('zlib');
 
-const ConvertTask = require('./convert-task');
-const Size = require('../size');
+const PackageTask = require('./package-task');
 
 const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
-
-// TODO: Support resizing images with non-1:1 aspect ratios
 
 /**
  * TODO: document
  *
  * @public
  */
-class ConvertPNGToICOTask extends ConvertTask {
+class PackageAnyToZIPTask extends PackageTask {
 
   /**
    * @inheritdoc
    * @override
    */
   async execute(context) {
-    const sizes = _.map(context.option('sizes', []), 'width');
+    const { inputFiles } = context;
+    const [ inputFile ] = inputFiles;
+    const outputFile = context.outputFile
+      .defaults(inputFile.dir, '<%= file.base(true) %>.zip', inputFile.format)
+      .evaluate({ file: inputFile });
 
-    for (const inputFile of context.inputFiles) {
-      const { width } = await Size.fromImage(path.resolve(inputFile.dir, inputFile.name));
-
-      if (_.isEmpty(sizes)) {
-        await this[_execute](inputFile, null, width, context);
-      } else {
-        for (const size of sizes) {
-          await this[_execute](inputFile, size, width, context);
-        }
-      }
-    }
+    await this[_execute](inputFiles, outputFile, context);
   }
 
   /**
@@ -70,27 +60,40 @@ class ConvertPNGToICOTask extends ConvertTask {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'png' && context.outputFile.format === 'ico';
+    return context.outputFile.format === 'zip';
   }
 
-  async [_execute](inputFile, size, realSize, context) {
-    const outputFile = context.outputFile
-      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
-      .evaluate({ file: inputFile, size });
+  async [_execute](inputFiles, outputFile, context) {
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
 
-    const input = await readFile(inputFilePath);
-    const output = await toIco([ input ], {
-      resize: size != null && size !== realSize,
-      sizes: [ size != null ? size : realSize ]
+    const output = fs.createWriteStream(outputFilePath);
+    const archive = archiver('zip', {
+      zlib: {
+        level: context.option('compression', zlib.constants.Z_DEFAULT_COMPRESS)
+      }
     });
 
-    await writeFile(outputFilePath, output);
+    archive.pipe(output);
+
+    for (const inputFile of context.inputFiles) {
+      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const input = await readFile(inputFilePath);
+
+      // TODO: Support directories (relative to what?)
+      archive.append(input, { name: inputFile.name });
+    }
+
+    archive.finalize();
+
+    return new Promise((resolve, reject) => {
+      archive.on('error', reject);
+      archive.on('warning', reject);
+      output.on('close', resolve);
+    });
   }
 
 }
 
-ConvertTask.register(new ConvertPNGToICOTask());
+PackageTask.register(new PackageAnyToZIPTask());
 
-module.exports = ConvertPNGToICOTask;
+module.exports = PackageAnyToZIPTask;

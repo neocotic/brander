@@ -62,23 +62,23 @@ class Task {
   }
 
   /**
-   * Registers the specified <code>task</code> for the <code>type</code> provided.
+   * Registers the specified <code>task</code>.
    *
    * This needs to be done per {@link Task} implementation, otherwise they will not be detected by the
-   * {@link TaskExecutor}.
+   * {@link TaskExecutor} which looks up tasks via {@link Task#getTasks}.
    *
-   * Nothing happens if either <code>type</code> or <code>task</code> are not specified.
+   * Nothing happens if <code>task</code> is not specified.
    *
-   * @param {?string} type - the type of <code>task</code> to be registered (may be <code>null</code>)
    * @param {?Task} task - the {@link Task} instance to be registered (may be <code>null</code>)
    * @return {void}
    * @public
    */
-  static register(type, task) {
-    if (!(type && task)) {
+  static register(task) {
+    if (!task) {
       return;
     }
 
+    const type = task.getType();
     let tasks = typeMap.get(type);
     if (!tasks) {
       tasks = new Set();
@@ -108,6 +108,22 @@ class Task {
  * @method execute
  */
 pollock(Task, 'execute', { promise: true });
+
+/**
+ * Returns the type of this {@link Task}.
+ *
+ * The type is used to categorize tasks when they are registered so that they can be easily and quickly looked up via
+ * {@link Task#getTasks}.
+ *
+ * All implementations of {@link Task} <b>must</b> override this method.
+ *
+ * @return {string} The type.
+ * @public
+ * @abstract
+ * @memberof Task#
+ * @method getType
+ */
+pollock(Task, 'getType');
 
 /**
  * Returns whether this {@link Task} supports the specified <code>context</code>.

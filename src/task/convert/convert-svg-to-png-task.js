@@ -23,11 +23,15 @@
 'use strict';
 
 const _ = require('lodash');
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const svg2png = require('svg2png');
+const util = require('util');
 
-const Task = require('../task');
+const ConvertTask = require('./convert-task');
+
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 
@@ -36,7 +40,7 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class ConvertSVGToPNGTask extends Task {
+class ConvertSVGToPNGTask extends ConvertTask {
 
   /**
    * @inheritdoc
@@ -70,14 +74,15 @@ class ConvertSVGToPNGTask extends Task {
       .evaluate({ file: inputFile, size });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
     const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
-    const input = await fs.readFile(inputFilePath);
-    const output = await svg2png(input, Object.assign(size ? { width: size.width, height: size.height } : null));
 
-    await fs.writeFile(outputFilePath, output);
+    const input = await readFile(inputFilePath);
+    const output = await svg2png(input, Object.assign(size ? { height: size.height, width: size.width } : null));
+
+    await writeFile(outputFilePath, output);
   }
 
 }
 
-Task.register('convert', new ConvertSVGToPNGTask());
+ConvertTask.register(new ConvertSVGToPNGTask());
 
 module.exports = ConvertSVGToPNGTask;

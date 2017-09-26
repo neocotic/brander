@@ -25,16 +25,17 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const svg2png = require('svg2png');
 const toIco = require('to-ico');
 const util = require('util');
 
-const ConvertTask = require('./convert-task');
+const PackageTask = require('./package-task');
 const Size = require('../size');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
-const _execute = Symbol('execute');
+const _readData = Symbol('readData');
 
 // TODO: Support resizing images with non-1:1 aspect ratios
 
@@ -43,26 +44,26 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class ConvertPNGToICOTask extends ConvertTask {
+class PackageSVGToICOTask extends PackageTask {
 
   /**
    * @inheritdoc
    * @override
    */
   async execute(context) {
-    const sizes = _.map(context.option('sizes', []), 'width');
+    const { inputFiles } = context;
+    const [ inputFile ] = inputFiles;
+    const outputFile = context.outputFile
+      .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
+      .evaluate({ file: inputFile });
+    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
 
-    for (const inputFile of context.inputFiles) {
-      const { width } = await Size.fromImage(path.resolve(inputFile.dir, inputFile.name));
+    const data = await this[_readData](inputFiles, context);
+    const inputs = _.map(data, 'input');
+    const sizes = _.map(data, 'size.width');
+    const output = await toIco(inputs, { sizes });
 
-      if (_.isEmpty(sizes)) {
-        await this[_execute](inputFile, null, width, context);
-      } else {
-        for (const size of sizes) {
-          await this[_execute](inputFile, size, width, context);
-        }
-      }
-    }
+    await writeFile(outputFilePath, output);
   }
 
   /**
@@ -70,27 +71,29 @@ class ConvertPNGToICOTask extends ConvertTask {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'png' && context.outputFile.format === 'ico';
+    return context.inputFiles[0].format === 'svg' && context.outputFile.format === 'ico';
   }
 
-  async [_execute](inputFile, size, realSize, context) {
-    const outputFile = context.outputFile
-      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
-      .evaluate({ file: inputFile, size });
-    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+  async [_readData](inputFiles, context) {
+    const inputs = [];
+    const sizes = context.option('sizes');
 
-    const input = await readFile(inputFilePath);
-    const output = await toIco([ input ], {
-      resize: size != null && size !== realSize,
-      sizes: [ size != null ? size : realSize ]
-    });
+    for (const inputFile of inputFiles) {
+      const size = _.nth(sizes, inputs.length);
+      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
 
-    await writeFile(outputFilePath, output);
+      const svgInput = await readFile(inputFilePath);
+      const pngInput = await svg2png(svgInput, Object.assign(size ? { height: size.height, width: size.width } : null));
+      const realSize = await Size.fromImage(pngInput);
+
+      inputs.push({ input: pngInput, size: realSize });
+    }
+
+    return inputs;
   }
 
 }
 
-ConvertTask.register(new ConvertPNGToICOTask());
+PackageTask.register(new PackageSVGToICOTask());
 
-module.exports = ConvertPNGToICOTask;
+module.exports = PackageSVGToICOTask;

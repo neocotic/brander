@@ -25,6 +25,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
+const svg2png = require('svg2png');
 const toIco = require('to-ico');
 const util = require('util');
 
@@ -43,23 +44,21 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class ConvertPNGToICOTask extends ConvertTask {
+class ConvertSVGToICOTask extends ConvertTask {
 
   /**
    * @inheritdoc
    * @override
    */
   async execute(context) {
-    const sizes = _.map(context.option('sizes', []), 'width');
+    const sizes = context.option('sizes');
 
     for (const inputFile of context.inputFiles) {
-      const { width } = await Size.fromImage(path.resolve(inputFile.dir, inputFile.name));
-
       if (_.isEmpty(sizes)) {
-        await this[_execute](inputFile, null, width, context);
+        await this[_execute](inputFile, null, context);
       } else {
         for (const size of sizes) {
-          await this[_execute](inputFile, size, width, context);
+          await this[_execute](inputFile, size, context);
         }
       }
     }
@@ -70,27 +69,26 @@ class ConvertPNGToICOTask extends ConvertTask {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'png' && context.outputFile.format === 'ico';
+    return context.inputFiles[0].format === 'svg' && context.outputFile.format === 'ico';
   }
 
-  async [_execute](inputFile, size, realSize, context) {
+  async [_execute](inputFile, size, context) {
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
       .evaluate({ file: inputFile, size });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
     const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
 
-    const input = await readFile(inputFilePath);
-    const output = await toIco([ input ], {
-      resize: size != null && size !== realSize,
-      sizes: [ size != null ? size : realSize ]
-    });
+    const svgInput = await readFile(inputFilePath);
+    const pngInput = await svg2png(svgInput, Object.assign(size ? { height: size.height, width: size.width } : null));
+    const realSize = await Size.fromImage(pngInput);
+    const output = await toIco([ pngInput ], { sizes: [ realSize.width ] });
 
     await writeFile(outputFilePath, output);
   }
 
 }
 
-ConvertTask.register(new ConvertPNGToICOTask());
+ConvertTask.register(new ConvertSVGToICOTask());
 
-module.exports = ConvertPNGToICOTask;
+module.exports = ConvertSVGToICOTask;

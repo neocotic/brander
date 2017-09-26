@@ -22,11 +22,15 @@
 
 'use strict';
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const stripJsonComments = require('strip-json-comments');
+const util = require('util');
 
 const Config = require('./config');
+
+const access = util.promisify(fs.access);
+const readFile = util.promisify(fs.readFile);
 
 const _baseDir = Symbol('baseDir');
 const _findFilePath = Symbol('findFilePath');
@@ -114,7 +118,7 @@ class ConfigLoader {
       /* eslint-enable global-require */
     }
 
-    const contents = await fs.readFile(filePath, 'utf8');
+    const contents = await readFile(filePath, 'utf8');
     const data = this.parse(contents, filePath);
 
     if (!data) {
@@ -150,7 +154,7 @@ class ConfigLoader {
       const filePath = path.resolve(this[_baseDir], fileName);
 
       try {
-        await fs.access(filePath);
+        await access(filePath);
 
         return filePath;
       } catch (e) {

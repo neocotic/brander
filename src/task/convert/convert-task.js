@@ -22,4 +22,23 @@
 
 'use strict';
 
-require('./clean-any-task');
+const Task = require('../task');
+
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class ConvertTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return 'convert';
+  }
+
+}
+
+module.exports = ConvertTask;

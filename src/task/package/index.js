@@ -22,4 +22,6 @@
 
 'use strict';
 
-require('./clean-any-task');
+require('./package-any-to-zip-task');
+require('./package-png-to-ico-task');
+require('./package-svg-to-ico-task');

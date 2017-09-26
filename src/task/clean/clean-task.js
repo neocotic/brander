@@ -22,9 +22,6 @@
 
 'use strict';
 
-const fs = require('fs-extra');
-const path = require('path');
-
 const Task = require('../task');
 
 /**
@@ -38,23 +35,10 @@ class CleanTask extends Task {
    * @inheritdoc
    * @override
    */
-  async execute(context) {
-    for (const inputFile of context.inputFiles) {
-      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
-      await fs.remove(inputFilePath);
-    }
-  }
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  supports(context) {
-    return true;
+  getType() {
+    return 'clean';
   }
 
 }
-
-Task.register('clean', new CleanTask());
 
 module.exports = CleanTask;

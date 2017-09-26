@@ -27,6 +27,7 @@ const TaskContext = require('./task-context');
 require('./clean');
 require('./convert');
 require('./optimize');
+require('./package');
 
 const _contexts = Symbol('contexts');
 

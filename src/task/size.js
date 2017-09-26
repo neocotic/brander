@@ -22,6 +22,11 @@
 
 'use strict';
 
+const imageSize = require('image-size');
+const util = require('util');
+
+const sizeOf = util.promisify(imageSize);
+
 const _height = Symbol('height');
 const _width = Symbol('width');
 
@@ -33,6 +38,21 @@ const rSize = /^\s*(\d+)\s*([xX]\s*(\d+))?\s*$/;
  * @public
  */
 class Size {
+
+  /**
+   * Creates an instance of {@link Size} with the dimensions read from the specified <code>image</code>.
+   *
+   * <code>image</code> can either be a <code>Buffer</code> containing image data or the path of an image file.
+   *
+   * @param {Buffer|string} image - the image whose dimensions are to be captured in the returned {@link Size}
+   * @return {Promise.<Error, Size>} A <code>Promise</code> for the asynchronous image parsing and file reading.
+   * @public
+   */
+  static async fromImage(image) {
+    const { height, width } = await sizeOf(image);
+
+    return new Size(width, height);
+  }
 
   /**
    * Parses the specified <code>size</code> value into a {@link Size} instance.

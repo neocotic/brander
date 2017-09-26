@@ -22,4 +22,43 @@
 
 'use strict';
 
-require('./clean-any-task');
+const path = require('path');
+const rimraf = require('rimraf');
+const util = require('util');
+
+const CleanTask = require('./clean-task');
+
+const removeFile = util.promisify(rimraf);
+
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class CleanAnyTask extends CleanTask {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async execute(context) {
+    for (const inputFile of context.inputFiles) {
+      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+      await removeFile(inputFilePath);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  supports(context) {
+    return true;
+  }
+
+}
+
+CleanTask.register(new CleanAnyTask());
+
+module.exports = CleanAnyTask;

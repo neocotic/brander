@@ -25,16 +25,18 @@
 const _ = require('lodash');
 const glob = require('glob');
 const path = require('path');
+const util = require('util');
 
 const File = require('./file');
 const Size = require('./size');
+
+const findFiles = util.promisify(glob);
 
 const _buildInputFiles = Symbol('buildInputFiles');
 const _buildOutputFile = Symbol('buildOutputFile');
 const _config = Symbol('config');
 const _createContexts = Symbol('createContexts');
 const _createFile = Symbol('createFile');
-const _findFiles = Symbol('findFiles');
 const _inputFiles = Symbol('inputFiles');
 const _isOutputRequired = Symbol('isOutputRequired');
 const _options = Symbol('options');
@@ -102,7 +104,7 @@ class TaskContext {
         throw new Error('"input.files" configuration cannot contain null or empty patterns');
       }
 
-      const filePaths = await TaskContext[_findFiles](config.evaluate(pattern), dir);
+      const filePaths = await findFiles(config.evaluate(pattern), { cwd: dir });
 
       for (const filePath of filePaths) {
         const dirPath = path.resolve(dir, path.dirname(filePath));
@@ -143,6 +145,7 @@ class TaskContext {
       throw new Error('"task" configuration is required');
     }
 
+    // TODO: Perform format check after grouping
     const formats = _.chain(inputFiles)
       .map('format')
       .uniq()
@@ -193,20 +196,9 @@ class TaskContext {
     return new File(dirPath, fileName, format, config, evaluated);
   }
 
-  static [_findFiles](pattern, dir) {
-    return new Promise((resolve, reject) => {
-      glob(pattern, { cwd: dir }, (error, filePaths) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(filePaths);
-        }
-      });
-    });
-  }
-
   static [_isOutputRequired](type) {
-    return type === 'convert';
+    // TODO: Improve by moving to Task class
+    return type === 'convert' || type === 'package';
   }
 
   static [_parseOptions](data) {

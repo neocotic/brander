@@ -22,4 +22,23 @@
 
 'use strict';
 
-require('./clean-any-task');
+const Task = require('../task');
+
+/**
+ * TODO: document
+ *
+ * @public
+ */
+class OptimizeTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return 'optimize';
+  }
+
+}
+
+module.exports = OptimizeTask;
