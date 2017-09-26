@@ -51,14 +51,15 @@ class Task {}
 pollock(Task, 'execute', { promise: true });
 
 /**
- * Returns the type of this {@link Task}.
+ * Returns the {@link TaskType} of this {@link Task}.
  *
  * The type is used to categorize tasks when they are added to the {@link TaskService} so that they can be easily and
- * quickly looked up.
+ * quickly looked up as well as provides additional information that is useful when parsing and validating data within
+ * the {@link Config}.
  *
  * All implementations of {@link Task} <b>must</b> override this method.
  *
- * @return {string} The type.
+ * @return {TaskType} The type.
  * @public
  * @abstract
  * @memberof Task#

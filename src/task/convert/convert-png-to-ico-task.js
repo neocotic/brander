@@ -28,8 +28,9 @@ const path = require('path');
 const toIco = require('to-ico');
 const util = require('util');
 
-const ConvertTask = require('./convert-task');
 const Size = require('../size');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -43,7 +44,15 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class ConvertPNGToICOTask extends ConvertTask {
+class ConvertPNGToICOTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.CONVERT;
+  }
 
   /**
    * @inheritdoc

@@ -48,8 +48,8 @@ class TaskExecutor {
   /**
    * Executes all of the task contexts within this {@link TaskExecutor}.
    *
-   * An error will occur if no tasks can be found for a type found in the {@link Config}, or none that support a parsed
-   * {@link TaskContext}, or a problem arises during the execution of any {@link Task}.
+   * An error will occur if no tasks can be found for a {@link TaskType} found in the {@link Config}, or none that
+   * support a parsed {@link TaskContext}, or a problem arises during the execution of any {@link Task}.
    *
    * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous execution of each {@link Task}.
    * @public
@@ -61,15 +61,15 @@ class TaskExecutor {
       const { type } = context;
       const tasks = await taskService.findByType(type);
       if (tasks.length === 0) {
-        throw new Error(`"task" configuration is invalid: ${type}`);
+        throw new Error(`"task" configuration has no associated tasks: ${type}`);
       }
 
-      const supportedTask = tasks.find((task) => task.supports(context));
-      if (!supportedTask) {
-        throw new Error(`Unable to find supporting task: ${type}`);
+      const supportingTask = tasks.find((task) => task.supports(context));
+      if (!supportingTask) {
+        throw new Error(`"task" configuration has no supporting tasks: ${type}`);
       }
 
-      await supportedTask.execute(context);
+      await supportingTask.execute(context);
     }
   }
 

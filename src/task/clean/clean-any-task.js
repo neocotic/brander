@@ -26,7 +26,8 @@ const path = require('path');
 const rimraf = require('rimraf');
 const util = require('util');
 
-const CleanTask = require('./clean-task');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const removeFile = util.promisify(rimraf);
 
@@ -35,7 +36,15 @@ const removeFile = util.promisify(rimraf);
  *
  * @public
  */
-class CleanAnyTask extends CleanTask {
+class CleanAnyTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.CLEAN;
+  }
 
   /**
    * @inheritdoc

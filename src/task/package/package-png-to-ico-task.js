@@ -28,8 +28,9 @@ const path = require('path');
 const toIco = require('to-ico');
 const util = require('util');
 
-const PackageTask = require('./package-task');
 const Size = require('../size');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -44,7 +45,15 @@ const _readInputs = Symbol('readInputs');
  *
  * @public
  */
-class PackagePNGToICOTask extends PackageTask {
+class PackagePNGToICOTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.PACKAGE;
+  }
 
   /**
    * @inheritdoc

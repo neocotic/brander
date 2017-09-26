@@ -28,12 +28,12 @@ const util = require('util');
 const Task = require('./task');
 const TaskContext = require('./task-context');
 const TaskExecutor = require('./task-executor');
+const TaskType = require('./task-type');
 
 const findFiles = util.promisify(glob);
 
 const _addBuiltIns = Symbol('addBuiltIns');
 const _builtInsAdded = Symbol('builtInsAdded');
-const _isFullyImplementedTask = Symbol('isFullyImplementedTask');
 const _singleton = Symbol('singleton');
 const _types = Symbol('typeMap');
 
@@ -74,8 +74,8 @@ class TaskService {
   /**
    * Adds the specified <code>task</code> to this {@link TaskService}.
    *
-   * An error will occur if there is a problem while loading any built-in {@link Task} implementations, which is only
-   * done once.
+   * An error will occur if {@link TaskType#getType} does not return a {@link TaskType} or if there is a problem while
+   * loading any built-in {@link Task} implementations, which is only done once.
    *
    * @param {Task} task - the {@link Task} to be added
    * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
@@ -86,10 +86,14 @@ class TaskService {
     await this[_addBuiltIns]();
 
     const type = task.getType();
-    let tasks = this[_types].get(type);
+    if (!(type instanceof TaskType)) {
+      throw new TypeError('task#getType did not return a TaskType');
+    }
+
+    let tasks = this[_types].get(type.name);
     if (!tasks) {
       tasks = new Set();
-      this[_types].set(type, tasks);
+      this[_types].set(type.name, tasks);
     }
 
     tasks.add(task);
@@ -131,18 +135,22 @@ class TaskService {
   /**
    * Returns all of the tasks for this {@link TaskService} that belong to the specified <code>type</code>.
    *
-   * An error will occur if there is a problem while loading any built-in {@link Task} implementations, which is only
-   * done once.
+   * An error will occur if <code>type</code> is not a {@link TaskType} or if there is a problem while loading any
+   * built-in {@link Task} implementations, which is only done once.
    *
-   * @param {string} type - the type of {@link Task} implementations to be returned
+   * @param {TaskType} type - the {@link TaskType} whose associated {@link Task} implementations are to be returned
    * @return {Promise.<Error, Task[]>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations that is resolved with each {@link Task} that belongs to <code>type</code>.
    * @public
    */
   async findByType(type) {
+    if (!(type instanceof TaskType)) {
+      throw new TypeError('type is not a TaskType');
+    }
+
     await this[_addBuiltIns]();
 
-    const tasks = this[_types].get(type);
+    const tasks = this[_types].get(type.name);
 
     return tasks ? Array.from(tasks) : [];
   }
@@ -172,8 +180,8 @@ class TaskService {
   /**
    * Removes the specified <code>task</code> from this {@link TaskService}.
    *
-   * An error will occur if there is a problem while loading any built-in {@link Task} implementations, which is only
-   * done once.
+   * An error will occur if {@link TaskType#getType} does not return a {@link TaskType} or if there is a problem while
+   * loading any built-in {@link Task} implementations, which is only done once.
    *
    * @param {Task} task - the {@link Task} to be removed
    * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
@@ -184,7 +192,11 @@ class TaskService {
     await this[_addBuiltIns]();
 
     const type = task.getType();
-    const tasks = this[_types].get(type);
+    if (!(type instanceof TaskType)) {
+      throw new TypeError('task#getType did not return a TaskType');
+    }
+
+    const tasks = this[_types].get(type.name);
 
     if (tasks) {
       tasks.delete(task);
@@ -194,18 +206,22 @@ class TaskService {
   /**
    * Removes the all tasks from this {@link TaskService} that belong to the specified <code>type</code>.
    *
-   * An error will occur if there is a problem while loading any built-in {@link Task} implementations, which is only
-   * done once.
+   * An error will occur if <code>type</code> is not a {@link TaskType} or if there is a problem while loading any
+   * built-in {@link Task} implementations, which is only done once.
    *
-   * @param {string} type - the type of {@link Task} implementations to be removed
+   * @param {TaskType} type - the {@link TaskType} whose associated {@link Task} implementations are to be removed
    * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations.
    * @public
    */
   async removeByType(type) {
+    if (!(type instanceof TaskType)) {
+      throw new TypeError('type is not a TaskType');
+    }
+
     await this[_addBuiltIns]();
 
-    this[_types].delete(type);
+    this[_types].delete(type.name);
   }
 
   async [_addBuiltIns]() {
@@ -225,26 +241,12 @@ class TaskService {
       const TaskImpl = require(filePath);
       /* eslint-enable global-require */
       const task = new TaskImpl();
-
-      if (this[_isFullyImplementedTask](task)) {
-        await this.add(task);
+      if (!(task instanceof Task)) {
+        throw new TypeError(`Non-task implementation loaded from module: ${filePath}`);
       }
-    }
-  }
 
-  [_isFullyImplementedTask](task) {
-    if (!(task instanceof Task)) {
-      return false;
+      await this.add(task);
     }
-
-    // Ensure all abstract methods have been overridden
-    for (const [ key, value ] of Object.entries(Task.prototype)) {
-      if (task[key] === value) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
 }

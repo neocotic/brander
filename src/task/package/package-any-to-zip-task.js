@@ -28,7 +28,8 @@ const path = require('path');
 const util = require('util');
 const zlib = require('zlib');
 
-const PackageTask = require('./package-task');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 
@@ -39,7 +40,15 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class PackageAnyToZIPTask extends PackageTask {
+class PackageAnyToZIPTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.PACKAGE;
+  }
 
   /**
    * @inheritdoc

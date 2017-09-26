@@ -29,6 +29,7 @@ const util = require('util');
 
 const File = require('./file');
 const Size = require('./size');
+const TaskType = require('./task-type');
 
 const findFiles = util.promisify(glob);
 
@@ -38,7 +39,6 @@ const _config = Symbol('config');
 const _createContexts = Symbol('createContexts');
 const _createFile = Symbol('createFile');
 const _inputFiles = Symbol('inputFiles');
-const _isOutputRequired = Symbol('isOutputRequired');
 const _options = Symbol('options');
 const _outputFile = Symbol('outputFile');
 const _parseOptions = Symbol('parseOptions');
@@ -141,11 +141,12 @@ class TaskContext {
       return contexts;
     }
 
-    const type = _.trim(data.task).toLowerCase();
-    if (!type) {
+    const typeName = _.trim(data.task);
+    if (!typeName) {
       throw new Error('"task" configuration is required');
     }
 
+    const type = TaskType.valueOf(typeName);
     const { groupBy } = options;
     const groups = _.groupBy(inputFiles, (file) => {
       switch (typeof groupBy) {
@@ -162,7 +163,7 @@ class TaskContext {
       TaskContext[_validateSingleFormat](groupName, groupFiles);
 
       const outputFile = TaskContext[_buildOutputFile](data, config);
-      if (!outputFile && TaskContext[_isOutputRequired](type)) {
+      if (!outputFile && type.outputRequired) {
         throw new Error(`"output" configuration is required for "${type}" tasks`);
       }
 
@@ -188,11 +189,6 @@ class TaskContext {
     }
 
     return new File(dirPath, fileName, format, config, evaluated);
-  }
-
-  static [_isOutputRequired](type) {
-    // TODO: Improve by moving to Task class
-    return type === 'convert' || type === 'package';
   }
 
   static [_parseOptions](data) {
@@ -227,7 +223,7 @@ class TaskContext {
    *
    * {@link TaskContext.parse} should be used to create instances.
    *
-   * @param {string} type - the task type to be used
+   * @param {TaskType} type - the associated {@link TaskType} to be used
    * @param {File[]} inputFiles - the input files to be used
    * @param {?File} outputFile - the output file to be used (may be <code>null</code>)
    * @param {Object} options - the options to be used
@@ -284,7 +280,7 @@ class TaskContext {
    * Returns the output {@link File} for this {@link TaskContext}.
    *
    * The {@link File} will be <code>null</code> if there is none but it should only ever be <code>null</code> for task
-   * types that the output file is optional or unnecessary.
+   * types that the output file is optional or unnecessary (see {@link TaskType#optionalRequired}).
    *
    * @return {?File} The output file or <code>null</code> if there is none.
    * @public
@@ -294,9 +290,9 @@ class TaskContext {
   }
 
   /**
-   * Returns the task type for this {@link TaskContext}.
+   * Returns the {@link TaskType} associated with this {@link TaskContext}.
    *
-   * @return {string} The task type.
+   * @return {TaskType} The task type.
    * @public
    */
   get type() {

@@ -29,8 +29,9 @@ const svg2png = require('svg2png');
 const toIco = require('to-ico');
 const util = require('util');
 
-const PackageTask = require('./package-task');
 const Size = require('../size');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -44,7 +45,15 @@ const _readData = Symbol('readData');
  *
  * @public
  */
-class PackageSVGToICOTask extends PackageTask {
+class PackageSVGToICOTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.PACKAGE;
+  }
 
   /**
    * @inheritdoc

@@ -28,7 +28,8 @@ const SVGO = require('svgo');
 const util = require('util');
 
 const File = require('../file');
-const OptimizeTask = require('./optimize-task');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -41,7 +42,7 @@ const _svgo = Symbol('svgo');
  *
  * @public
  */
-class OptimizeSVGTask extends OptimizeTask {
+class OptimizeSVGTask extends Task {
 
   /**
    * Creates an instance of {@link OptimizeSVGTask}.
@@ -52,6 +53,14 @@ class OptimizeSVGTask extends OptimizeTask {
     super();
 
     this[_svgo] = new SVGO();
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.OPTIMIZE;
   }
 
   /**

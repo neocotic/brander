@@ -28,7 +28,8 @@ const path = require('path');
 const svg2png = require('svg2png');
 const util = require('util');
 
-const ConvertTask = require('./convert-task');
+const Task = require('../task');
+const TaskType = require('../task-type');
 
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
@@ -40,7 +41,15 @@ const _execute = Symbol('execute');
  *
  * @public
  */
-class ConvertSVGToPNGTask extends ConvertTask {
+class ConvertSVGToPNGTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  getType() {
+    return TaskType.CONVERT;
+  }
 
   /**
    * @inheritdoc
