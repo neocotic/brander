@@ -127,6 +127,7 @@ class TaskService {
    * @public
    */
   async createExecutor(config) {
+    // FIXME: Process currently broken as input files are currently resolved immediately but they need resolved JIT!
     const contexts = await TaskContext.parse(config);
 
     return new TaskExecutor(contexts, this);
