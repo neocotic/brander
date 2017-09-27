@@ -54,11 +54,11 @@ class Logger {
   }
 
   /**
-   * Writes the specified <code>message</code> to the error stream for this {@link Logger}.
+   * Writes the specified error <code>message</code> to the error stream for this {@link Logger}.
    *
    * Optionally, <code>args</code> can be specified and used to format <code>message</code>.
    *
-   * <code>message</code> will be proceeded with a new line character.
+   * <code>message</code> will be preceded by an error indicator and proceeded with a new line character.
    *
    * Nothing happens if this {@link Logger} has no error stream.
    *
@@ -77,7 +77,7 @@ class Logger {
   }
 
   /**
-   * Writes the specified <code>message</code> to the output stream for this {@link Logger}.
+   * Writes the specified output <code>message</code> to the output stream for this {@link Logger}.
    *
    * Optionally, <code>args</code> can be specified and used to format <code>message</code>.
    *
@@ -92,6 +92,29 @@ class Logger {
    */
   log(message, ...args) {
     return this[_writeln](this[_outputStream], message || '', args);
+  }
+
+  /**
+   * Writes the specified warning <code>message</code> to the output stream for this {@link Logger}.
+   *
+   * Optionally, <code>args</code> can be specified and used to format <code>message</code>.
+   *
+   * <code>message</code> will be preceded by an warning indicator and proceeded with a new line character.
+   *
+   * Nothing happens if this {@link Logger} has no output stream.
+   *
+   * @param {string} [message] - the warning message to be logged
+   * @param {...*} [args] - any arguments to be used to format <code>message</code>
+   * @return {Logger} A reference to this {@link Logger} for chaining purposes.
+   * @public
+   */
+  warn(message, ...args) {
+    let formatMessage = chalk.yellow('Warning!');
+    if (message) {
+      formatMessage += ` ${message}`;
+    }
+
+    return this[_writeln](this[_outputStream], formatMessage, args);
   }
 
   [_writeln](stream, message, args) {

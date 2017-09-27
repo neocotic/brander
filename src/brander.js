@@ -48,51 +48,46 @@ class Brander {
   /**
    * Generates the assets and documentation based on the configuration for this {@link Brander}.
    *
+   * Optionally, <code>options</code> can be provided for more granular control.
+   *
    * An error will occur if a problem arises while generating the assets or documentation.
    *
+   * @param {Brander~GenerateOptions} [options] - the options to be used
    * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
    * @public
    */
-  async generate() {
-    const { logger } = this.config;
-
-    await this.generateAssets();
-    await this.generateDocs();
-
-    logger.log();
-    logger.log(chalk.green('Done!'));
-  }
-
-  /**
-   * Generates the assets based on the configuration for this {@link Brander}.
-   *
-   * An error will occur if a problem arises while generating the assets.
-   *
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of assets.
-   * @public
-   */
-  async generateAssets() {
+  async generate(options = {}) {
     const { config } = this;
     const { logger } = config;
 
-    logger.log('Generating assets...');
+    if (options.skipAssets && options.skipDocs) {
+      logger.warn('Both skipAssets and skipDocs options enabled. Nothing to do!');
+
+      return;
+    }
+
+    if (!options.skipAssets) {
+      logger.log('Generating assets...');
+      logger.log();
+
+      const executor = new TaskExecutor(config);
+
+      await executor.execute();
+    }
+
+    if (!options.skipDocs) {
+      if (!options.skipAssets) {
+        logger.log();
+      }
+      logger.log('Generating documentation...');
+      logger.log();
+
+      // FIXME: implement documentation generation
+      logger.warn('Documentation generation has not been implemented yet!');
+    }
+
     logger.log();
-
-    const executor = new TaskExecutor(config);
-
-    await executor.execute();
-  }
-
-  /**
-   * Generates the documentation based on the configuration for this {@link Brander}.
-   *
-   * An error will occur if a problem arises while generating the documentation.
-   *
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of documentation.
-   * @public
-   */
-  async generateDocs() {
-    // FIXME: implement documentation generation
+    logger.log(chalk.green('Done!'));
   }
 
   /**
@@ -108,3 +103,11 @@ class Brander {
 }
 
 module.exports = Brander;
+
+/**
+ * TODO: document
+ *
+ * @typedef {Object} Brander~GenerateOptions
+ * @property {boolean} [skipAssets] -
+ * @property {boolean} [skipDocs] -
+ */
