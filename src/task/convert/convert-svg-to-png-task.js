@@ -38,7 +38,8 @@ const writeFile = util.promisify(fs.writeFile);
 const _execute = Symbol('execute');
 
 /**
- * TODO: document
+ * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple PNG files, if multiple
+ * <code>sizes</code> are specified in the options.
  *
  * @public
  */

@@ -35,7 +35,10 @@ const _name = Symbol('name');
 const _title = Symbol('title');
 
 /**
- * TODO: document
+ * Contains parsed configuration data loaded from a single configuration file.
+ *
+ * While it's possible to create an instance using the constructor, it's recommended that {@link ConfigLoader} is used
+ * instead.
  *
  * @public
  */

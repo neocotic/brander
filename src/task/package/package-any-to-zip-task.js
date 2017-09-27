@@ -38,7 +38,7 @@ const readFile = util.promisify(fs.readFile);
 const _execute = Symbol('execute');
 
 /**
- * TODO: document
+ * A {@link TaskType.PACKAGE} task that adds all input files to input a single ZIP file.
  *
  * @public
  */

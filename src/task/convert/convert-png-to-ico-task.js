@@ -41,7 +41,8 @@ const _execute = Symbol('execute');
 // TODO: Support resizing images with non-1:1 aspect ratios
 
 /**
- * TODO: document
+ * A {@link TaskType.CONVERT} task that can convert a PNG file to potentially multiple ICO files, if multiple
+ * <code>sizes</code> are specified in the options.
  *
  * @public
  */

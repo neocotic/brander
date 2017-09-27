@@ -31,7 +31,10 @@ const _format = Symbol('format');
 const _name = Symbol('name');
 
 /**
- * TODO: document
+ * Contains information for a file associated with a {@link Task}.
+ *
+ * Care should be taken when using this information to generate file paths as the parent directory path and/or name may
+ * contain a expression that needs to be evaluated beforehand.
  *
  * @public
  */

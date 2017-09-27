@@ -29,7 +29,10 @@ const _outputRequired = Symbol('outputRequired');
 const _privateKey = Symbol('privateKey');
 
 /**
- * TODO: document
+ * Describes a category for {@link Task} instances to help group and organize them.
+ *
+ * This class is enum-like for ease-of-use. It cannot be instantiated and built-in instances can only be referenced via
+ * the static values (e.g. {@link TaskType.CLEAN}) or using {@link TaskType.valueOf}.
  *
  * @public
  */

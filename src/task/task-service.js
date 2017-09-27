@@ -39,7 +39,12 @@ const _singleton = Symbol('singleton');
 const _types = Symbol('typeMap');
 
 /**
- * TODO: document
+ * Manages {@link Task} instances that are available for execution.
+ *
+ * Built-in tasks are automatically discovered and added to the service before the first CRUD operation is performed.
+ *
+ * This class cannot be instantiated and {@link TaskService.getInstance} must be used to gain a reference to the
+ * globally available singleton instance.
  *
  * @public
  */

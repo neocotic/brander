@@ -33,7 +33,7 @@ const TaskType = require('../task-type');
 const removeFile = util.promisify(rimraf);
 
 /**
- * TODO: document
+ * A {@link TaskType.CLEAN} task that simply deletes all files.
  *
  * @public
  */

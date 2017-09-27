@@ -45,7 +45,9 @@ const _tasks = Symbol('tasks');
 const _validateSingleFormat = Symbol('validateSingleFormat');
 
 /**
- * TODO: document
+ * Parses {@link TaskContext} instances from configuration data iteratively so that only the contexts for once task data
+ * item within the configuration are read at a time. This is done to ensure that contexts are executed sequentially and
+ * to avoid wasting time parsing contexts if an early tasks fails during execution.
  *
  * @public
  */

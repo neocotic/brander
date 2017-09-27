@@ -31,7 +31,11 @@ const _outputFile = Symbol('outputFile');
 const _type = Symbol('type');
 
 /**
- * TODO: document
+ * Contains contextual information that is based on configuration data which can be executed by a supporting
+ * {@link Task} to generate assets.
+ *
+ * While it's possible to create an instance using the constructor, it's recommended that {@link TaskParser} is used
+ * instead.
  *
  * @public
  */

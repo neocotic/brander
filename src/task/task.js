@@ -25,7 +25,8 @@
 const pollock = require('pollock');
 
 /**
- * TODO: document
+ * Performs a single operation relating to an associated {@link TaskType} that is executed for {@link TaskContext}
+ * instances created based on configuration data to generate assets.
  *
  * @public
  */

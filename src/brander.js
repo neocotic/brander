@@ -29,7 +29,7 @@ const TaskExecutor = require('./task/task-executor');
 const _config = Symbol('config');
 
 /**
- * TODO: document
+ * Generates assets and documentation based on an associated {@link Config}.
  *
  * @public
  */
@@ -49,6 +49,8 @@ class Brander {
    * Generates the assets and documentation based on the configuration for this {@link Brander}.
    *
    * Optionally, <code>options</code> can be provided for more granular control.
+   *
+   * Nothing happens if both the <code>skipAssets</code> and <code>skipDocs</code> options are <code>true</code>.
    *
    * An error will occur if a problem arises while generating the assets or documentation.
    *
@@ -105,9 +107,9 @@ class Brander {
 module.exports = Brander;
 
 /**
- * TODO: document
+ * The options that can be passed to {@link Brander#generate}.
  *
  * @typedef {Object} Brander~GenerateOptions
- * @property {boolean} [skipAssets] -
- * @property {boolean} [skipDocs] -
+ * @property {boolean} [skipAssets] - <code>true</code> to skip asset generation; otherwise <code>false</code>.
+ * @property {boolean} [skipDocs] - <code>true</code> to skip documentation generation; otherwise <code>false</code>.
  */

@@ -31,7 +31,9 @@ const _outputStream = Symbol('outputStream');
 const _writeln = Symbol('writeln');
 
 /**
- * TODO: document
+ * Provides the ability to log messages to controllable streams.
+ *
+ * If not streams are provided, then any attempt to log a message will be ignored.
  *
  * @public
  */

@@ -43,7 +43,12 @@ const _readData = Symbol('readData');
 // TODO: Support resizing images with non-1:1 aspect ratios
 
 /**
- * TODO: document
+ * A {@link TaskType.PACKAGE} task that can package one or more PNG files into a single ICO file.
+ *
+ * The <code>sizes</code> option can be used to control the size of the PNG files as they're added to the ICO file. It
+ * can even be used to resize the PNG files.
+ *
+ * The SVG files are first converted into PNG format and it's the PNG data that is written to the ICO file.
  *
  * @public
  */

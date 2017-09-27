@@ -38,7 +38,17 @@ const _findFilePath = Symbol('findFilePath');
 const _logger = Symbol('logger');
 
 /**
- * TODO: document
+ * Responsible for finding, loading, and parsing configuration files and creating {@link Config} instances.
+ *
+ * A <code>ConfigLoader</code> can be used to load a specific configuration file or attempt to find available
+ * configuration files (based on predefined naming conventions), read their contents, and finally parse them into a
+ * plain object that will be used as the configuration data.
+ *
+ * All files are read and/or searched for relative to the base directory for the loader. By default, the base directory
+ * is the current working directory but this can be changed by specifying the <code>baseDir</code> option.
+ *
+ * The <code>logger</code> option can be specified to provide a {@link Logger} instance that is to be passed to all
+ * {@link Config} instances created by the loader.
  *
  * @public
  */
@@ -93,7 +103,7 @@ class ConfigLoader {
    * will be made to find any file with a recognised name within the base directory and use the first one it finds.
    *
    * If the file denotes a module, it will be required and its exports will be used as the configuration data.
-   * Otherwise, the contents of the file will be read using UTF-8 encoding and parsed based on its type.
+   * Otherwise, the contents of the file will read and parsed based on its type.
    *
    * All file paths (specified or discovered) are resolve using the base directory unless where already absolute.
    *
@@ -126,7 +136,7 @@ class ConfigLoader {
       /* eslint-enable global-require */
     }
 
-    const contents = await readFile(filePath, 'utf8');
+    const contents = await readFile(filePath);
     const data = this.parse(contents, filePath);
     if (!data) {
       throw new Error(`Configuration file contains no data: ${filePath}`);
@@ -143,7 +153,7 @@ class ConfigLoader {
    * An error will occur if a problem arises while attempting to parse <code>contents</code> or if <code>filePath</code>
    * denotes an unsupported file type.
    *
-   * @param {string} contents - the UTF-8 encoded file contents to be parsed
+   * @param {Buffer} contents - the file contents to be parsed
    * @param {string} filePath - the path of the file being parsed
    * @return {?Object} The parsed configuration data or <code>null</code> if <code>contents</code> contained none.
    * @throws {Error} If an error occurred while attempting to parse <code>contents</code> or if <code>filePath</code>
@@ -157,7 +167,7 @@ class ConfigLoader {
 
     switch (extension) {
     case '.json':
-      return JSON.parse(stripJsonComments(contents));
+      return JSON.parse(stripJsonComments(contents.toString('utf8')));
     default:
       throw new Error(`Unsupported configuration file type: ${filePath}`);
     }

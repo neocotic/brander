@@ -42,7 +42,10 @@ const _execute = Symbol('execute');
 // TODO: Support resizing images with non-1:1 aspect ratios
 
 /**
- * TODO: document
+ * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple ICO files, if multiple
+ * <code>sizes</code> are specified in the options.
+ *
+ * The SVG file is first converted into PNG format and it's the PNG data that is written to the ICO file(s).
  *
  * @public
  */

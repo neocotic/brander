@@ -33,7 +33,11 @@ const _width = Symbol('width');
 const rSize = /^\s*(\d+)\s*([xX]\s*(\d+))?\s*$/;
 
 /**
- * TODO: document
+ * Contains size information based on specific dimensions.
+ *
+ * While it's possible to create an instance using the constructor, it's often necessary to contents read from
+ * configuration data or file names, in which cases {@link Size.parse} is recommended instead. Additionally, size
+ * information for images can be derived using {@link Size.fromImage}.
  *
  * @public
  */

@@ -39,7 +39,7 @@ const _execute = Symbol('execute');
 const _svgo = Symbol('svgo');
 
 /**
- * TODO: document
+ * A {@link TaskType.OPTIMIZE} task that optimizes SVG files.
  *
  * @public
  */
