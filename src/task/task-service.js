@@ -32,6 +32,7 @@ const findFiles = util.promisify(glob);
 
 const _addBuiltIns = Symbol('addBuiltIns');
 const _builtInsAdded = Symbol('builtInsAdded');
+const _privateKey = Symbol('privateKey');
 const _singleton = Symbol('singleton');
 const _types = Symbol('typeMap');
 
@@ -53,7 +54,7 @@ class TaskService {
    */
   static getInstance() {
     if (!TaskService[_singleton]) {
-      TaskService[_singleton] = new TaskService();
+      TaskService[_singleton] = new TaskService(_privateKey);
     }
 
     return TaskService[_singleton];
@@ -62,9 +63,19 @@ class TaskService {
   /**
    * Creates an instance of {@link TaskService}.
    *
-   * @protected
+   * <code>privateKey</code> is used to ensure that {@link TaskService} can only be instantiated within this module.
+   *
+   * An error will occur if <code>privateKey</code> is invalid.
+   *
+   * @param {symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
+   * @throws {Error} If <code>privateKey</code> is invalid.
+   * @private
    */
-  constructor() {
+  constructor(privateKey) {
+    if (privateKey !== _privateKey) {
+      throw new Error('TaskService constructor is private');
+    }
+
     this[_builtInsAdded] = false;
     this[_types] = new Map();
   }
