@@ -77,15 +77,14 @@ class PackageAnyToZIPTask extends Task {
 
   async [_execute](inputFiles, outputFile, context) {
     const { config } = context;
+    const level = context.option('compression', zlib.constants.Z_DEFAULT_COMPRESS);
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
 
     debug('Creating ZIP file for files: %s', outputFilePath);
 
     const output = fs.createWriteStream(outputFilePath);
     const archive = archiver('zip', {
-      zlib: {
-        level: context.option('compression', zlib.constants.Z_DEFAULT_COMPRESS)
-      }
+      zlib: { level }
     });
 
     archive.pipe(output);
@@ -109,8 +108,8 @@ class PackageAnyToZIPTask extends Task {
       archive.on('error', reject);
       archive.on('warning', reject);
       output.on('close', () => {
-        config.logger.log('Packaged %d %s into ZIP file: %s', inputFiles.length, pluralize('file', inputFiles.length),
-          chalk.blue(config.relative(outputFilePath)));
+        config.logger.log('Packaged %d %s into ZIP file: %s (level = %d)', inputFiles.length,
+          pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), level);
 
         resolve();
       });
