@@ -6,6 +6,8 @@ before_script:
   - npm install -g npm@latest
 script:
   - npm run ci
+after_script:
+  - npm run report-coverage
 notifications:
   slack:
     rooms:

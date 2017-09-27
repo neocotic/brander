@@ -37,8 +37,13 @@
     "to-ico": "^1.1.5"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "codecov": "^2.3.0",
     "eslint": "^4.7.1",
-    "eslint-config-notninja": "^0.2.3"
+    "eslint-config-notninja": "^0.2.3",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.3",
+    "sinon": "^4.0.0"
   },
   "bin": {
     "brander": "bin/brander"
@@ -46,7 +51,10 @@
   "main": "src/brander.js",
   "scripts": {
     "ci": "npm run test",
-    "test": "eslint \"src/**/*.js\""
+    "report-coverage": "istanbul cover _mocha --report lcovonly -- -R list \"test/**/*.spec.js\" && codecov",
+    "pretest": "eslint \"src/**/*.js\" \"test/**/*.js\"",
+    "test": "istanbul cover _mocha -- -R list \"test/**/*.spec.js\"",
+    "posttest": "istanbul check-coverage"
   },
   "engines": {
     "node": ">=8"

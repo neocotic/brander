@@ -1,4 +1,7 @@
+coverage/
+test/
 .*
+*.log
 AUTHORS.md
 CHANGES.md
 CONTRIBUTING.md
