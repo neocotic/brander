@@ -98,8 +98,7 @@ class PackageAnyToZIPTask extends Task {
 
       debug('Adding file to ZIP package: %s', inputFilePath);
 
-      // TODO: Support directories (relative to what?)
-      archive.append(input, { name: inputFile.name });
+      archive.append(input, { name: config.relative(inputFilePath) });
     }
 
     archive.finalize();
