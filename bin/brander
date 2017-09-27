@@ -40,6 +40,8 @@ const { version } = require('../package.json');
     .usage('[options]')
     .option('-c, --config <path>', 'use configuration from this file')
     .option('-d, --debug', 'enable debug level logging')
+    .option('--only-assets', 'only generate assets')
+    .option('--only-docs', 'only generate documentation')
     .on('option:debug', () => debug.enable('brander*'))
     .parse(process.argv);
 
@@ -49,7 +51,18 @@ const { version } = require('../package.json');
     const configLoader = new ConfigLoader({ logger });
     const config = await configLoader.load(program.config);
     const brander = new Brander(config);
-    await brander.generate();
+
+    if (program.onlyAssets && program.onlyDocs) {
+      throw new Error('Cannot use both --only-assets and --only-docs options at same time');
+    }
+
+    if (program.onlyAssets) {
+      await brander.generateAssets();
+    } else if (program.onlyDocs) {
+      await brander.generateDocs();
+    } else {
+      await brander.generate();
+    }
   } catch (e) {
     logger.error(e.stack);
 
