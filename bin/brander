@@ -40,6 +40,7 @@ const { version } = require('../package.json');
     .usage('[options]')
     .option('-c, --config <path>', 'use configuration from this file')
     .option('-d, --debug', 'enable debug level logging')
+    .option('--no-color', 'disables color output')
     .option('--only-assets', 'only generate assets')
     .option('--only-docs', 'only generate documentation')
     .on('option:debug', () => debug.enable('brander*'))
