@@ -22,8 +22,10 @@
 
 'use strict';
 
-const _contexts = Symbol('contexts');
-const _taskService = Symbol('taskService');
+const TaskParser = require('./task-parser');
+const TaskService = require('./task-service');
+
+const _taskParser = Symbol('taskParser');
 
 /**
  * TODO: document
@@ -33,55 +35,46 @@ const _taskService = Symbol('taskService');
 class TaskExecutor {
 
   /**
-   * Creates an instance of {@link TaskExecutor} with the specified <code>contexts</code> and <code>taskService</code>.
+   * Creates an instance of {@link TaskExecutor} with the specified <code>config</code>.
    *
-   * {@link TaskService#createExecutor} should be used to create instances.
-   *
-   * @param {TaskContext[]} contexts - the task contexts to be used
-   * @param {TaskService} taskService - the {@link TaskService} to be used
-   * @protected
+   * @param {Config} config - the {@link Config} whose task data is to be parsed and executed
+   * @public
    */
-  constructor(contexts, taskService) {
-    this[_contexts] = contexts;
-    this[_taskService] = taskService;
+  constructor(config) {
+    this[_taskParser] = new TaskParser(config);
   }
 
   /**
-   * Executes all of the task contexts within this {@link TaskExecutor}.
+   * Parses the task data within the {@link Config} of this {@link TaskExecutor} using a {@link TaskParser} and then
+   * executes these against their supporting {@link Task} implementations.
    *
-   * An error will occur if no tasks can be found for a {@link TaskType} found in the {@link Config}, or none that
-   * support a parsed {@link TaskContext}, or a problem arises during the execution of any {@link Task}.
+   * An error will occur if a problem occurs while parsing task data in the {@link Config}, no tasks can be found for a
+   * {@link TaskType} found in the {@link Config}, or none that support a parsed {@link TaskContext}, or a problem
+   * arises during the execution of any {@link Task}.
    *
    * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous execution of each {@link Task}.
    * @public
    */
   async execute() {
-    for (const context of this[_contexts]) {
-      const { type } = context;
-      const tasks = await this[_taskService].findByType(type);
-      if (tasks.length === 0) {
-        throw new Error(`"task" configuration has no associated tasks: ${type}`);
-      }
+    let contexts;
+    const taskService = TaskService.getInstance();
 
-      const supportingTask = tasks.find((task) => task.supports(context));
-      if (!supportingTask) {
-        throw new Error(`"task" configuration has no supporting tasks: ${type}`);
-      }
+    while ((contexts = await this[_taskParser].parseNext()) != null) {
+      for (const context of contexts) {
+        const { type } = context;
+        const tasks = await taskService.findByType(type);
+        if (tasks.length === 0) {
+          throw new Error(`"task" configuration has no associated tasks: ${type}`);
+        }
 
-      await supportingTask.execute(context);
+        const supportingTask = tasks.find((task) => task.supports(context));
+        if (!supportingTask) {
+          throw new Error(`"task" configuration has no supporting tasks: ${type}`);
+        }
+
+        await supportingTask.execute(context);
+      }
     }
-  }
-
-  /**
-   * Return the task contexts that are executed by this {@link TaskExecuted}.
-   *
-   * The array is a copy so any modifications to it will not be reflected in this {@link TaskExecutor}.
-   *
-   * @return {TaskContext[]} All of the {@link TaskContext} instances.
-   * @public
-   */
-  get contexts() {
-    return this[_contexts].slice();
   }
 
 }

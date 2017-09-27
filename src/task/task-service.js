@@ -26,8 +26,6 @@ const glob = require('glob');
 const util = require('util');
 
 const Task = require('./task');
-const TaskContext = require('./task-context');
-const TaskExecutor = require('./task-executor');
 const TaskType = require('./task-type');
 
 const findFiles = util.promisify(glob);
@@ -112,25 +110,6 @@ class TaskService {
     this[_builtInsAdded] = true;
 
     this[_types].clear();
-  }
-
-  /**
-   * Creates an instance of {@link TaskExecutor} using {@link TaskContext} instances that are parsed from the tasks data
-   * within the specified <code>config</code>.
-   *
-   * An error will occur if the tasks data within <code>config</code> is malformed or incomplete or if a problem occurs
-   * while attempting to find input files.
-   *
-   * @param {Config} config - the {@link Config} to be used
-   * @return {Promise.<Error, TaskExecutor>} A <code>Promise</code> for asynchronous parsing that is resolved with the
-   * {@link TaskExecutor}.
-   * @public
-   */
-  async createExecutor(config) {
-    // FIXME: Process currently broken as input files are currently resolved immediately but they need resolved JIT!
-    const contexts = await TaskContext.parse(config);
-
-    return new TaskExecutor(contexts, this);
   }
 
   /**
