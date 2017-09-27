@@ -76,8 +76,8 @@ class ConfigLoader {
   getFileNames() {
     return [
       '.branderrc',
-      '.branderrc.js',
-      '.branderrc.json'
+      '.branderrc.json',
+      '.branderrc.js'
     ];
   }
 
