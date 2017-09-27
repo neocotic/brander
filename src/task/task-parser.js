@@ -134,7 +134,7 @@ class TaskParser {
       }
     });
 
-    for (const [ groupName, groupFiles ] of Object.entries(groups)) {
+    for (const groupFiles of Object.values(groups)) {
       const outputFile = this[_buildOutputFile](taskData);
       if (!outputFile && type.outputRequired) {
         throw new Error(`"output" configuration is required for "${type}" tasks`);
