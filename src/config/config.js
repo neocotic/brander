@@ -104,6 +104,18 @@ class Config {
   }
 
   /**
+   * Returns the specified <code>filePath</code> relative to the base directory from where the data for this
+   * {@link Config} was originally loaded.
+   *
+   * @param {string} filePath - the file path to be made relative
+   * @return {string} The relative file path.
+   * @public
+   */
+  relative(filePath) {
+    return path.relative(this.baseDir, filePath);
+  }
+
+  /**
    * Resolves the specified sequence of <code>paths</code> or path segments into an absolute path relative to the base
    * directory from where the data for this {@link Config} was originally loaded.
    *

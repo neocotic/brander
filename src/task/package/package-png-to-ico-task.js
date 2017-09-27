@@ -23,9 +23,11 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
+const pluralize = require('pluralize');
 const toIco = require('to-ico');
 const util = require('util');
 
@@ -61,7 +63,7 @@ class PackagePNGToICOTask extends Task {
    * @override
    */
   async execute(context) {
-    const { inputFiles } = context;
+    const { config, inputFiles } = context;
     const [ inputFile ] = inputFiles;
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
@@ -72,11 +74,15 @@ class PackagePNGToICOTask extends Task {
 
     debug('Creating ICO for PNG files');
 
-    const output = await toIco(inputs, this[_getOptions](context));
+    const options = await this[_getOptions](context);
+    const output = await toIco(inputs, options);
 
     debug('Writing packaged ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
+
+    config.logger.log('Packaged %d PNG %s into ICO file for %j sizes: %s', inputFiles.length,
+      pluralize('file', inputFiles.length), options.sizes, chalk.blue(config.relative(outputFilePath)));
   }
 
   /**
@@ -89,7 +95,6 @@ class PackagePNGToICOTask extends Task {
 
   async [_getOptions](context) {
     const { inputFiles } = context;
-    let finalSizes;
     const realSizes = [];
     const sizes = _.map(context.option('sizes', []), 'width');
 
@@ -98,20 +103,9 @@ class PackagePNGToICOTask extends Task {
       realSizes.push(width);
     }
 
-    if (sizes) {
-      const filesLength = inputFiles.length;
-      const sizesLength = sizes.length;
-
-      if (sizesLength < filesLength) {
-        finalSizes = sizes.concat(realSizes.slice(sizesLength));
-      } else if (sizesLength > filesLength) {
-        finalSizes = sizes.slice(0, filesLength);
-      } else {
-        finalSizes = sizes.slice();
-      }
-    } else {
-      finalSizes = realSizes;
-    }
+    const sizesLength = sizes.length;
+    const filesLength = inputFiles.length;
+    const finalSizes = sizesLength < filesLength ? sizes.concat(realSizes.slice(sizesLength)) : sizes;
 
     return {
       resize: !_.isEqual(finalSizes, realSizes),

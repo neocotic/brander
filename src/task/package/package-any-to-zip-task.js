@@ -23,9 +23,11 @@
 'use strict';
 
 const archiver = require('archiver');
+const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
+const pluralize = require('pluralize');
 const util = require('util');
 const zlib = require('zlib');
 
@@ -74,6 +76,7 @@ class PackageAnyToZIPTask extends Task {
   }
 
   async [_execute](inputFiles, outputFile, context) {
+    const { config } = context;
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
 
     debug('Creating ZIP file for files: %s', outputFilePath);
@@ -105,7 +108,12 @@ class PackageAnyToZIPTask extends Task {
     return new Promise((resolve, reject) => {
       archive.on('error', reject);
       archive.on('warning', reject);
-      output.on('close', resolve);
+      output.on('close', () => {
+        config.logger.log('Packaged %d %s into ZIP file: %s', inputFiles.length, pluralize('file', inputFiles.length),
+          chalk.blue(config.relative(outputFilePath)));
+
+        resolve();
+      });
     });
   }
 

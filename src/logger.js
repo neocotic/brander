@@ -22,6 +22,7 @@
 
 'use strict';
 
+const chalk = require('chalk');
 const { EOL } = require('os');
 const util = require('util');
 
@@ -61,13 +62,18 @@ class Logger {
    *
    * Nothing happens if this {@link Logger} has no error stream.
    *
-   * @param {string} message - the error message to be logged
+   * @param {string} [message] - the error message to be logged
    * @param {...*} [args] - any arguments to be used to format <code>message</code>
    * @return {Logger} A reference to this {@link Logger} for chaining purposes.
    * @public
    */
   error(message, ...args) {
-    return this[_writeln](this[_errorStream], message, args);
+    let formatMessage = chalk.red('Error!');
+    if (message) {
+      formatMessage += ` ${message}`;
+    }
+
+    return this[_writeln](this[_errorStream], formatMessage, args);
   }
 
   /**
@@ -79,13 +85,13 @@ class Logger {
    *
    * Nothing happens if this {@link Logger} has no output stream.
    *
-   * @param {string} message - the output message to be logged
+   * @param {string} [message] - the output message to be logged
    * @param {...*} [args] - any arguments to be used to format <code>message</code>
    * @return {Logger} A reference to this {@link Logger} for chaining purposes.
    * @public
    */
   log(message, ...args) {
-    return this[_writeln](this[_outputStream], message, args);
+    return this[_writeln](this[_outputStream], message || '', args);
   }
 
   [_writeln](stream, message, args) {

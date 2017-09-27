@@ -23,9 +23,11 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
+const pluralize = require('pluralize');
 const svg2png = require('svg2png');
 const toIco = require('to-ico');
 const util = require('util');
@@ -61,7 +63,7 @@ class PackageSVGToICOTask extends Task {
    * @override
    */
   async execute(context) {
-    const { inputFiles } = context;
+    const { config, inputFiles } = context;
     const [ inputFile ] = inputFiles;
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
@@ -79,6 +81,9 @@ class PackageSVGToICOTask extends Task {
     debug('Writing packaged ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
+
+    config.logger.log('Packaged %d SVG %s into ICO file for %j sizes: %s', inputFiles.length,
+      pluralize('file', inputFiles.length), sizes, chalk.blue(config.relative(outputFilePath)));
   }
 
   /**

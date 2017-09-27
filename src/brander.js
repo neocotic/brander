@@ -22,7 +22,7 @@
 
 'use strict';
 
-const debug = require('debug')('brander');
+const chalk = require('chalk');
 
 const TaskExecutor = require('./task/task-executor');
 
@@ -54,8 +54,13 @@ class Brander {
    * @public
    */
   async generate() {
+    const { logger } = this.config;
+
     await this.generateAssets();
     await this.generateDocs();
+
+    logger.log();
+    logger.log(chalk.green('Done!'));
   }
 
   /**
@@ -67,9 +72,13 @@ class Brander {
    * @public
    */
   async generateAssets() {
-    debug('Generating assets...');
+    const { config } = this;
+    const { logger } = config;
 
-    const executor = new TaskExecutor(this.config);
+    logger.log('Generating assets...');
+    logger.log();
+
+    const executor = new TaskExecutor(config);
 
     await executor.execute();
   }

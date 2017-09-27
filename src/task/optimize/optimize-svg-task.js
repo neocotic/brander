@@ -22,6 +22,7 @@
 
 'use strict';
 
+const chalk = require('chalk');
 const debug = require('debug')('brander:task:optimize');
 const fs = require('fs');
 const path = require('path');
@@ -83,8 +84,9 @@ class OptimizeSVGTask extends Task {
   }
 
   async [_execute](inputFile, context) {
+    const { config } = context;
     const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
-    const outputFile = (context.outputFile || new File(null, null, null, context.config))
+    const outputFile = (context.outputFile || new File(null, null, null, config))
       .defaults(inputFile.dir, '<%= file.base(true) %>.min.svg', inputFile.format)
       .evaluate({ file: inputFile });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
@@ -108,6 +110,9 @@ class OptimizeSVGTask extends Task {
     debug('Writing optimized SVG file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
+
+    config.logger.log('Optimized SVG file: %s -> %s', chalk.blue(config.relative(inputFilePath)),
+      chalk.blue(config.relative(outputFilePath)));
   }
 
 }
