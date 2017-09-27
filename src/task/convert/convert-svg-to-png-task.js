@@ -76,7 +76,7 @@ class ConvertSVGToPNGTask extends Task {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'svg' && context.outputFile.format === 'png';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'png';
   }
 
   async [_execute](inputFile, size, context) {

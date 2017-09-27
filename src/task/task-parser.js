@@ -42,7 +42,6 @@ const _createFile = Symbol('createFile');
 const _currentIndex = Symbol('currentIndex');
 const _parseOptions = Symbol('parseOptions');
 const _tasks = Symbol('tasks');
-const _validateSingleFormat = Symbol('validateSingleFormat');
 
 /**
  * Parses {@link TaskContext} instances from configuration data iteratively so that only the contexts for once task data
@@ -136,8 +135,6 @@ class TaskParser {
     });
 
     for (const [ groupName, groupFiles ] of Object.entries(groups)) {
-      this[_validateSingleFormat](groupName, groupFiles);
-
       const outputFile = this[_buildOutputFile](taskData);
       if (!outputFile && type.outputRequired) {
         throw new Error(`"output" configuration is required for "${type}" tasks`);
@@ -232,24 +229,6 @@ class TaskParser {
     }
 
     return options;
-  }
-
-  [_validateSingleFormat](group, inputFiles) {
-    const formats = _.chain(inputFiles)
-      .map('format')
-      .uniq()
-      .value();
-
-    if (formats.length !== 1) {
-      let message = '"input.files" configuration must map to a single format ';
-      if (group != null) {
-        message += `within resolved group: "${group}"`;
-      } else {
-        message += '- consider specifying the "options.groupBy" configuration';
-      }
-
-      throw new Error(message);
-    }
   }
 
   /**

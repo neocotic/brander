@@ -22,6 +22,7 @@
 
 'use strict';
 
+const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:optimize');
 const fs = require('fs');
@@ -79,7 +80,7 @@ class OptimizeSVGTask extends Task {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'svg';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'svg'));
   }
 
   async [_execute](inputFile, context) {

@@ -82,7 +82,7 @@ class ConvertSVGToICOTask extends Task {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'svg' && context.outputFile.format === 'ico';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
   }
 
   async [_execute](inputFile, size, context) {

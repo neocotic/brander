@@ -81,7 +81,7 @@ class ConvertPNGToICOTask extends Task {
    * @override
    */
   supports(context) {
-    return context.inputFiles[0].format === 'png' && context.outputFile.format === 'ico';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'png')) && context.outputFile.format === 'ico';
   }
 
   async [_execute](inputFile, size, realSize, context) {
