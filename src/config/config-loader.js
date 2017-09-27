@@ -22,6 +22,7 @@
 
 'use strict';
 
+const debug = require('debug')('brander:config');
 const fs = require('fs');
 const path = require('path');
 const stripJsonComments = require('strip-json-comments');
@@ -105,6 +106,8 @@ class ConfigLoader {
    */
   async load(filePath) {
     if (!filePath) {
+      debug('Finding configuration file as none was specified...');
+
       filePath = await this[_findFilePath]();
     }
     if (!filePath) {
@@ -112,6 +115,8 @@ class ConfigLoader {
     }
 
     filePath = path.resolve(this[_baseDir], filePath);
+
+    debug('Loading configuration file: %s', filePath);
 
     if (this.isModule(filePath)) {
       /* eslint-disable global-require */
@@ -121,16 +126,20 @@ class ConfigLoader {
 
     const contents = await readFile(filePath, 'utf8');
     const data = this.parse(contents, filePath);
-
     if (!data) {
       throw new Error(`Configuration file contains no data: ${filePath}`);
     }
+
+    debug('Successfully loaded configuration file: %s', filePath);
 
     return new Config(filePath, data);
   }
 
   /**
    * Attempts to parse the specified <code>contents</code> of the <code>filePath</code> provided as configuration data.
+   *
+   * An error will occur if a problem arises while attempting to parse <code>contents</code> or if <code>filePath</code>
+   * denotes an unsupported file type.
    *
    * @param {string} contents - the UTF-8 encoded file contents to be parsed
    * @param {string} filePath - the path of the file being parsed
@@ -140,6 +149,8 @@ class ConfigLoader {
    * @protected
    */
   parse(contents, filePath) {
+    debug('Parsing configuration file: %s', filePath);
+
     const extension = path.extname(filePath) || '.json';
 
     switch (extension) {

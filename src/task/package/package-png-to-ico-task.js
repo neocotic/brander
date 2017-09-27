@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
 const toIco = require('to-ico');
@@ -68,7 +69,12 @@ class PackagePNGToICOTask extends Task {
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
 
     const inputs = await this[_readInputs](inputFiles);
+
+    debug('Creating ICO for PNG files');
+
     const output = await toIco(inputs, this[_getOptions](context));
+
+    debug('Writing packaged ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }
@@ -118,6 +124,9 @@ class PackagePNGToICOTask extends Task {
 
     for (const inputFile of inputFiles) {
       const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+      debug('Reading PNG file to be packaged in ICO: %s', inputFilePath);
+
       const input = await readFile(inputFilePath);
 
       inputs.push(input);

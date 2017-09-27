@@ -26,6 +26,7 @@
 
 /* eslint-disable no-process-exit */
 
+const debug = require('debug');
 const { EOL } = require('os');
 const program = require('commander');
 
@@ -38,6 +39,8 @@ const { version } = require('../package.json');
     .version(version)
     .usage('[options]')
     .option('-c, --config <path>', 'use configuration from this file')
+    .option('-d, --debug', 'enable debug level logging')
+    .on('option:debug', () => debug.enable('brander*'))
     .parse(process.argv);
 
   try {

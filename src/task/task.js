@@ -29,7 +29,16 @@ const pollock = require('pollock');
  *
  * @public
  */
-class Task {}
+class Task {
+
+  /**
+   * @override
+   */
+  toString() {
+    return `${this.constructor.name}(${this.getType()})`;
+  }
+
+}
 
 /**
  * Executes this {@link Task} using the specified <code>context</code>.

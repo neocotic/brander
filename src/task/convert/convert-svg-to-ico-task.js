@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task:convert');
 const fs = require('fs');
 const path = require('path');
 const svg2png = require('svg2png');
@@ -82,16 +83,26 @@ class ConvertSVGToICOTask extends Task {
   }
 
   async [_execute](inputFile, size, context) {
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
       .evaluate({ file: inputFile, size });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+    debug('Reading SVG file to be converted to ICO: %s', inputFilePath);
 
     const svgInput = await readFile(inputFilePath);
+
+    debug('Converting SVG file to PNG: %s', inputFilePath);
+
     const pngInput = await svg2png(svgInput, Object.assign(size ? { height: size.height, width: size.width } : null));
+
+    debug('Converting PNG to ICO');
+
     const realSize = await Size.fromImage(pngInput);
     const output = await toIco([ pngInput ], { sizes: [ realSize.width ] });
+
+    debug('Writing converted ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }

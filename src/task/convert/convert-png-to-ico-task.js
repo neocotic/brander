@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task:convert');
 const fs = require('fs');
 const path = require('path');
 const toIco = require('to-ico');
@@ -83,17 +84,24 @@ class ConvertPNGToICOTask extends Task {
   }
 
   async [_execute](inputFile, size, realSize, context) {
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
       .evaluate({ file: inputFile, size });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+    debug('Reading PNG file to be converted to ICO: %s', inputFilePath);
 
     const input = await readFile(inputFilePath);
+
+    debug('Converting PNG file to ICO: %s', inputFilePath);
+
     const output = await toIco([ input ], {
       resize: size != null && size !== realSize,
       sizes: [ size != null ? size : realSize ]
     });
+
+    debug('Writing converted ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }

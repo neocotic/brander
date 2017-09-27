@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task');
 const glob = require('glob');
 const path = require('path');
 const util = require('util');
@@ -86,12 +87,17 @@ class TaskParser {
    * @public
    */
   async parseNext() {
-    if (this[_currentIndex] === this[_tasks].length) {
+    const index = this[_currentIndex]++;
+    if (index === this[_tasks].length) {
+      debug('No more task data to be parsed');
+
       return null;
     }
 
-    const taskData = this[_tasks][this[_currentIndex]++];
+    const taskData = this[_tasks][index];
     if (!taskData) {
+      debug('No data found at task[%d]', index);
+
       return [];
     }
 
@@ -100,6 +106,8 @@ class TaskParser {
     const contexts = [];
 
     if (inputFiles.length === 0) {
+      debug('No input files found at task[%d]', index);
+
       return contexts;
     }
 
@@ -110,6 +118,9 @@ class TaskParser {
     }
 
     const type = TaskType.valueOf(typeName);
+
+    debug('Creating contexts for "%s" task[%d]...', type, index);
+
     const { groupBy } = options;
     const groups = _.groupBy(inputFiles, (file) => {
       switch (typeof groupBy) {

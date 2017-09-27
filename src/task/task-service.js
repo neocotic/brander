@@ -22,6 +22,7 @@
 
 'use strict';
 
+const debug = require('debug')('brander:task');
 const glob = require('glob');
 const util = require('util');
 
@@ -30,6 +31,7 @@ const TaskType = require('./task-type');
 
 const findFiles = util.promisify(glob);
 
+const _add = Symbol('add');
 const _addBuiltIns = Symbol('addBuiltIns');
 const _builtInsAdded = Symbol('builtInsAdded');
 const _privateKey = Symbol('privateKey');
@@ -67,7 +69,7 @@ class TaskService {
    *
    * An error will occur if <code>privateKey</code> is invalid.
    *
-   * @param {symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
+   * @param {Symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
    * @throws {Error} If <code>privateKey</code> is invalid.
    * @private
    */
@@ -94,18 +96,9 @@ class TaskService {
   async add(task) {
     await this[_addBuiltIns]();
 
-    const type = task.getType();
-    if (!(type instanceof TaskType)) {
-      throw new TypeError('task#getType did not return a TaskType');
-    }
+    debug('Adding task: %s', task);
 
-    let tasks = this[_types].get(type.name);
-    if (!tasks) {
-      tasks = new Set();
-      this[_types].set(type.name, tasks);
-    }
-
-    tasks.add(task);
+    this[_add](task);
   }
 
   /**
@@ -119,6 +112,8 @@ class TaskService {
    */
   clear() {
     this[_builtInsAdded] = true;
+
+    debug('Removing all tasks');
 
     this[_types].clear();
   }
@@ -182,6 +177,8 @@ class TaskService {
   async remove(task) {
     await this[_addBuiltIns]();
 
+    debug('Removing task: %s', task);
+
     const type = task.getType();
     if (!(type instanceof TaskType)) {
       throw new TypeError('task#getType did not return a TaskType');
@@ -212,7 +209,24 @@ class TaskService {
 
     await this[_addBuiltIns]();
 
+    debug('Removing all tasks for type: %s', type);
+
     this[_types].delete(type.name);
+  }
+
+  [_add](task) {
+    const type = task.getType();
+    if (!(type instanceof TaskType)) {
+      throw new TypeError('task#getType did not return a TaskType');
+    }
+
+    let tasks = this[_types].get(type.name);
+    if (!tasks) {
+      tasks = new Set();
+      this[_types].set(type.name, tasks);
+    }
+
+    tasks.add(task);
   }
 
   async [_addBuiltIns]() {
@@ -236,7 +250,9 @@ class TaskService {
         throw new TypeError(`Non-task implementation loaded from module: ${filePath}`);
       }
 
-      await this.add(task);
+      debug('Adding internal task: %s', task);
+
+      this[_add](task);
     }
   }
 

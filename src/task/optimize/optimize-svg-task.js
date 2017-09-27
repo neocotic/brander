@@ -22,6 +22,7 @@
 
 'use strict';
 
+const debug = require('debug')('brander:task:optimize');
 const fs = require('fs');
 const path = require('path');
 const SVGO = require('svgo');
@@ -82,13 +83,18 @@ class OptimizeSVGTask extends Task {
   }
 
   async [_execute](inputFile, context) {
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
     const outputFile = (context.outputFile || new File(null, null, null, context.config))
       .defaults(inputFile.dir, '<%= file.base(true) %>.min.svg', inputFile.format)
       .evaluate({ file: inputFile });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+    debug('Reading SVG file to be optimized: %s', inputFilePath);
 
     const input = await readFile(inputFilePath, 'utf8');
+
+    debug('Optimizing SVG file: %s', inputFilePath);
+
     const output = await new Promise((resolve, reject) => {
       this[_svgo].optimize(input, (result) => {
         if (result.error) {
@@ -98,6 +104,8 @@ class OptimizeSVGTask extends Task {
         }
       });
     });
+
+    debug('Writing optimized SVG file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }

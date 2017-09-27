@@ -22,6 +22,8 @@
 
 'use strict';
 
+const debug = require('debug')('brander:task');
+
 const TaskParser = require('./task-parser');
 const TaskService = require('./task-service');
 
@@ -59,9 +61,14 @@ class TaskExecutor {
     let contexts;
     const taskService = TaskService.getInstance();
 
+    debug('Executing configured tasks...');
+
     while ((contexts = await this[_taskParser].parseNext()) != null) {
       for (const context of contexts) {
         const { type } = context;
+
+        debug('Finding task for type: %s', type);
+
         const tasks = await taskService.findByType(type);
         if (tasks.length === 0) {
           throw new Error(`"task" configuration has no associated tasks: ${type}`);
@@ -71,6 +78,8 @@ class TaskExecutor {
         if (!supportingTask) {
           throw new Error(`"task" configuration has no supporting tasks: ${type}`);
         }
+
+        debug('Executing task: %s', supportingTask);
 
         await supportingTask.execute(context);
       }

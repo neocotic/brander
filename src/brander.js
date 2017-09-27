@@ -22,6 +22,8 @@
 
 'use strict';
 
+const debug = require('debug')('brander');
+
 const TaskExecutor = require('./task/task-executor');
 
 const _config = Symbol('config');
@@ -65,6 +67,8 @@ class Brander {
    * @public
    */
   async generateAssets() {
+    debug('Generating assets...');
+
     const executor = new TaskExecutor(this.config);
 
     await executor.execute();

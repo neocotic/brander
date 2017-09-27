@@ -108,6 +108,13 @@ class Config {
   }
 
   /**
+   * @override
+   */
+  toString() {
+    return `Config(${this.name})`;
+  }
+
+  /**
    * Returns the path of the base directory from where the data for this {@link Config} was originally loaded.
    *
    * @return {string} The configuration base directory.

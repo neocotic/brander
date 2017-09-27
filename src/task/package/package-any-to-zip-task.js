@@ -23,6 +23,7 @@
 'use strict';
 
 const archiver = require('archiver');
+const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -75,6 +76,8 @@ class PackageAnyToZIPTask extends Task {
   async [_execute](inputFiles, outputFile, context) {
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
 
+    debug('Creating ZIP file for files: %s', outputFilePath);
+
     const output = fs.createWriteStream(outputFilePath);
     const archive = archiver('zip', {
       zlib: {
@@ -84,9 +87,14 @@ class PackageAnyToZIPTask extends Task {
 
     archive.pipe(output);
 
-    for (const inputFile of context.inputFiles) {
+    for (const inputFile of inputFiles) {
       const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+      debug('Reading file to be packaged in ZIP: %s', inputFilePath);
+
       const input = await readFile(inputFilePath);
+
+      debug('Adding file to ZIP package: %s', inputFilePath);
 
       // TODO: Support directories (relative to what?)
       archive.append(input, { name: inputFile.name });

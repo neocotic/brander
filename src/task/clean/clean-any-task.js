@@ -22,6 +22,7 @@
 
 'use strict';
 
+const debug = require('debug')('brander:task:clean');
 const path = require('path');
 const rimraf = require('rimraf');
 const util = require('util');
@@ -53,6 +54,8 @@ class CleanAnyTask extends Task {
   async execute(context) {
     for (const inputFile of context.inputFiles) {
       const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+      debug('Removing file: %s', inputFilePath);
 
       await removeFile(inputFilePath, { glob: false });
     }

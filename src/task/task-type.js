@@ -73,7 +73,7 @@ class TaskType {
    *
    * An error will occur if <code>privateKey</code> is invalid.
    *
-   * @param {symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
+   * @param {Symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
    * @param {string} name - the name to be used
    * @param {boolean} [outputRequired] - <code>true</code> if tasks belong to the type require an output file; otherwise
    * <code>false</code>

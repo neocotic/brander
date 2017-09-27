@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task:convert');
 const fs = require('fs');
 const path = require('path');
 const svg2png = require('svg2png');
@@ -78,14 +79,21 @@ class ConvertSVGToPNGTask extends Task {
   }
 
   async [_execute](inputFile, size, context) {
+    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.png', inputFile.format)
       .evaluate({ file: inputFile, size });
     const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
-    const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+
+    debug('Reading SVG file to be converted to PNG: %s', inputFilePath);
 
     const input = await readFile(inputFilePath);
+
+    debug('Converting SVG file to PNG: %s', inputFilePath);
+
     const output = await svg2png(input, Object.assign(size ? { height: size.height, width: size.width } : null));
+
+    debug('Writing converted PNG file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }

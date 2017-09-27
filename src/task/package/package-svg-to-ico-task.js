@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const path = require('path');
 const svg2png = require('svg2png');
@@ -70,7 +71,12 @@ class PackageSVGToICOTask extends Task {
     const data = await this[_readData](inputFiles, context);
     const inputs = _.map(data, 'input');
     const sizes = _.map(data, 'size.width');
+
+    debug('Creating ICO for PNGs converted from SVG files');
+
     const output = await toIco(inputs, { sizes });
+
+    debug('Writing packaged ICO file: %s', outputFilePath);
 
     await writeFile(outputFilePath, output);
   }
@@ -88,10 +94,15 @@ class PackageSVGToICOTask extends Task {
     const sizes = context.option('sizes');
 
     for (const inputFile of inputFiles) {
-      const size = _.nth(sizes, inputs.length);
       const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const size = _.nth(sizes, inputs.length);
+
+      debug('Reading SVG file to be packaged in ICO: %s', inputFilePath);
 
       const svgInput = await readFile(inputFilePath);
+
+      debug('Converting SVG file to PNG: %s', inputFilePath);
+
       const pngInput = await svg2png(svgInput, Object.assign(size ? { height: size.height, width: size.width } : null));
       const realSize = await Size.fromImage(pngInput);
 
