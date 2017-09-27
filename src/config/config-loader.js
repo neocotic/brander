@@ -35,6 +35,7 @@ const readFile = util.promisify(fs.readFile);
 
 const _baseDir = Symbol('baseDir');
 const _findFilePath = Symbol('findFilePath');
+const _logger = Symbol('logger');
 
 /**
  * TODO: document
@@ -53,6 +54,7 @@ class ConfigLoader {
    */
   constructor(options = {}) {
     this[_baseDir] = options.baseDir || process.cwd();
+    this[_logger] = options.logger;
   }
 
   /**
@@ -132,7 +134,7 @@ class ConfigLoader {
 
     debug('Successfully loaded configuration file: %s', filePath);
 
-    return new Config(filePath, data);
+    return new Config(filePath, data, this[_logger]);
   }
 
   /**
@@ -189,4 +191,5 @@ module.exports = ConfigLoader;
  *
  * @typedef {Object} ConfigLoader~Options
  * @property {string} [baseDir=process.cwd()] - The base directory.
+ * @property {Logger} [logger] - The {@link Logger} to be passed to loaded {@link Config} instances upon initialization.
  */

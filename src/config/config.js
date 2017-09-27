@@ -25,9 +25,12 @@
 const _ = require('lodash');
 const path = require('path');
 
+const Logger = require('../logger');
+
 const _baseDir = Symbol('baseDir');
 const _data = Symbol('data');
 const _filePath = Symbol('filePath');
+const _logger = Symbol('logger');
 const _name = Symbol('name');
 const _title = Symbol('title');
 
@@ -42,13 +45,18 @@ class Config {
    * Creates an instance of {@link Config} with the specified <code>data</code> loaded from the <code>filePath</code>
    * provided.
    *
+   * Optionally, <code>logger</code> can be specified to control where output messages are written to. By default, a
+   * {@link Logger} with no output streams will be used so that such messages are not written at all.
+   *
    * @param {string} filePath - the path of the file from where the configuration data was loaded
    * @param {Object} data - the configuration data to be used
+   * @param {Logger} [logger] - the {@link Logger} to be used
    * @public
    */
-  constructor(filePath, data) {
+  constructor(filePath, data, logger) {
     this[_filePath] = filePath;
     this[_data] = data;
+    this[_logger] = logger || new Logger();
     this[_baseDir] = path.dirname(filePath);
     this[_name] = _.trim(data.name);
     this[_title] = _.trim(data.title) || this[_name];
@@ -132,6 +140,18 @@ class Config {
    */
   get filePath() {
     return this[_filePath];
+  }
+
+  /**
+   * Returns the {@link Logger} for this {@link Config}.
+   *
+   * The logger can be used at any time to log normal/error messages.
+   *
+   * @return {Logger} The logger.
+   * @public
+   */
+  get logger() {
+    return this[_logger];
   }
 
   /**

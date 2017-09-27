@@ -27,11 +27,11 @@
 /* eslint-disable no-process-exit */
 
 const debug = require('debug');
-const { EOL } = require('os');
 const program = require('commander');
 
 const Brander = require('../src/brander');
 const ConfigLoader = require('../src/config/config-loader');
+const Logger = require('../src/logger');
 const { version } = require('../package.json');
 
 (async() => {
@@ -43,13 +43,16 @@ const { version } = require('../package.json');
     .on('option:debug', () => debug.enable('brander*'))
     .parse(process.argv);
 
+  const logger = new Logger(process.stdout, process.stderr);
+
   try {
-    const configLoader = new ConfigLoader();
+    const configLoader = new ConfigLoader({ logger });
     const config = await configLoader.load(program.config);
     const brander = new Brander(config);
     await brander.generate();
   } catch (e) {
-    process.stderr.write(`${e.stack}${EOL}`);
+    logger.error(e.stack);
+
     process.exit(1);
   }
 })();
