@@ -82,8 +82,8 @@ class PackageSVGToICOTask extends Task {
 
     await writeFile(outputFilePath, output);
 
-    config.logger.log('Packaged %d SVG %s into ICO file for %j sizes: %s', inputFiles.length,
-      pluralize('file', inputFiles.length), sizes, chalk.blue(config.relative(outputFilePath)));
+    config.logger.log('Packaged %d SVG %s into ICO file: %s (sizes = %s)', inputFiles.length,
+      pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), sizes);
   }
 
   /**

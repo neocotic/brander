@@ -81,8 +81,8 @@ class PackagePNGToICOTask extends Task {
 
     await writeFile(outputFilePath, output);
 
-    config.logger.log('Packaged %d PNG %s into ICO file for %j sizes: %s', inputFiles.length,
-      pluralize('file', inputFiles.length), options.sizes, chalk.blue(config.relative(outputFilePath)));
+    config.logger.log('Packaged %d PNG %s into ICO file: %s (sizes = %s)', inputFiles.length,
+      pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), options.sizes);
   }
 
   /**
