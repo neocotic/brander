@@ -26,7 +26,6 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
-const path = require('path');
 const pluralize = require('pluralize');
 const toIco = require('to-ico');
 const util = require('util');
@@ -68,7 +67,7 @@ class PackagePNGToICOTask extends Task {
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
       .evaluate({ file: inputFile });
-    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const outputFilePath = outputFile.absolute;
 
     const inputs = await this[_readInputs](inputFiles);
 
@@ -82,7 +81,7 @@ class PackagePNGToICOTask extends Task {
     await writeFile(outputFilePath, output);
 
     config.logger.log('Packaged %d PNG %s into ICO file: %s (sizes = %s)', inputFiles.length,
-      pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), options.sizes);
+      pluralize('file', inputFiles.length), chalk.blue(outputFile.relative), options.sizes);
   }
 
   /**
@@ -99,7 +98,8 @@ class PackagePNGToICOTask extends Task {
     const sizes = _.map(context.option('sizes', []), 'width');
 
     for (const inputFile of inputFiles) {
-      const { width } = await Size.fromImage(path.resolve(inputFile.dir, inputFile.name));
+      const { width } = await Size.fromImage(inputFile.absolute);
+
       realSizes.push(width);
     }
 
@@ -117,7 +117,7 @@ class PackagePNGToICOTask extends Task {
     const inputs = [];
 
     for (const inputFile of inputFiles) {
-      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const inputFilePath = inputFile.absolute;
 
       debug('Reading PNG file to be packaged in ICO: %s', inputFilePath);
 

@@ -26,7 +26,6 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
-const path = require('path');
 const pluralize = require('pluralize');
 const svg2png = require('svg2png');
 const toIco = require('to-ico');
@@ -68,7 +67,7 @@ class PackageSVGToICOTask extends Task {
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %>.ico', inputFile.format)
       .evaluate({ file: inputFile });
-    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const outputFilePath = outputFile.absolute;
 
     const data = await this[_readData](inputFiles, context);
     const inputs = _.map(data, 'input');
@@ -83,7 +82,7 @@ class PackageSVGToICOTask extends Task {
     await writeFile(outputFilePath, output);
 
     config.logger.log('Packaged %d SVG %s into ICO file: %s (sizes = %s)', inputFiles.length,
-      pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), sizes);
+      pluralize('file', inputFiles.length), chalk.blue(outputFile.relative), sizes);
   }
 
   /**
@@ -99,7 +98,7 @@ class PackageSVGToICOTask extends Task {
     const sizes = context.option('sizes');
 
     for (const inputFile of inputFiles) {
-      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const inputFilePath = inputFile.absolute;
       const size = _.nth(sizes, inputs.length);
 
       debug('Reading SVG file to be packaged in ICO: %s', inputFilePath);

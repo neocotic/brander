@@ -24,7 +24,6 @@
 
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:clean');
-const path = require('path');
 const rimraf = require('rimraf');
 const util = require('util');
 
@@ -53,16 +52,14 @@ class CleanAnyTask extends Task {
    * @override
    */
   async execute(context) {
-    const { config } = context;
-
     for (const inputFile of context.inputFiles) {
-      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const inputFilePath = inputFile.absolute;
 
       debug('Removing file: %s', inputFilePath);
 
       await removeFile(inputFilePath, { glob: false });
 
-      config.logger.log('Cleaned file: %s', chalk.blue(config.relative(inputFilePath)));
+      context.config.logger.log('Cleaned file: %s', chalk.blue(inputFile.relative));
     }
   }
 

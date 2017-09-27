@@ -26,7 +26,6 @@ const archiver = require('archiver');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
-const path = require('path');
 const pluralize = require('pluralize');
 const util = require('util');
 const zlib = require('zlib');
@@ -78,7 +77,7 @@ class PackageAnyToZIPTask extends Task {
   async [_execute](inputFiles, outputFile, context) {
     const { config } = context;
     const level = context.option('compression', zlib.constants.Z_DEFAULT_COMPRESS);
-    const outputFilePath = path.resolve(outputFile.dir, outputFile.name);
+    const outputFilePath = outputFile.absolute;
 
     debug('Creating ZIP file for files: %s', outputFilePath);
 
@@ -90,7 +89,7 @@ class PackageAnyToZIPTask extends Task {
     archive.pipe(output);
 
     for (const inputFile of inputFiles) {
-      const inputFilePath = path.resolve(inputFile.dir, inputFile.name);
+      const inputFilePath = inputFile.absolute;
 
       debug('Reading file to be packaged in ZIP: %s', inputFilePath);
 
@@ -98,7 +97,7 @@ class PackageAnyToZIPTask extends Task {
 
       debug('Adding file to ZIP package: %s', inputFilePath);
 
-      archive.append(input, { name: config.relative(inputFilePath) });
+      archive.append(input, { name: inputFile.relative });
     }
 
     archive.finalize();
@@ -108,7 +107,7 @@ class PackageAnyToZIPTask extends Task {
       archive.on('warning', reject);
       output.on('close', () => {
         config.logger.log('Packaged %d %s into ZIP file: %s (level = %d)', inputFiles.length,
-          pluralize('file', inputFiles.length), chalk.blue(config.relative(outputFilePath)), level);
+          pluralize('file', inputFiles.length), chalk.blue(outputFile.relative), level);
 
         resolve();
       });

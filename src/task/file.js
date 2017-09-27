@@ -158,6 +158,35 @@ class File {
   }
 
   /**
+   * Resolves the specified sequence of <code>paths</code> or path segments into an absolute path relative to the parent
+   * directory for this {@link File}.
+   *
+   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @return {string} An absolute file path.
+   * @public
+   */
+  resolve(...paths) {
+    return path.resolve(this.dir, ...paths);
+  }
+
+  /**
+   * @override
+   */
+  toString() {
+    return this.absolute;
+  }
+
+  /**
+   * Returns the absolute path of this {@link File}.
+   *
+   * @return {string} The absolute file path.
+   * @public
+   */
+  get absolute() {
+    return path.join(this.dir, this.name);
+  }
+
+  /**
    * Returns the {@link Config} for this {@link File}.
    *
    * @return {Config} The configuration.
@@ -201,6 +230,17 @@ class File {
    */
   get name() {
     return this[_name];
+  }
+
+  /**
+   * Returns the path of this {@link File} relative to the base directory from where the data for the associated
+   * {@link Config} was originally loaded.
+   *
+   * @return {string} The relative file path.
+   * @public
+   */
+  get relative() {
+    return this.config.relative(this.absolute);
   }
 
 }
