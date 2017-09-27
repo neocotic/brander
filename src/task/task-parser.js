@@ -81,7 +81,7 @@ class TaskParser {
    * An error will occur if the task data within the {@link Config} is malformed or incomplete or if a problem occurs
    * while attempting to find input files.
    *
-   * @return {Promise.<Error, TaskContext[]>} A <code>promise</code> for asynchronous parsing and file system
+   * @return {Promise.<TaskContext[], Error>} A <code>promise</code> for asynchronous parsing and file system
    * traversals that is resolved with each {@link TaskContext}, which may be <code>null</code> if there is no more
    * available task data.
    * @public

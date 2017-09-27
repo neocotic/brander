@@ -51,7 +51,7 @@ class Task {
  * All implementations of {@link Task} <b>must</b> override this method.
  *
  * @param {TaskContext} context - the {@link TaskContext} to be executed
- * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous execution.
+ * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous execution.
  * @public
  * @abstract
  * @memberof Task#

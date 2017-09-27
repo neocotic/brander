@@ -50,7 +50,7 @@ class Brander {
    *
    * An error will occur if a problem arises while generating the assets or documentation.
    *
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
    * @public
    */
   async generate() {
@@ -63,7 +63,7 @@ class Brander {
    *
    * An error will occur if a problem arises while generating the assets.
    *
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of assets.
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of assets.
    * @public
    */
   async generateAssets() {
@@ -79,7 +79,7 @@ class Brander {
    *
    * An error will occur if a problem arises while generating the documentation.
    *
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous generation of documentation.
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of documentation.
    * @public
    */
   async generateDocs() {

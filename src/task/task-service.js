@@ -89,7 +89,7 @@ class TaskService {
    * loading any built-in {@link Task} implementations, which is only done once.
    *
    * @param {Task} task - the {@link Task} to be added
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations.
    * @public
    */
@@ -125,7 +125,7 @@ class TaskService {
    * built-in {@link Task} implementations, which is only done once.
    *
    * @param {TaskType} type - the {@link TaskType} whose associated {@link Task} implementations are to be returned
-   * @return {Promise.<Error, Task[]>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
+   * @return {Promise.<Task[], Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations that is resolved with each {@link Task} that belongs to <code>type</code>.
    * @public
    */
@@ -147,7 +147,7 @@ class TaskService {
    * An error will occur if there is a problem while loading any built-in {@link Task} implementations, which is only
    * done once.
    *
-   * @return {Promise.<Error, Task[]>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
+   * @return {Promise.<Task[], Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations that is resolved with each {@link Task}.
    * @public
    */
@@ -170,7 +170,7 @@ class TaskService {
    * loading any built-in {@link Task} implementations, which is only done once.
    *
    * @param {Task} task - the {@link Task} to be removed
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations.
    * @public
    */
@@ -198,7 +198,7 @@ class TaskService {
    * built-in {@link Task} implementations, which is only done once.
    *
    * @param {TaskType} type - the {@link TaskType} whose associated {@link Task} implementations are to be removed
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in {@link Task}
    * implementations.
    * @public
    */

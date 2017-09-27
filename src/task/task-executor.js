@@ -54,7 +54,7 @@ class TaskExecutor {
    * {@link TaskType} found in the {@link Config}, or none that support a parsed {@link TaskContext}, or a problem
    * arises during the execution of any {@link Task}.
    *
-   * @return {Promise.<Error>} A <code>Promise</code> for the asynchronous execution of each {@link Task}.
+   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous execution of each {@link Task}.
    * @public
    */
   async execute() {
