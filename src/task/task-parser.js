@@ -83,8 +83,8 @@ class TaskParser {
    * while attempting to find input files.
    *
    * @return {Promise.<TaskContext[], Error>} A <code>promise</code> for asynchronous parsing and file system
-   * traversals that is resolved with each {@link TaskContext}, which may be <code>null</code> if there is no more
-   * available task data.
+   * traversals that is resolved with each {@link TaskContext} or <code>null</code> if there is no more available task
+   * data.
    * @public
    */
   async parseNext() {
@@ -162,7 +162,7 @@ class TaskParser {
         `(${typeof input.files})`);
     }
 
-    const dir = config.resolve(config.option('assets.dir', 'assets'), config.evaluate(_.trim(input.dir)));
+    const dir = config.assetPath(config.evaluate(_.trim(input.dir)));
     const files = _.castArray(input.files);
     const inputFiles = [];
 
@@ -201,7 +201,7 @@ class TaskParser {
     }
 
     let dirPath = _.trim(output.dir);
-    dirPath = dirPath ? config.resolve(config.option('assets.dir', 'assets'), dirPath) : null;
+    dirPath = dirPath ? config.assetPath(dirPath) : null;
 
     return this[_createFile](dirPath, output.files, output.format, false);
   }

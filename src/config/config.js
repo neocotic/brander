@@ -25,68 +25,145 @@
 const _ = require('lodash');
 const path = require('path');
 
+const Expression = require('./expression');
 const Logger = require('../logger');
+const Package = require('./package/package');
+const Repo = require('./repository/repo');
+const RepositoryService = require('./repository/repository-service');
 
 const _baseDir = Symbol('baseDir');
 const _data = Symbol('data');
+const _email = Symbol('email');
 const _filePath = Symbol('filePath');
+const _homepage = Symbol('homepage');
 const _logger = Symbol('logger');
 const _name = Symbol('name');
+const _pkg = Symbol('pkg');
+const _repository = Symbol('repository');
 const _title = Symbol('title');
 
 /**
- * Contains parsed configuration data loaded from a single configuration file.
+ * Contains parsed configuration data that has been loaded from a single configuration file.
  *
- * While it's possible to create an instance using the constructor, it's recommended that {@link ConfigLoader} is used
- * instead.
+ * While it's possible to create an instance using the constructor, it's highly recommended that {@link ConfigLoader} is
+ * used instead.
+ *
+ * The <code>logger</code> option can be specified to control where output messages are written to. By default, a
+ * {@link Logger} with no output streams will be used so that such messages are not written at all.
+ *
+ * The <code>pkg</code> and <code>repository</code> options can be specified to provide {@link Package} and repository
+ * information respectively. If instantiating the constructor directly, it may be necessary to use {@link PackageLoader}
+ * and {@link RepositoryService} to obtain this information.
  *
  * @public
  */
 class Config {
 
   /**
-   * Creates an instance of {@link Config} with the specified <code>data</code> loaded from the <code>filePath</code>
-   * provided.
+   * Creates an instance of {@link Config} using the <code>options</code> provided.
    *
-   * Optionally, <code>logger</code> can be specified to control where output messages are written to. By default, a
-   * {@link Logger} with no output streams will be used so that such messages are not written at all.
-   *
-   * @param {string} filePath - the path of the file from where the configuration data was loaded
-   * @param {Object} data - the configuration data to be used
-   * @param {Logger} [logger] - the {@link Logger} to be used
+   * @param {Config~Options} options - the options to be used
    * @public
    */
-  constructor(filePath, data, logger) {
-    this[_filePath] = filePath;
-    this[_data] = data;
-    this[_logger] = logger || new Logger();
-    this[_baseDir] = path.dirname(filePath);
-    this[_name] = _.trim(data.name);
-    this[_title] = _.trim(data.title) || this[_name];
+  constructor(options) {
+    const repositoryService = RepositoryService.getInstance();
+
+    this[_filePath] = options.filePath;
+    this[_data] = options.data;
+    this[_logger] = options.logger || new Logger();
+    this[_pkg] = options.pkg || new Package();
+    this[_repository] = new Repo(repositoryService.getRepository(options.repository));
+    this[_baseDir] = path.dirname(this[_filePath]);
+    this[_email] = _.trim(this[_data].email) || null;
+    this[_homepage] = _.trim(this[_data].homepage) || _.trim(this[_pkg].get('homepage')) || this[_repository].homepage;
+    this[_name] = _.trim(this[_data].name) || _.trim(this[_pkg].get('name')) || this[_repository].name;
+    this[_title] = _.trim(this[_data].title) || this[_name];
   }
 
   /**
-   * Evaluates the specified <code>expression</code> by interpolating data properties and executing embedded JavaScript.
+   * Resolves the specified sequence of <code>paths</code> or path segments into an absolute path relative to the
+   * directory to which assets are to be generated.
+   *
+   * This is convenient shorthand for the {@link Config#resolve} method where {@link Config#assetsDir} is used as the
+   * first path.
+   *
+   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @return {string} An absolute asset file path.
+   * @public
+   */
+  assetPath(...paths) {
+    return this.resolve(this.assetsDir, ...paths);
+  }
+
+  /**
+   * Resolves the specified sequence of <code>paths</code> or path segments into an absolute URL for a raw asset file.
+   *
+   * If the <code>assets.url</code> option is enabled within this {@link Config}, then this method will evaluate it to
+   * create the URL, passing the file path to be included. Otherwise, this method will attempt to create the URL based
+   * on the {@link Repository} information associated with this {@link Config}.
+   *
+   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @return {?string} The asset file URL or <code>null</code> if insufficient information available.
+   * @public
+   */
+  assetURL(...paths) {
+    const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
+    const fileUrl = this.option('assets.url');
+
+    return fileUrl ? this.evaluate(fileUrl, { file: filePath }) : this.repository.rawFileURL(filePath);
+  }
+
+  /**
+   * Resolves the specified sequence of <code>paths</code> or path segments into an absolute path relative to the
+   * directory to which documentation is to be generated.
+   *
+   * This is convenient shorthand for the {@link Config#resolve} method where {@link Config#docsDir} is used as the
+   * first path.
+   *
+   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @return {string} An absolute doc file path.
+   * @public
+   */
+  docPath(...paths) {
+    return this.resolve(this.docsDir, ...paths);
+  }
+
+  /**
+   * Resolves the specified sequence of <code>paths</code> or path segments into an absolute URL for viewing a doc file.
+   *
+   * If the <code>docs.url</code> option is enabled within this {@link Config}, then this method will evaluate it to
+   * create the URL, passing the file path to be included. Otherwise, this method will attempt to create the URL based
+   * on the {@link Repository} information associated with this {@link Config}.
+   *
+   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @return {?string} The doc file URL or <code>null</code> if insufficient information available.
+   * @public
+   */
+  docURL(...paths) {
+    const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
+    const fileUrl = this.option('docs.url');
+
+    return fileUrl ? this.evaluate(fileUrl, { file: filePath }) : this.repository.fileURL(filePath);
+  }
+
+  /**
+   * Evaluates the specified raw expression string by interpolating data properties and executing embedded JavaScript.
    *
    * Optionally, <code>additionalData</code> can be provided to expose more variables to <code>expression</code> during
    * evaluation.
    *
    * A <code>config</code> variable can be used within the expression to reference this {@link Config}.
    *
-   * @param {string} expression - the expression to be evaluated
+   * @param {?string} expressionString - the raw expression to be evaluated (may be <code>null</code>)
    * @param {Object} [additionalData] - an object whose properties will be exposed as variables when the expression is
    * evaluated
    * @return {string} The evaluated output.
    * @public
    */
-  evaluate(expression, additionalData) {
-    if (!expression) {
-      return '';
-    }
+  evaluate(expressionString, additionalData) {
+    const expression = new Expression(expressionString);
 
-    const compiled = _.template(expression);
-
-    return compiled(Object.assign({ config: this }, additionalData));
+    return expression.evaluate(Object.assign({ config: this }, additionalData));
   }
 
   /**
@@ -98,7 +175,7 @@ class Config {
    *
    * @param {string|string[]} name - the paths or path segments to the property on the options object within the data
    * whose value is to be returned
-   * @param {*} [defaultValue] - the value to be returned for <code>undefined</code> resolved values.
+   * @param {*} [defaultValue] - the value to be returned for <code>undefined</code> resolved values
    * @return {*} The resolved option value.
    * @public
    */
@@ -138,6 +215,20 @@ class Config {
   }
 
   /**
+   * Returns the path to the directory to which assets are to be generated.
+   *
+   * The path is relative to the base directory of this {@link Config} and is <b>not</b> absolute and is simply the
+   * value of the <code>assets.dir</code> option with a default value of <code>assets</code>. It's recommended that the
+   * path be passed to {@link Config#resolve} to obtain the absolute directory path.
+   *
+   * @return {string} The relative directory path for assets.
+   * @public
+   */
+  get assetsDir() {
+    return this.option('assets.dir', 'assets');
+  }
+
+  /**
    * Returns the path of the base directory from where the data for this {@link Config} was originally loaded.
    *
    * @return {string} The configuration base directory.
@@ -148,6 +239,30 @@ class Config {
   }
 
   /**
+   * Returns the path to the directory to which documentation is to be generated.
+   *
+   * The path is relative to the base directory of this {@link Config} and is <b>not</b> absolute and is simply the
+   * value of the <code>docs.dir</code> option with a default value of <code>docs</code>. It's recommended that the path
+   * be passed to {@link Config#resolve} to obtain the absolute directory path.
+   *
+   * @return {string} The relative directory path for docs.
+   * @public
+   */
+  get docsDir() {
+    return this.option('docs.dir', 'docs');
+  }
+
+  /**
+   * Returns a contact email address for the brand.
+   *
+   * @return {?string} The brand email address or <code>null</code> if unavailable.
+   * @public
+   */
+  get email() {
+    return this[_email];
+  }
+
+  /**
    * Returns the path of the file from where the data for this {@link Config} was originally loaded.
    *
    * @return {string} The configuration file path.
@@ -155,6 +270,20 @@ class Config {
    */
   get filePath() {
     return this[_filePath];
+  }
+
+  /**
+   * Returns the homepage of the brand.
+   *
+   * If no homepage is available in this {@link Config}, it will fall back to the homepage within the associated
+   * {@link Package} or {@link Repo}, in that order.
+   *
+   * @return {?string} The brand homepage, falling back to the package and repository homepages if unavailable, or
+   * <code>null</code> if none of these are available.
+   * @public
+   */
+  get homepage() {
+    return this[_homepage];
   }
 
   /**
@@ -175,11 +304,40 @@ class Config {
    * The name should be in a format that is suitable for file paths while the title should be used when presenting the
    * brand.
    *
-   * @return {string} The brand name.
+   * If no name is available in this {@link Config}, it will fall back to the name within the associated {@link Package}
+   * or {@link Repo}, in that order.
+   *
+   * @return {?string} The brand name, falling back to the package and repository names if unavailable, or
+   * <code>null</code> if none of these are available.
    * @public
    */
   get name() {
     return this[_name];
+  }
+
+  /**
+   * Returns the {@link Package} information derived from the <code>package.json</code> file associated with this
+   * {@link Config}.
+   *
+   * The package information will be empty if no <code>package.json</code> file could be found for this {@link Config}.
+   *
+   * @return {Package} The package information.
+   * @public
+   */
+  get pkg() {
+    return this[_pkg];
+  }
+
+  /**
+   * Returns a {@link Repo} wrapper around the {@link Repository} information associated with this {@link Config}.
+   *
+   * The repository information will be empty if no recognized VCS data could be found for this {@link Config}.
+   *
+   * @return {Repo} The repository information.
+   * @public
+   */
+  get repository() {
+    return this[_repository];
   }
 
   /**
@@ -209,9 +367,12 @@ class Config {
    * Returns the title of the brand.
    *
    * The title should be used when presenting the brand while the name should be in a format that is suitable for file
-   * paths. However, the name will be used where no title is available.
+   * paths.
    *
-   * @return {string} The brand title.
+   * If no title is available in this {@link Config}, it will fall back to the brand name.
+   *
+   * @return {?string} The brand title, falling back to the brand name, or <code>null</code> if neither of these are
+   * available.
    * @public
    */
   get title() {
@@ -221,3 +382,15 @@ class Config {
 }
 
 module.exports = Config;
+
+/**
+ * The options that can be passed to the {@link Config} constructor.
+ *
+ * @typedef {Object} Config~Options
+ * @property {string} filePath - The path of the file from where the configuration data was loaded.
+ * @property {Object} data - The configuration data.
+ * @property {Logger} [logger] - The {@link Logger} to be used by the configuration.
+ * @property {Package} [pkg] - The {@link Package} associated with the configuration.
+ * @property {RepositoryService~RepositoryInfo} [repository] - The VCS repository information associated with the
+ * configuration.
+ */

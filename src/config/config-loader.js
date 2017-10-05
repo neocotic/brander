@@ -29,6 +29,8 @@ const stripJsonComments = require('strip-json-comments');
 const util = require('util');
 
 const Config = require('./config');
+const PackageLoader = require('./package/package-loader');
+const RepositoryService = require('./repository/repository-service');
 
 const access = util.promisify(fs.access);
 const readFile = util.promisify(fs.readFile);
@@ -36,6 +38,7 @@ const readFile = util.promisify(fs.readFile);
 const _baseDir = Symbol('baseDir');
 const _findFilePath = Symbol('findFilePath');
 const _logger = Symbol('logger');
+const _packageLoader = Symbol('packageLoader');
 
 /**
  * Responsible for finding, loading, and parsing configuration files and creating {@link Config} instances.
@@ -65,6 +68,7 @@ class ConfigLoader {
   constructor(options = {}) {
     this[_baseDir] = options.baseDir || process.cwd();
     this[_logger] = options.logger;
+    this[_packageLoader] = new PackageLoader();
   }
 
   /**
@@ -99,19 +103,19 @@ class ConfigLoader {
   /**
    * Attempts to find and load the configuration data from a file.
    *
-   * If <code>filePath</code> is specified, the configuration data will be read from that file. Otherwise, an attempt
-   * will be made to find any file with a recognised name within the base directory and use the first one it finds.
+   * Optionally, <code>filePath</code> can be provided to read the configuration data from that file. Otherwise, an
+   * attempt will be made to find any file with a recognised name within the base directory and use the first one it
+   * finds.
    *
    * If the file denotes a module, it will be required and its exports will be used as the configuration data.
    * Otherwise, the contents of the file will read and parsed based on its type.
    *
-   * All file paths (specified or discovered) are resolve using the base directory unless where already absolute.
+   * All file paths (specified or discovered) are resolved using the base directory unless where already absolute.
    *
    * An error will occur if no configuration file was specified and/or found, an error occurred while attempting to load
    * the configuration file, or the configuration file contained no data.
    *
-   * @param {?string} filePath - the path of the file whose configuration data is to be loaded (may be <code>null</code>
-   * to find and load configuration data from recognisable file within base directory)
+   * @param {string} [filePath] - the path of the file whose configuration data is to be loaded
    * @return {Promise.<Config, Error>} A <code>Promise</code> for the asynchronous file reading that is resolved with
    * the {@link Config} loaded from the file.
    * @public
@@ -130,21 +134,35 @@ class ConfigLoader {
 
     debug('Loading configuration file: %s', filePath);
 
+    let data;
     if (this.isModule(filePath)) {
       /* eslint-disable global-require */
-      return require(filePath);
+      data = require(filePath);
       /* eslint-enable global-require */
+    } else {
+      const contents = await readFile(filePath);
+      data = this.parse(contents, filePath);
     }
-
-    const contents = await readFile(filePath);
-    const data = this.parse(contents, filePath);
     if (!data) {
       throw new Error(`Configuration file contains no data: ${filePath}`);
     }
 
     debug('Successfully loaded configuration file: %s', filePath);
 
-    return new Config(filePath, data, this[_logger]);
+    const pkg = await this[_packageLoader].load(filePath);
+    const repositoryService = RepositoryService.getInstance();
+    const repositoryInfo = await repositoryService.getRepositoryInfo(path.dirname(filePath), {
+      info: data.repository,
+      pkg
+    });
+
+    return new Config({
+      filePath,
+      data,
+      logger: this[_logger],
+      pkg,
+      repository: repositoryInfo
+    });
   }
 
   /**

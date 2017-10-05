@@ -53,10 +53,7 @@ class TaskService {
   /**
    * Returns a singleton instance of {@link TaskService}.
    *
-   * It is highly recommended that the singleton instance is used to ensure that all tasks are added to the same
-   * instance and to improve performance as each instance has to lookup and cache built-in {@link Task} implementations.
-   *
-   * @return {TaskService} The single instance.
+   * @return {TaskService} The singleton instance.
    * @public
    */
   static getInstance() {
@@ -70,11 +67,14 @@ class TaskService {
   /**
    * Creates an instance of {@link TaskService}.
    *
+   * Use {@link TaskService.getInstance} to obtain an instance of {@link TaskService}. Do not try to instantiate this
+   * class directly.
+   *
    * <code>privateKey</code> is used to ensure that {@link TaskService} can only be instantiated within this module.
    *
    * An error will occur if <code>privateKey</code> is invalid.
    *
-   * @param {Symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskType}
+   * @param {Symbol} privateKey - a private symbol used to prevent external instantiation of {@link TaskService}
    * @throws {Error} If <code>privateKey</code> is invalid.
    * @private
    */
