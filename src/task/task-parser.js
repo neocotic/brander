@@ -142,6 +142,8 @@ class TaskParser {
 
       const context = new TaskContext(type, groupFiles, outputFile, _.cloneDeep(options), config);
 
+      config.scope.tasks.add(context);
+
       contexts.push(context);
     }
 

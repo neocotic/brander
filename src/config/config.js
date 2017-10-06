@@ -30,6 +30,7 @@ const Logger = require('../logger');
 const Package = require('./package/package');
 const Repo = require('./repository/repo');
 const RepositoryService = require('./repository/repository-service');
+const Scope = require('./scope');
 
 const _baseDir = Symbol('baseDir');
 const _data = Symbol('data');
@@ -40,6 +41,7 @@ const _logger = Symbol('logger');
 const _name = Symbol('name');
 const _pkg = Symbol('pkg');
 const _repository = Symbol('repository');
+const _scope = Symbol('scope');
 const _title = Symbol('title');
 
 /**
@@ -54,6 +56,9 @@ const _title = Symbol('title');
  * The <code>pkg</code> and <code>repository</code> options can be specified to provide {@link Package} and repository
  * information respectively. If instantiating the constructor directly, it may be necessary to use {@link PackageLoader}
  * and {@link RepositoryService} to obtain this information.
+ *
+ * Each <code>Config</code> instance has a {@link Scope} that is cleared at the beginning of each generation cycle. This
+ * can be used to share state and to get a high level overview of the generation process.
  *
  * @public
  */
@@ -77,6 +82,7 @@ class Config {
     this[_email] = _.trim(this[_data].email) || null;
     this[_homepage] = _.trim(this[_data].homepage) || _.trim(this[_pkg].get('homepage')) || this[_repository].homepage;
     this[_name] = _.trim(this[_data].name) || _.trim(this[_pkg].get('name')) || this[_repository].name;
+    this[_scope] = new Scope();
     this[_title] = _.trim(this[_data].title) || this[_name];
   }
 
@@ -338,6 +344,16 @@ class Config {
    */
   get repository() {
     return this[_repository];
+  }
+
+  /**
+   * Returns the {@link Scope} for this {@link Config}.
+   *
+   * @return {Scope} The scope.
+   * @public
+   */
+  get scope() {
+    return this[_scope];
   }
 
   /**

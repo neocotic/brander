@@ -62,6 +62,8 @@ class Brander {
     const { config } = this;
     const { logger } = config;
 
+    config.scope.clear();
+
     if (options.skipAssets && options.skipDocs) {
       logger.warn('Both skipAssets and skipDocs options enabled. Nothing to do!');
 
