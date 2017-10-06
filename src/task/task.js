@@ -36,7 +36,7 @@ class Task {
    * @override
    */
   toString() {
-    return `${this.constructor.name}(${this.getType()})`;
+    return `Task(${this.getType()})`;
   }
 
 }
