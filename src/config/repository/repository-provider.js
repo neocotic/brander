@@ -93,6 +93,6 @@ pollock(RepositoryProvider, 'parseURL');
  * @memberof RepositoryProvider#
  * @method resolveURL
  */
-pollock(RepositoryProvider, 'resolveURL');
+pollock(RepositoryProvider, 'resolveURL', { promise: true });
 
 module.exports = RepositoryProvider;
