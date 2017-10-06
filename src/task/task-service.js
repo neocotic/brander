@@ -36,7 +36,7 @@ const _addBuiltIns = Symbol('addBuiltIns');
 const _builtInsAdded = Symbol('builtInsAdded');
 const _privateKey = Symbol('privateKey');
 const _singleton = Symbol('singleton');
-const _types = Symbol('typeMap');
+const _types = Symbol('types');
 
 /**
  * Manages {@link Task} instances that are available for execution.
