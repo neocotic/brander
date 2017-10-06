@@ -29,7 +29,7 @@ const fs = require('fs');
 const SVGO = require('svgo');
 const util = require('util');
 
-const File = require('../file');
+const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
 

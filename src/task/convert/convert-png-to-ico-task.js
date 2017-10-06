@@ -29,7 +29,7 @@ const fs = require('fs');
 const toIco = require('to-ico');
 const util = require('util');
 
-const Size = require('../size');
+const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
 

@@ -28,8 +28,8 @@ const glob = require('glob');
 const path = require('path');
 const util = require('util');
 
-const File = require('./file');
-const Size = require('./size');
+const File = require('../file');
+const Size = require('../size');
 const TaskContext = require('./task-context');
 const TaskType = require('./task-type');
 
