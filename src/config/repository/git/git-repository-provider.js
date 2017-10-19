@@ -24,6 +24,7 @@
 
 const _ = require('lodash');
 const debug = require('debug')('brander:config:repository:git');
+// TODO: Replace workaround using neocotic/hosted-git-info#browsefile once npm/hosted-git-info#28 has been implemented
 const hostedGitInfo = require('hosted-git-info');
 const { spawn } = require('child_process');
 

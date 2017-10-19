@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const { EOL } = require('os');
 const path = require('path');
 
 const Expression = require('./expression');
@@ -37,6 +38,7 @@ const _data = Symbol('data');
 const _email = Symbol('email');
 const _filePath = Symbol('filePath');
 const _homepage = Symbol('homepage');
+const _lineSeparator = Symbol('lineSeparator');
 const _logger = Symbol('logger');
 const _name = Symbol('name');
 const _pkg = Symbol('pkg');
@@ -84,6 +86,16 @@ class Config {
     this[_name] = _.trim(this[_data].name) || _.trim(this[_pkg].get('name')) || this[_repository].name;
     this[_scope] = new Scope();
     this[_title] = _.trim(this[_data].title) || this[_name];
+    this[_lineSeparator] = ((lineSeparator) => {
+      switch (lineSeparator) {
+      case 'crlf':
+        return '\r\n';
+      case 'lf':
+        return '\n';
+      default:
+        return EOL;
+      }
+    })(_.trim(this.option('lineSeparator')).toLowerCase());
   }
 
   /**
@@ -108,11 +120,13 @@ class Config {
    * create the URL, passing the file path to be included. Otherwise, this method will attempt to create the URL based
    * on the {@link Repository} information associated with this {@link Config}.
    *
-   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * @param {string|string[]} paths - the sequence of paths or path segments to be resolved
    * @return {?string} The asset file URL or <code>null</code> if insufficient information available.
    * @public
    */
-  assetURL(...paths) {
+  assetURL(paths) {
+    paths = _.castArray(paths);
+
     const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
     const fileUrl = this.option('assets.url');
 
@@ -137,19 +151,25 @@ class Config {
   /**
    * Resolves the specified sequence of <code>paths</code> or path segments into an absolute URL for viewing a doc file.
    *
-   * If the <code>docs.url</code> option is enabled within this {@link Config}, then this method will evaluate it to
-   * create the URL, passing the file path to be included. Otherwise, this method will attempt to create the URL based
-   * on the {@link Repository} information associated with this {@link Config}.
+   * Optionally, <code>fragment</code> can be provided to be included in the URL as a hash fragment that relates to
+   * content on the file view page.
    *
-   * @param {...string} paths - the sequence of paths or path segments to be resolved
+   * If the <code>docs.url</code> option is enabled within this {@link Config}, then this method will evaluate it to
+   * create the URL, passing the file path and hash fragment to be included. Otherwise, this method will attempt to
+   * create the URL based on the {@link Repository} information associated with this {@link Config}.
+   *
+   * @param {string|string[]} paths - the sequence of paths or path segments to be resolved
+   * @param {string} [fragment] - the hash fragment to be included
    * @return {?string} The doc file URL or <code>null</code> if insufficient information available.
    * @public
    */
-  docURL(...paths) {
+  docURL(paths, fragment) {
+    paths = _.castArray(paths);
+
     const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
     const fileUrl = this.option('docs.url');
 
-    return fileUrl ? this.evaluate(fileUrl, { file: filePath }) : this.repository.fileURL(filePath);
+    return fileUrl ? this.evaluate(fileUrl, { file: filePath, fragment }) : this.repository.fileURL(filePath, fragment);
   }
 
   /**
@@ -158,7 +178,8 @@ class Config {
    * Optionally, <code>additionalData</code> can be provided to expose more variables to <code>expression</code> during
    * evaluation.
    *
-   * A <code>config</code> variable can be used within the expression to reference this {@link Config}.
+   * A <code>config</code> and <code>eol</code> variable can be used within the expression to reference this
+   * {@link Config} and {@link Config#lineSeparator} respectively.
    *
    * @param {?string} expressionString - the raw expression to be evaluated (may be <code>null</code>)
    * @param {Object} [additionalData] - an object whose properties will be exposed as variables when the expression is
@@ -245,6 +266,29 @@ class Config {
   }
 
   /**
+   * Returns the raw data for all docs defined within this {@link Config}.
+   *
+   * The array will be empty if the "docs" configuration is null, empty, or missing entirely.
+   *
+   * An error will occur if the "docs" configuration is present but is not an array.
+   *
+   * @return {Object[]} The raw doc data.
+   * @throws {TypeError} If the "docs" configuration is not an array.
+   * @public
+   */
+  get docs() {
+    const { docs } = this[_data];
+    if (!docs) {
+      return [];
+    }
+    if (!Array.isArray(docs)) {
+      throw new TypeError('"docs" configuration can only be an array');
+    }
+
+    return _.cloneDeep(docs);
+  }
+
+  /**
    * Returns the path to the directory to which documentation is to be generated.
    *
    * The path is relative to the base directory of this {@link Config} and is <b>not</b> absolute and is simply the
@@ -290,6 +334,19 @@ class Config {
    */
   get homepage() {
     return this[_homepage];
+  }
+
+  /**
+   * Returns the line separator to be used as per this {@link Config}.
+   *
+   * The line separator is derived from the value of the <code>lineSeparator</code> option, while <code>os.EOL</code> is
+   * used as a fallback value.
+   *
+   * @return {string} The line separator.
+   * @public
+   */
+  get lineSeparator() {
+    return this[_lineSeparator];
   }
 
   /**
@@ -364,7 +421,7 @@ class Config {
    * An error will occur if the "tasks" configuration is present but is not an array.
    *
    * @return {Object[]} The raw task data.
-   * @throws {Error} If the "tasks" configuration is not an array.
+   * @throws {TypeError} If the "tasks" configuration is not an array.
    * @public
    */
   get tasks() {
@@ -373,7 +430,7 @@ class Config {
       return [];
     }
     if (!Array.isArray(tasks)) {
-      throw new Error('"tasks" configuration can only be an array');
+      throw new TypeError('"tasks" configuration can only be an array');
     }
 
     return _.cloneDeep(tasks);

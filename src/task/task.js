@@ -29,6 +29,7 @@ const pollock = require('pollock');
  * instances created based on configuration data to generate assets.
  *
  * @public
+ * @abstract
  */
 class Task {
 

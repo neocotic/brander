@@ -34,6 +34,7 @@ const _type = Symbol('type');
  * that {@link RepositoryService} is used instead.
  *
  * @public
+ * @abstract
  */
 class RepositoryProvider {
 

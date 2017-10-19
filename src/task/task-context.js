@@ -24,22 +24,23 @@
 
 const _ = require('lodash');
 
-const _config = Symbol('config');
+const Context = require('../config/context');
+
 const _inputFiles = Symbol('inputFiles');
 const _options = Symbol('options');
 const _outputFile = Symbol('outputFile');
 const _type = Symbol('type');
 
 /**
- * Contains contextual information that is based on configuration data which can be executed by a supporting
- * {@link Task} to generate assets.
+ * Contains contextual information that is based on task-related configuration data which can be executed by a
+ * supporting {@link Task} to generate assets.
  *
- * While it's possible to create an instance using the constructor, it's highly recommended that {@link TaskParser} is
- * used instead.
+ * While it's possible to create an instance using the constructor, it's highly recommended that
+ * {@link TaskContextParser} is used instead.
  *
  * @public
  */
-class TaskContext {
+class TaskContext extends Context {
 
   /**
    * Creates an instance of {@link TaskContext}.
@@ -52,11 +53,12 @@ class TaskContext {
    * @public
    */
   constructor(type, inputFiles, outputFile, options, config) {
+    super(config);
+
     this[_type] = type;
     this[_inputFiles] = inputFiles;
     this[_outputFile] = outputFile;
     this[_options] = options;
-    this[_config] = config;
   }
 
   /**
@@ -73,16 +75,6 @@ class TaskContext {
    */
   option(name, defaultValue) {
     return _.get(this[_options], name, defaultValue);
-  }
-
-  /**
-   * Returns the {@link Config} for this {@link TaskContext}.
-   *
-   * @return {Config} The configuration.
-   * @public
-   */
-  get config() {
-    return this[_config];
   }
 
   /**

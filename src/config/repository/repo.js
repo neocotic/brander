@@ -52,11 +52,12 @@ class Repo {
    *
    * @param {string} filePath - the path of the file for which a URL to view it's user-friendly contents is to be
    * returned
+   * @param {string} [fragment] - the hash fragment to be included
    * @return {?string} The URL for viewing the file or <code>null</code> if no {@link Repository} is available.
    * @public
    */
-  fileURL(filePath) {
-    return this[_get]((repository) => repository.getFileURL(filePath));
+  fileURL(filePath, fragment) {
+    return this[_get]((repository) => repository.getFileURL(filePath, fragment));
   }
 
   /**

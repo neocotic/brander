@@ -53,7 +53,7 @@ class Package {
   /**
    * Resolves the value of the data with the specified <code>name</code> within this {@link Package}.
    *
-   * Optionally, if <code>defaultValue</code> is specified and this {@link Package} contains no data , or the desired
+   * Optionally, if <code>defaultValue</code> is specified and this {@link Package} contains no data, or the desired
    * data is missing, it will be returned instead. Otherwise, this method will return <code>undefined</code>.
    *
    * @param {string|string[]} name - the paths or path segments to the property within the data whose value is to be

@@ -26,7 +26,7 @@
     "commander": "^2.11.0",
     "debug": "^3.1.0",
     "glob": "^7.1.2",
-    "hosted-git-info": "^2.5.0",
+    "hosted-git-info": "github:neocotic/hosted-git-info#browsefile",
     "image-size": "^0.6.1",
     "lodash": "^4.17.4",
     "pkg-up": "^2.0.0",

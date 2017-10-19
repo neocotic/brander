@@ -24,7 +24,10 @@
 
 const chalk = require('chalk');
 
-const TaskExecutor = require('./task/task-executor');
+const DocumentContextParser = require('./doc/document-context-parser');
+const DocumentContextRunner = require('./doc/document-context-runner');
+const TaskContextParser = require('./task/task-context-parser');
+const TaskContextRunner = require('./task/task-context-runner');
 
 const _config = Symbol('config');
 
@@ -60,9 +63,9 @@ class Brander {
    */
   async generate(options = {}) {
     const { config } = this;
-    const { logger } = config;
+    const { logger, scope } = config;
 
-    config.scope.clear();
+    scope.clear();
 
     if (options.skipAssets && options.skipDocs) {
       logger.warn('Both skipAssets and skipDocs options enabled. Nothing to do!');
@@ -74,9 +77,11 @@ class Brander {
       logger.log('Generating assets...');
       logger.log();
 
-      const executor = new TaskExecutor(config);
+      const taskContextParser = new TaskContextParser(config.tasks, config);
+      taskContextParser.on('parsed', (contexts) => scope.addAllTasks(contexts));
+      const taskContextRunner = new TaskContextRunner(taskContextParser);
 
-      await executor.execute();
+      await taskContextRunner.run();
     }
 
     if (!options.skipDocs) {
@@ -86,8 +91,12 @@ class Brander {
       logger.log('Generating documentation...');
       logger.log();
 
-      // FIXME: implement documentation generation
-      logger.warn('Documentation generation has not been implemented yet!');
+      const documentContextParser = new DocumentContextParser(config.docs, config, 'root');
+      documentContextParser.on('parsed', (contexts) => scope.addAllDocs(contexts));
+      const documentContexts = await documentContextParser.parseRemaining();
+      const documentContextRunner = new DocumentContextRunner(documentContexts);
+
+      await documentContextRunner.run();
     }
 
     logger.log();

@@ -37,6 +37,7 @@ const _type = Symbol('type');
  * that {@link RepositoryService} is used instead.
  *
  * @public
+ * @abstract
  */
 class Repository {
 
@@ -82,6 +83,9 @@ pollock(Repository, 'getBranch');
 /**
  * Returns the URL for viewing the file at the path provided within this {@link Repository}.
  *
+ * Optionally, <code>fragment</code> can be provided to be included in the URL as a hash fragment that relates to
+ * content on the file view page.
+ *
  * <code>filePath</code> will always be treated as relative to the repository tree.
  *
  * This method is useful for generating URLs for linking file viewers. There is no requirement for this URL to point to
@@ -90,6 +94,7 @@ pollock(Repository, 'getBranch');
  * All implementations of {@link Repository} <b>must</b> override this method.
  *
  * @param {string} filePath - the path of the file for which a URL to view it's user-friendly contents is to be returned
+ * @param {string} [fragment] - the hash fragment to be included
  * @return {string} The URL for viewing the file.
  * @public
  * @abstract
