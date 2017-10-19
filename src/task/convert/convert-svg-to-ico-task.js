@@ -24,9 +24,9 @@
 
 const _ = require('lodash');
 const chalk = require('chalk');
+const { convert } = require('convert-svg-to-png');
 const debug = require('debug')('brander:task:convert');
 const fs = require('fs');
-const svg2png = require('svg2png');
 const toIco = require('to-ico');
 const util = require('util');
 
@@ -98,7 +98,11 @@ class ConvertSVGToICOTask extends Task {
 
     debug('Converting SVG file to PNG: %s', inputFilePath);
 
-    const pngInput = await svg2png(svgInput, Object.assign(size ? { height: size.height, width: size.width } : null));
+    const pngInput = await convert(svgInput, Object.assign(size ? {
+      baseFile: inputFilePath,
+      height: size.height,
+      width: size.width
+    } : null));
 
     debug('Converting PNG to ICO');
 

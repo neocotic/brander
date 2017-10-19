@@ -25,6 +25,7 @@
     "chalk": "^2.1.0",
     "color-convert": "^1.9.0",
     "commander": "^2.11.0",
+    "convert-svg-to-png": "^0.1.0",
     "debug": "^3.1.0",
     "glob": "^7.1.2",
     "hosted-git-info": "github:neocotic/hosted-git-info#browsefile",
@@ -35,7 +36,6 @@
     "pollock": "^0.1.0",
     "rimraf": "^2.6.2",
     "strip-json-comments": "^2.0.1",
-    "svg2png": "^4.1.1",
     "svgo": "^0.7.2",
     "to-ico": "^1.1.5"
   },
