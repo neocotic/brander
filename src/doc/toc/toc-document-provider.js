@@ -88,7 +88,7 @@ class TOCDocumentProvider extends DocumentProvider {
     const rootMap = new Map();
     for (const availableContext of context.config.scope.docs) {
       if (availableContext.isRoot()) {
-        rootMap.set(availableContext.file.base(true), availableContext);
+        rootMap.set(availableContext.file.base(), availableContext);
       }
     }
 
