@@ -125,14 +125,15 @@ class ContextParser extends EventEmitter {
    */
   async parseRemaining() {
     let contexts;
+    const results = [];
 
     while ((contexts = await this.parseNext()) != null) {
       for (const context of contexts) {
-        contexts.push(context);
+        results.push(context);
       }
     }
 
-    return contexts;
+    return results;
   }
 
   /**
