@@ -138,7 +138,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     for (const dirPath of dirPaths) {
       const [ previewFile ] = await AssetFeatureDocumentProvider[_findFiles](dirPath, data.preview, config);
       const fileGroups = await AssetFeatureDocumentProvider[_getFileGroups](dirPath, data, config);
-      const context = new AssetFeatureDocumentContext(`${this.getType()}-child`, dirPath, fileGroups, previewFile, data,
+      const context = new AssetFeatureDocumentContext(`${this.getType()}#child`, dirPath, fileGroups, previewFile, data,
         mainContext, config);
 
       childContexts.push(context);
