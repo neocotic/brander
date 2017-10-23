@@ -87,6 +87,10 @@ Object.keys(convert).forEach((format) => {
     configurable: true,
     enumerable: true,
     get() {
+      if (this.format === format) {
+        return this.value;
+      }
+
       if (!convert[this.format]) {
         throw new Error(`Unsupported color format: ${this.format}`);
       }
