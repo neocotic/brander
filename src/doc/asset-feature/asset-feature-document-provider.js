@@ -175,6 +175,10 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
           const rowOutput = [];
 
           for (const file of fileGroup.files) {
+            if (!_.isEmpty(rowOutput)) {
+              rowOutput.push(' ');
+            }
+
             rowOutput.push('[');
             rowOutput.push(file.size);
             rowOutput.push('](');
