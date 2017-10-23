@@ -38,12 +38,19 @@ class DocumentContextRunner extends ContextRunner {
    * @inheritdoc
    * @override
    */
-  runContext(context) {
-    const { provider } = context;
+  async runContext(context) {
+    const { provider, title } = context;
+    const output = [];
 
-    // TODO: should this render titles on behalf of the context?
+    if (title) {
+      output.push(`${'#'.repeat(context.depth + 1)} ${title}`);
+      output.push('');
+    }
 
-    return provider.render(context);
+    output.push(await provider.render(context));
+    output.push('');
+
+    return output.join(context.config.lineSeparator);
   }
 
 }
