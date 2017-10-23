@@ -263,7 +263,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     output.push(config.assetURL(previewFile.relative));
     output.push(')](');
 
-    const filePath = config.relative(context.dir).replace(/\\/g, '/');
+    const filePath = config.relative(path.join(config.assetsDir, context.dir)).replace(/\\/g, '/');
     const fileURL = config.repository.fileURL(filePath);
 
     output.push(fileURL);
