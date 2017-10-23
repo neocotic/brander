@@ -46,10 +46,8 @@ class TOCDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  createContexts(data, parent, config) {
-    const context = new DocumentContext(this, data, parent, config);
-
-    return [ context ];
+  createContext(data, parent, config) {
+    return new DocumentContext(this.getType(), data, parent, config);
   }
 
   /**

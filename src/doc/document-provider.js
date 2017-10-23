@@ -51,13 +51,13 @@ class DocumentProvider {
  * @param {Object} data -
  * @param {?DocumentContext} parent -
  * @param {Config} config -
- * @return {Promise.<DocumentContext[], Error>}
+ * @return {Promise.<DocumentContext, Error>}
  * @public
  * @abstract
  * @memberof DocumentProvider#
  * @method createContexts
  */
-pollock(DocumentProvider, 'createContexts', { promise: true });
+pollock(DocumentProvider, 'createContext', { promise: true });
 
 /**
  * TODO: document

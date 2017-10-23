@@ -45,7 +45,7 @@ class RootDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  async createContexts(data, parent, config) {
+  async createContext(data, parent, config) {
     if (parent) {
       throw new Error('"root" document cannot have parent');
     }
@@ -64,7 +64,7 @@ class RootDocumentProvider extends DocumentProvider {
 
     const file = new File(dirPath, fileName, format, config)
       .evaluate();
-    const rootContext = new RootDocumentContext(this, file, data, parent, config);
+    const rootContext = new RootDocumentContext(this.getType(), file, data, config);
 
     const footer = config.option('docs.footer');
     const header = config.option('docs.header');
@@ -83,7 +83,7 @@ class RootDocumentProvider extends DocumentProvider {
       rootContext.children.push(...childContexts);
     }
 
-    return [ rootContext ];
+    return rootContext;
   }
 
   /**
@@ -101,9 +101,16 @@ class RootDocumentProvider extends DocumentProvider {
   async render(context) {
     const documentContextRunner = new DocumentContextRunner(context.children);
     const results = await documentContextRunner.run();
-    const output = results.join(context.config.lineSeparator);
+    const output = [];
 
-    await File.writeFile(context.file.absolute, output);
+    if (context.title) {
+      output.push(`${'#'.repeat(context.depth + 1)} ${context.title}`);
+      output.push('');
+    }
+
+    output.push(...results);
+
+    await File.writeFile(context.file.absolute, output.join(context.config.lineSeparator));
 
     return output;
   }

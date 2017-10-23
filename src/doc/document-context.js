@@ -29,8 +29,8 @@ const Context = require('../config/context');
 const _children = Symbol('children');
 const _data = Symbol('data');
 const _parent = Symbol('parent');
-const _provider = Symbol('provider');
 const _title = Symbol('title');
+const _type = Symbol('type');
 
 /**
  * Contains contextual information that is based on document-related configuration data which can be rendered by a
@@ -46,17 +46,17 @@ class DocumentContext extends Context {
   /**
    * Creates an instance of {@link DocumentContext}.
    *
-   * @param {DocumentProvider} provider - the associated {@link DocumentProvider} to be used
+   * @param {string} type - the type to be used
    * @param {Object} data - the data to be used
    * @param {?DocumentContext} parent - the parent {@link DocumentContext} to be used (may be <code>null</code> if there
    * is no parent)
    * @param {Config} config - the {@link Config} to be used
    * @public
    */
-  constructor(provider, data, parent, config) {
+  constructor(type, data, parent, config) {
     super(config);
 
-    this[_provider] = provider;
+    this[_type] = type;
     this[_data] = data;
     this[_parent] = parent;
     this[_children] = [];
@@ -130,16 +130,6 @@ class DocumentContext extends Context {
   }
 
   /**
-   * Returns the {@link DocumentProvider} associated with this {@link DocumentContext}.
-   *
-   * @return {DocumentProvider} The provider.
-   * @public
-   */
-  get provider() {
-    return this[_provider];
-  }
-
-  /**
    * Traverses the document tree for this {@link DocumentContext} to find one whose type is "root".
    *
    * <code>null</code> will be returned if this {@link DocumentContext} has no parent or does not belong to a root
@@ -179,13 +169,11 @@ class DocumentContext extends Context {
   /**
    * Returns the type of this {@link DocumentContext}.
    *
-   * This is a convenient shorthand for {@link DocumentProvider#getType}.
-   *
    * @return {string} The type.
    * @public
    */
   get type() {
-    return this.provider.getType();
+    return this[_type];
   }
 
 }

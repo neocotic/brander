@@ -39,12 +39,10 @@ const _previewFile = Symbol('previewFile');
  */
 class AssetFeatureDocumentContext extends DocumentContext {
 
-  // TODO: complete
-
   /**
    * Creates an instance of {@link AssetFeatureDocumentContext}.
    *
-   * @param {DocumentProvider} provider - the associated {@link DocumentProvider} to be used
+   * @param {string} type - the type to be used
    * @param {string} dir - TODO: document
    * @param {AssetFeatureDocumentContext~FileGroup[]} fileGroups - TODO: document
    * @param {?File} previewFile - TODO: document
@@ -54,8 +52,8 @@ class AssetFeatureDocumentContext extends DocumentContext {
    * @param {Config} config - the {@link Config} to be used
    * @public
    */
-  constructor(provider, dir, fileGroups, previewFile, data, parent, config) {
-    super(provider, data, parent, config);
+  constructor(type, dir, fileGroups, previewFile, data, parent, config) {
+    super(type, data, parent, config);
 
     this[_dir] = dir;
     this[_fileGroups] = fileGroups;

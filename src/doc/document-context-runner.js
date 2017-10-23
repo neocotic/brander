@@ -23,6 +23,7 @@
 'use strict';
 
 const ContextRunner = require('../config/context-runner');
+const DocumentService = require('./document-service');
 
 /**
  * Capable of running {@link DocumentContext} instances sequentially which can either be provided directly or extracted
@@ -39,15 +40,21 @@ class DocumentContextRunner extends ContextRunner {
    * @override
    */
   async runContext(context) {
-    const { provider, title } = context;
+    const { title, type } = context;
     const output = [];
+
+    const documentService = DocumentService.getInstance();
+    const documentProvider = await documentService.findByType(type);
+    if (!documentProvider) {
+      throw new Error(`Unable to find provider for type: ${type}`);
+    }
 
     if (title) {
       output.push(`${'#'.repeat(context.depth + 1)} ${title}`);
       output.push('');
     }
 
-    output.push(await provider.render(context));
+    output.push(await documentProvider.render(context));
     output.push('');
 
     return output.join(context.config.lineSeparator);

@@ -22,8 +22,6 @@
 
 'use strict';
 
-/* eslint "max-params": "off" */
-
 // TODO: complete
 
 const DocumentContext = require('../document-context');
@@ -40,16 +38,14 @@ class RootDocumentContext extends DocumentContext {
   /**
    * Creates an instance of {@link RootDocumentContext}.
    *
-   * @param {DocumentProvider} provider - the associated {@link DocumentProvider} to be used
+   * @param {string} type - the type to be used
    * @param {File} file - TODO: document
    * @param {Object} data - the data to be used
-   * @param {?DocumentContext} parent - the parent {@link DocumentContext} to be used (may be <code>null</code> if there
-   * is no parent)
    * @param {Config} config - the {@link Config} to be used
    * @public
    */
-  constructor(provider, file, data, parent, config) {
-    super(provider, data, parent, config);
+  constructor(type, file, data, config) {
+    super(type, data, null, config);
 
     this[_file] = file;
   }

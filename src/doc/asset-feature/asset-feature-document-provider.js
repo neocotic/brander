@@ -28,6 +28,7 @@ const _ = require('lodash');
 const path = require('path');
 
 const AssetFeatureDocumentContext = require('./asset-feature-document-context');
+const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
 const File = require('../../file');
 const Size = require('../../size');
@@ -35,6 +36,7 @@ const Size = require('../../size');
 const _findFiles = Symbol('findFiles');
 const _getDirPaths = Symbol('getDirPaths');
 const _getFileGroups = Symbol('getFileGroups');
+const _renderChild = Symbol('renderChild');
 const _renderHeaders = Symbol('renderHeaders');
 const _renderPreview = Symbol('renderPreview');
 const _renderRow = Symbol('renderRow');
@@ -128,19 +130,23 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  async createContexts(data, parent, config) {
-    const contexts = [];
+  async createContext(data, parent, config) {
+    const childContexts = [];
     const dirPaths = await AssetFeatureDocumentProvider[_getDirPaths](data, config);
+    const mainContext = new DocumentContext(this.getType(), data, parent, config);
 
     for (const dirPath of dirPaths) {
       const [ previewFile ] = await AssetFeatureDocumentProvider[_findFiles](dirPath, data.preview, config);
       const fileGroups = await AssetFeatureDocumentProvider[_getFileGroups](dirPath, data, config);
-      const context = new AssetFeatureDocumentContext(this, dirPath, fileGroups, previewFile, data, parent, config);
+      const context = new AssetFeatureDocumentContext(`${this.getType()}-child`, dirPath, fileGroups, previewFile, data,
+        mainContext, config);
 
-      contexts.push(context);
+      childContexts.push(context);
     }
 
-    return _.sortBy(contexts, 'title');
+    mainContext.children.push(..._.sortBy(childContexts, 'title'));
+
+    return mainContext;
   }
 
   /**
@@ -156,11 +162,12 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
+    // TODO: complete
     const columns = [
       {
         header: 'Type',
         render(fileGroup) {
-          return fileGroup.files[0].type;
+          return fileGroup.files[0].file.type;
         }
       },
       {
@@ -189,18 +196,34 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
           const rowOutput = [];
 
           if (optimized) {
-            rowOutput.push('([optimized](');
+            rowOutput.push('[');
+            rowOutput.push(optimized.base());
+            rowOutput.push('](');
 
             const fileURL = context.config.assetURL(optimized.relative);
 
             rowOutput.push(fileURL);
-            rowOutput.push('))');
+            rowOutput.push(')');
           }
 
           return rowOutput.join('');
         }
       }
     ];
+    const output = [];
+
+    for (const childContext of context.children) {
+      if (!_.isEmpty(output)) {
+        output.push('');
+      }
+
+      output.push(...this[_renderChild](childContext, columns));
+    }
+
+    return output.join(context.config.lineSeparator);
+  }
+
+  [_renderChild](context, columns) {
     const output = [];
 
     if (context.previewFile) {
@@ -212,10 +235,10 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     output.push(this[_renderSeparator](columns));
 
     for (const fileGroup of context.fileGroups) {
-      output.push(this[_renderRow](columns, fileGroup));
+      output.push(this[_renderRow](fileGroup, columns));
     }
 
-    return output.join(context.config.lineSeparator);
+    return output;
   }
 
   [_renderHeaders](columns) {
@@ -246,7 +269,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     return output.join('');
   }
 
-  [_renderRow](columns, fileGroup) {
+  [_renderRow](fileGroup, columns) {
     const output = [];
 
     for (const column of columns) {
@@ -260,12 +283,10 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     const output = [];
 
     for (const column of columns) {
-      const columnStr = String(column);
-
-      output.push('-'.repeat(columnStr.length + 2));
+      output.push('-'.repeat(column.header.length + 2));
     }
 
-    return `|${output.join('|')}|`;
+    return `|${output.join('+')}|`;
   }
 
 }

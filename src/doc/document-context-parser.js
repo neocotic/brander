@@ -83,7 +83,9 @@ class DocumentContextParser extends ContextParser {
       throw new Error(`Unable to find provider for type: ${type}`);
     }
 
-    return documentProvider.createContexts(data, this[_parent], this.config);
+    const documentContext = await documentProvider.createContext(data, this[_parent], this.config);
+
+    return [ documentContext ];
   }
 
 }
