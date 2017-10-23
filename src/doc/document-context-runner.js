@@ -54,8 +54,12 @@ class DocumentContextRunner extends ContextRunner {
       output.push('');
     }
 
-    output.push(await documentProvider.render(context));
-    output.push('');
+    const result = await documentProvider.render(context);
+
+    if (result) {
+      output.push(result);
+      output.push('');
+    }
 
     return output.join(context.config.lineSeparator);
   }
