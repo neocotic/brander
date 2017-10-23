@@ -26,14 +26,10 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const { convert } = require('convert-svg-to-png');
 const debug = require('debug')('brander:task:convert');
-const fs = require('fs');
-const util = require('util');
 
+const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 
@@ -88,7 +84,7 @@ class ConvertSVGToPNGTask extends Task {
 
     debug('Reading SVG file to be converted to PNG: %s', inputFilePath);
 
-    const input = await readFile(inputFilePath);
+    const input = await File.readFile(inputFilePath);
 
     debug('Converting SVG file to PNG: %s', inputFilePath);
 
@@ -100,7 +96,7 @@ class ConvertSVGToPNGTask extends Task {
 
     debug('Writing converted PNG file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     context.config.logger.log('Converted SVG file to PNG file: %s -> %s', chalk.blue(inputFile.relative),
       chalk.blue(outputFile.relative));

@@ -26,16 +26,12 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const { convert } = require('convert-svg-to-png');
 const debug = require('debug')('brander:task:convert');
-const fs = require('fs');
 const toIco = require('to-ico');
-const util = require('util');
 
+const File = require('../../file');
 const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 
@@ -94,7 +90,7 @@ class ConvertSVGToICOTask extends Task {
 
     debug('Reading SVG file to be converted to ICO: %s', inputFilePath);
 
-    const svgInput = await readFile(inputFilePath);
+    const svgInput = await File.readFile(inputFilePath);
 
     debug('Converting SVG file to PNG: %s', inputFilePath);
 
@@ -111,7 +107,7 @@ class ConvertSVGToICOTask extends Task {
 
     debug('Writing converted ICO file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     context.config.logger.log('Converted SVG file to ICO file: %s -> %s', chalk.blue(inputFile.relative),
       chalk.blue(outputFile.relative));

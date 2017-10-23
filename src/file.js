@@ -23,8 +23,20 @@
 'use strict';
 
 const _ = require('lodash');
+const fs = require('fs');
+const glob = require('glob');
 const mime = require('mime');
+const mkdirp = require('mkdirp');
 const path = require('path');
+const rimraf = require('rimraf');
+const util = require('util');
+
+const access = util.promisify(fs.access);
+const deleteFile = util.promisify(rimraf);
+const findFiles = util.promisify(glob);
+const makeDir = util.promisify(mkdirp);
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 const _config = Symbol('config');
 const _dir = Symbol('dir');
@@ -41,6 +53,30 @@ const _name = Symbol('name');
  * @public
  */
 class File {
+
+  /**
+   * TODO: document
+   *
+   * @param {string} filePath -
+   * @param {number} [mode] -
+   * @return {Promise.<void, Error>}
+   * @public
+   */
+  static access(filePath, mode) {
+    return access(filePath, mode);
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} filePath -
+   * @param {Object} [options] -
+   * @return {Promise.<void, Error>}
+   * @public
+   */
+  static deleteFile(filePath, options) {
+    return deleteFile(filePath, options);
+  }
 
   /**
    * Attempts to derive the file format from the specified <code>fileName</code>.
@@ -64,6 +100,46 @@ class File {
     }
 
     return format || null;
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} pattern -
+   * @param {Object} [options] -
+   * @return {Promise.<string[], Error>}
+   * @public
+   */
+  static findFiles(pattern, options) {
+    return findFiles(pattern, options);
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} filePath -
+   * @param {Object|string} [options] -
+   * @return {Promise.<Buffer|string, Error>}
+   * @public
+   */
+  static readFile(filePath, options) {
+    return readFile(filePath, options);
+  }
+
+  /**
+   * TODO: document
+   *
+   * @param {string} filePath -
+   * @param {Buffer|string|Uint8Array} data -
+   * @param {Object|string} [options] -
+   * @return {Promise.<void, Error>}
+   * @public
+   */
+  static async writeFile(filePath, data, options) {
+    const dirPath = path.dirname(filePath);
+    await makeDir(dirPath);
+
+    return writeFile(filePath, data, options);
   }
 
   /**

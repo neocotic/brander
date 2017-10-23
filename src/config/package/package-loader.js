@@ -23,13 +23,10 @@
 'use strict';
 
 const debug = require('debug')('brander:config');
-const fs = require('fs');
 const pkgUp = require('pkg-up');
-const util = require('util');
 
+const File = require('../../file');
 const Package = require('./package');
-
-const readFile = util.promisify(fs.readFile);
 
 const _cache = Symbol('cache');
 const _getPackageFilePath = Symbol('getPackageFilePath');
@@ -75,7 +72,7 @@ class PackageLoader {
       debug('Loading package file found at path: %s', packageFilePath);
 
       try {
-        const contents = await readFile(filePath, 'utf8');
+        const contents = await File.readFile(filePath, 'utf8');
         const data = JSON.parse(contents);
         if (!data) {
           debug('Package file contains no data: %s', packageFilePath);

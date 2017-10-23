@@ -25,11 +25,7 @@
 // TODO: complete
 
 const _ = require('lodash');
-const glob = require('glob');
 const path = require('path');
-const util = require('util');
-
-const findFiles = util.promisify(glob);
 
 const AssetFeatureDocumentContext = require('./asset-feature-document-context');
 const DocumentProvider = require('../document-provider');
@@ -57,7 +53,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     dirPath = config.assetPath(dirPath);
     pattern = _.trim(pattern);
 
-    const filePaths = pattern ? await findFiles(pattern, { cwd: dirPath }) : [];
+    const filePaths = pattern ? await File.findFiles(pattern, { cwd: dirPath }) : [];
     if (_.isEmpty(filePaths)) {
       return [];
     }
@@ -75,7 +71,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     const assetsDir = config.resolve(config.assetsDir);
     const dirPattern = _.trim(data.dir);
 
-    return dirPattern ? findFiles(dirPattern, { cwd: assetsDir }) : [ assetsDir ];
+    return dirPattern ? File.findFiles(dirPattern, { cwd: assetsDir }) : [ assetsDir ];
   }
 
   static async [_getFileGroups](dirPath, data, config) {

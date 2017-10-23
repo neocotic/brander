@@ -25,16 +25,11 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:optimize');
-const fs = require('fs');
 const SVGO = require('svgo');
-const util = require('util');
 
 const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 const _svgo = Symbol('svgo');
@@ -93,7 +88,7 @@ class OptimizeSVGTask extends Task {
 
     debug('Reading SVG file to be optimized: %s', inputFilePath);
 
-    const input = await readFile(inputFilePath, 'utf8');
+    const input = await File.readFile(inputFilePath, 'utf8');
 
     debug('Optimizing SVG file: %s', inputFilePath);
 
@@ -109,7 +104,7 @@ class OptimizeSVGTask extends Task {
 
     debug('Writing optimized SVG file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     config.logger.log('Optimized SVG file: %s -> %s', chalk.blue(inputFile.relative), chalk.blue(outputFile.relative));
   }

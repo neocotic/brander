@@ -25,16 +25,12 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:convert');
-const fs = require('fs');
 const toIco = require('to-ico');
-const util = require('util');
 
+const File = require('../../file');
 const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _execute = Symbol('execute');
 
@@ -93,7 +89,7 @@ class ConvertPNGToICOTask extends Task {
 
     debug('Reading PNG file to be converted to ICO: %s', inputFilePath);
 
-    const input = await readFile(inputFilePath);
+    const input = await File.readFile(inputFilePath);
 
     debug('Converting PNG file to ICO: %s', inputFilePath);
 
@@ -104,7 +100,7 @@ class ConvertPNGToICOTask extends Task {
 
     debug('Writing converted ICO file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     context.config.logger.log('Converted PNG file to ICO file: %s -> %s', chalk.blue(inputFile.relative),
       chalk.blue(outputFile.relative));

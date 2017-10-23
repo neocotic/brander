@@ -23,17 +23,13 @@
 'use strict';
 
 const debug = require('debug')('brander:config');
-const fs = require('fs');
 const path = require('path');
 const stripJsonComments = require('strip-json-comments');
-const util = require('util');
 
 const Config = require('./config');
+const File = require('../file');
 const PackageLoader = require('./package/package-loader');
 const RepositoryService = require('./repository/repository-service');
-
-const access = util.promisify(fs.access);
-const readFile = util.promisify(fs.readFile);
 
 const _baseDir = Symbol('baseDir');
 const _findFilePath = Symbol('findFilePath');
@@ -140,7 +136,7 @@ class ConfigLoader {
       data = require(filePath);
       /* eslint-enable global-require */
     } else {
-      const contents = await readFile(filePath);
+      const contents = await File.readFile(filePath);
       data = this.parse(contents, filePath);
     }
     if (!data) {
@@ -196,7 +192,7 @@ class ConfigLoader {
       const filePath = path.resolve(this[_baseDir], fileName);
 
       try {
-        await access(filePath);
+        await File.access(filePath);
 
         return filePath;
       } catch (e) {

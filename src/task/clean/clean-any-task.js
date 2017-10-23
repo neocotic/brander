@@ -24,13 +24,10 @@
 
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:clean');
-const rimraf = require('rimraf');
-const util = require('util');
 
+const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const removeFile = util.promisify(rimraf);
 
 /**
  * A {@link TaskType.CLEAN} task that simply deletes all files.
@@ -57,7 +54,7 @@ class CleanAnyTask extends Task {
 
       debug('Removing file: %s', inputFilePath);
 
-      await removeFile(inputFilePath, { glob: false });
+      await File.deleteFile(inputFilePath, { glob: false });
 
       context.config.logger.log('Cleaned file: %s', chalk.blue(inputFile.relative));
     }

@@ -25,11 +25,8 @@
 // TODO: complete
 
 const _ = require('lodash');
-const fs = require('fs');
-const util = require('util');
 
-const readFile = util.promisify(fs.readFile);
-
+const File = require('../../file');
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
 
@@ -75,7 +72,7 @@ class TemplateDocumentProvider extends DocumentProvider {
     }
 
     if (file) {
-      content = await readFile(context.config.docPath(file), 'utf8');
+      content = await File.readFile(context.config.docPath(file), 'utf8');
     }
 
     return context.config.evaluate(_.trim(content));

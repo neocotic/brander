@@ -24,17 +24,13 @@
 
 const _ = require('lodash');
 const debug = require('debug')('brander:task');
-const glob = require('glob');
 const path = require('path');
-const util = require('util');
 
 const ContextParser = require('../config/context-parser');
 const File = require('../file');
 const Size = require('../size');
 const TaskContext = require('./task-context');
 const TaskType = require('./task-type');
-
-const findFiles = util.promisify(glob);
 
 const _buildInputFiles = Symbol('buildInputFiles');
 const _buildOutputFile = Symbol('buildOutputFile');
@@ -128,7 +124,7 @@ class TaskContextParser extends ContextParser {
         throw new Error('"input.files" configuration cannot contain null or empty patterns');
       }
 
-      const filePaths = await findFiles(config.evaluate(pattern), { cwd: dir });
+      const filePaths = await File.findFiles(config.evaluate(pattern), { cwd: dir });
 
       for (const filePath of filePaths) {
         const dirPath = path.resolve(dir, path.dirname(filePath));

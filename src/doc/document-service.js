@@ -24,12 +24,9 @@
 
 const _ = require('lodash');
 const debug = require('debug')('brander:doc');
-const glob = require('glob');
-const util = require('util');
 
 const DocumentProvider = require('./document-provider');
-
-const findFiles = util.promisify(glob);
+const File = require('../file');
 
 const _addBuiltIns = Symbol('addBuiltIns');
 const _builtInsAdded = Symbol('builtInsAdded');
@@ -210,7 +207,7 @@ class DocumentService {
 
     this[_builtInsAdded] = true;
 
-    const filePaths = await findFiles('**/*-document-provider.js', {
+    const filePaths = await File.findFiles('**/*-document-provider.js', {
       absolute: true,
       cwd: __dirname
     });

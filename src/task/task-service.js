@@ -23,13 +23,10 @@
 'use strict';
 
 const debug = require('debug')('brander:task');
-const glob = require('glob');
-const util = require('util');
 
+const File = require('../file');
 const Task = require('./task');
 const TaskType = require('./task-type');
-
-const findFiles = util.promisify(glob);
 
 const _add = Symbol('add');
 const _addBuiltIns = Symbol('addBuiltIns');
@@ -241,7 +238,7 @@ class TaskService {
 
     this[_builtInsAdded] = true;
 
-    const filePaths = await findFiles('**/*-task.js', {
+    const filePaths = await File.findFiles('**/*-task.js', {
       absolute: true,
       cwd: __dirname
     });

@@ -26,17 +26,13 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const { convert } = require('convert-svg-to-png');
 const debug = require('debug')('brander:task:package');
-const fs = require('fs');
 const pluralize = require('pluralize');
 const toIco = require('to-ico');
-const util = require('util');
 
+const File = require('../../file');
 const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _readData = Symbol('readData');
 
@@ -84,7 +80,7 @@ class PackageSVGToICOTask extends Task {
 
     debug('Writing packaged ICO file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     config.logger.log('Packaged %d SVG %s into ICO file: %s (sizes = %s)', inputFiles.length,
       pluralize('file', inputFiles.length), chalk.blue(outputFile.relative), sizes);
@@ -108,7 +104,7 @@ class PackageSVGToICOTask extends Task {
 
       debug('Reading SVG file to be packaged in ICO: %s', inputFilePath);
 
-      const svgInput = await readFile(inputFilePath);
+      const svgInput = await File.readFile(inputFilePath);
 
       debug('Converting SVG file to PNG: %s', inputFilePath);
 

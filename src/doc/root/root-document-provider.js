@@ -25,10 +25,6 @@
 // TODO: complete
 
 const _ = require('lodash');
-const fs = require('fs');
-const util = require('util');
-
-const writeFile = util.promisify(fs.writeFile);
 
 const DocumentContextParser = require('../document-context-parser');
 const DocumentContextRunner = require('../document-context-runner');
@@ -107,7 +103,7 @@ class RootDocumentProvider extends DocumentProvider {
     const results = await documentContextRunner.run();
     const output = results.join(context.config.lineSeparator);
 
-    await writeFile(context.file.absolute, output);
+    await File.writeFile(context.file.absolute, output);
 
     return output;
   }

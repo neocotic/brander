@@ -25,17 +25,13 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
-const fs = require('fs');
 const pluralize = require('pluralize');
 const toIco = require('to-ico');
-const util = require('util');
 
+const File = require('../../file');
 const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _getOptions = Symbol('getOptions');
 const _readInputs = Symbol('readInputs');
@@ -81,7 +77,7 @@ class PackagePNGToICOTask extends Task {
 
     debug('Writing packaged ICO file: %s', outputFilePath);
 
-    await writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output);
 
     config.logger.log('Packaged %d PNG %s into ICO file: %s (sizes = %s)', inputFiles.length,
       pluralize('file', inputFiles.length), chalk.blue(outputFile.relative), options.sizes);
@@ -124,7 +120,7 @@ class PackagePNGToICOTask extends Task {
 
       debug('Reading PNG file to be packaged in ICO: %s', inputFilePath);
 
-      const input = await readFile(inputFilePath);
+      const input = await File.readFile(inputFilePath);
 
       inputs.push(input);
     }

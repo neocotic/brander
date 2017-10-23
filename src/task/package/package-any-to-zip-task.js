@@ -27,13 +27,11 @@ const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');
 const fs = require('fs');
 const pluralize = require('pluralize');
-const util = require('util');
 const zlib = require('zlib');
 
+const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
-
-const readFile = util.promisify(fs.readFile);
 
 const _execute = Symbol('execute');
 
@@ -93,7 +91,7 @@ class PackageAnyToZIPTask extends Task {
 
       debug('Reading file to be packaged in ZIP: %s', inputFilePath);
 
-      const input = await readFile(inputFilePath);
+      const input = await File.readFile(inputFilePath);
 
       debug('Adding file to ZIP package: %s', inputFilePath);
 
