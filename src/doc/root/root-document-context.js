@@ -68,14 +68,6 @@ class RootDocumentContext extends DocumentContext {
     return this[_file];
   }
 
-  /**
-   * @inheritdoc
-   * @override
-   */
-  get title() {
-    return super.title || this.file.base() || null;
-  }
-
 }
 
 module.exports = RootDocumentContext;
