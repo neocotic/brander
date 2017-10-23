@@ -42,12 +42,12 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "codecov": "^2.3.0",
-    "eslint": "^4.7.2",
+    "codecov": "^3.0.0",
+    "eslint": "^4.9.0",
     "eslint-config-notninja": "^0.2.3",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.3",
-    "sinon": "^4.0.0"
+    "mocha": "^4.0.1",
+    "sinon": "^4.0.1"
   },
   "bin": {
     "brander": "bin/brander"
