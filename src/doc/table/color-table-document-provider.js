@@ -94,7 +94,7 @@ class ColorTableDocumentProvider extends DocumentProvider {
     const output = [];
 
     for (const column of columns) {
-      output.push(` ${context.evaluate(column.content, { color })} `);
+      output.push(` ${context.config.evaluate(column.content, { color })} `);
     }
 
     return `|${output.join('|')}|`;
