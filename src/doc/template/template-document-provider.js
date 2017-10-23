@@ -73,7 +73,7 @@ class TemplateDocumentProvider extends DocumentProvider {
       content = await File.readFile(context.config.docPath(file), 'utf8');
     }
 
-    return context.config.evaluate(_.trim(content));
+    return context.config.evaluate(content);
   }
 
 }
