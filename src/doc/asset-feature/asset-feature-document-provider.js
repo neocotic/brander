@@ -162,7 +162,6 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
-    // TODO: complete
     const columns = [
       {
         header: 'Type',
