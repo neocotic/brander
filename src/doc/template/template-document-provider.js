@@ -46,8 +46,10 @@ class TemplateDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  createContext(data, parent, config) {
-    return new DocumentContext(this, data, parent, config);
+  createContexts(data, parent, config) {
+    const context = new DocumentContext(this, data, parent, config);
+
+    return [ context ];
   }
 
   /**

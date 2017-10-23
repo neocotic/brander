@@ -71,7 +71,7 @@ class DocumentContextParser extends ContextParser {
    * @inheritdoc
    * @override
    */
-  async parseData(data) {
+  parseData(data) {
     const type = _.trim(data.type) || this[_defaultType];
     if (!type) {
       throw new Error('"type" configuration is required');
@@ -83,9 +83,7 @@ class DocumentContextParser extends ContextParser {
       throw new Error(`Unable to find provider for type: ${type}`);
     }
 
-    const context = await documentProvider.createContext(data, this[_parent], this.config);
-
-    return [ context ];
+    return documentProvider.createContexts(data, this[_parent], this.config);
   }
 
 }

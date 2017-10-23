@@ -161,14 +161,10 @@ class TaskContextParser extends ContextParser {
   [_createFile](dirPath, fileName, format, evaluated) {
     dirPath = _.trim(dirPath) || null;
     fileName = _.trim(fileName) || null;
-    format = _.trim(format).toLowerCase() || null;
+    format = File.deriveFormat(fileName, format);
 
     if (!(dirPath || fileName || format)) {
       return null;
-    }
-
-    if (!format && fileName) {
-      format = path.extname(fileName).substring(1).toLowerCase() || null;
     }
 
     return new File(dirPath, fileName, format, this.config, evaluated);

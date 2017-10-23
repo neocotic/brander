@@ -22,6 +22,8 @@
 
 'use strict';
 
+const _ = require('lodash');
+const mime = require('mime');
 const path = require('path');
 
 const _config = Symbol('config');
@@ -39,6 +41,30 @@ const _name = Symbol('name');
  * @public
  */
 class File {
+
+  /**
+   * Attempts to derive the file format from the specified <code>fileName</code>.
+   *
+   * Optionally, <code>format</code> can be provided if there's an potential source of the file format already.
+   *
+   * <code>null</code> will be returned if the format could not be derived.
+   *
+   * @param {?string} fileName - the name of the file whose format is to be derived (may be <code>null</code>, in which
+   * case <code>format</code> is the only chance at deriving the file format)
+   * @param {string} [format] - a potential source of the file format
+   * @return {?string} The derived file format or <code>null</code> if it is not possible to be derived based on the
+   * information provided.
+   * @public
+   */
+  static deriveFormat(fileName, format) {
+    format = _.trim(format).toLowerCase();
+
+    if (!format && fileName) {
+      format = path.extname(fileName).substring(1).toLowerCase() || null;
+    }
+
+    return format || null;
+  }
 
   /**
    * Creates an instance of {@link File}.
@@ -148,7 +174,7 @@ class File {
    * be derived from the name and the format of this {@link File} is unavailable.
    *
    * @return {?string} The extension or <code>null</code> if it has no name or format and/or the extension could not be
-   * dervied from the name.
+   * derived from the name.
    * @public
    */
   extension() {
@@ -244,6 +270,21 @@ class File {
    */
   get relative() {
     return this.config.relative(this.absolute);
+  }
+
+  /**
+   * Returns the MIME type for this {@link File}.
+   *
+   * <code>null</code> will be returned if the name of this {@link File} is unavailable and/or the extension could not
+   * be derived from the name and the format of this {@link File} is unavailable <b>or</b> a valid MIME could not be
+   * derived from that extension.
+   *
+   * @return {?string} The MIME type or <code>null</code> if it has no name or format and/or the extension could not be
+   * derived from the name or the MIME type could not be derived from either that extension.
+   * @public
+   */
+  get type() {
+    return mime.getType(this.extension());
   }
 
 }

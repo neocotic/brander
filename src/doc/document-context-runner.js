@@ -41,6 +41,8 @@ class DocumentContextRunner extends ContextRunner {
   runContext(context) {
     const { provider } = context;
 
+    // TODO: should this render titles on behalf of the context?
+
     return provider.render(context);
   }
 

@@ -29,7 +29,7 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 
-const writeFile = util.promosify(fs.writeFile);
+const writeFile = util.promisify(fs.writeFile);
 
 const DocumentContextParser = require('../document-context-parser');
 const DocumentContextRunner = require('../document-context-runner');
@@ -50,7 +50,7 @@ class RootDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  async createContext(data, parent, config) {
+  async createContexts(data, parent, config) {
     if (parent) {
       throw new Error('"root" document cannot have parent');
     }
@@ -61,7 +61,7 @@ class RootDocumentProvider extends DocumentProvider {
       throw new Error('"doc" configuration is required');
     }
 
-    const format = _.trim(data.format).toLowerCase() || path.extname(fileName).substring(1).toLowerCase() || null;
+    const format = File.deriveFormat(fileName, data.format);
     // TODO: Support more formats
     if (format !== 'md' && format !== 'markdown') {
       throw new Error(`"format" configuration unsupported: ${format}`);
@@ -88,7 +88,7 @@ class RootDocumentProvider extends DocumentProvider {
       rootContext.children.push(...childContexts);
     }
 
-    return rootContext;
+    return [ rootContext ];
   }
 
   /**
