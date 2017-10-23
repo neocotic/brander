@@ -286,10 +286,10 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     const output = [];
 
     for (const column of columns) {
-      output.push('-'.repeat(column.header.length + 2));
+      output.push(` ${'-'.repeat(column.header.length)} `);
     }
 
-    return `|${output.join('+')}|`;
+    return `|${output.join('|')}|`;
   }
 
 }

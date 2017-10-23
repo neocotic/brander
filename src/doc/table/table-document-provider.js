@@ -93,7 +93,7 @@ class TableDocumentProvider extends DocumentProvider {
     for (const column of columns) {
       const columnStr = String(column);
 
-      output.push('-'.repeat(columnStr.length + 2));
+      output.push(` ${'-'.repeat(columnStr.length)} `);
     }
 
     return `|${output.join('|')}|`;
