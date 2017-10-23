@@ -172,6 +172,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       {
         header: 'Sizes',
         render(fileGroup) {
+          // FIXME: Support ICO files with multiple sizes per file
           const rowOutput = [];
 
           for (const file of fileGroup.files) {
