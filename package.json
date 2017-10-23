@@ -21,8 +21,8 @@
     "url": "https://github.com/NotNinja/brander.git"
   },
   "dependencies": {
-    "archiver": "^2.0.3",
-    "chalk": "^2.1.0",
+    "archiver": "^2.1.0",
+    "chalk": "^2.2.0",
     "color-convert": "^1.9.0",
     "commander": "^2.11.0",
     "convert-svg-to-png": "^0.1.0",
