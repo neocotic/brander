@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* eslint "max-params": "off" */
+
 // TODO: complete
 
 const _ = require('lodash');
@@ -63,13 +65,14 @@ class TOCDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
-    // FIXME: Not currently rendering correctly (indices wrong, indentation wrong)
+    let index = 0;
     const maxDepth = context.get('maxDepth', -1);
     const minDepth = context.get('minDepth', 1);
     const output = [];
+    const titleMap = new Map();
 
     for (const rootContext of this[_getDocumentContexts](context)) {
-      output.push(...this[_renderAtDepth](rootContext, [ rootContext ], 0, minDepth, maxDepth));
+      output.push(...this[_renderAtDepth](rootContext, [ rootContext ], 0, index++, minDepth, maxDepth, titleMap));
     }
 
     return output.join(context.config.lineSeparator);
@@ -103,30 +106,44 @@ class TOCDocumentProvider extends DocumentProvider {
     });
   }
 
-  [_renderAtDepth](root, contexts, depth, min, max) {
-    if (depth < min) {
-      return this[_renderAtDepth](root, _.flatMap(contexts, 'children'), depth + 1, min, max);
-    }
-
+  [_renderAtDepth](root, contexts, depth, index, min, max, titleMap) {
     const output = [];
 
-    if (max === -1 || depth <= max) {
-      contexts.forEach((context, index) => {
+    for (const context of contexts) {
+      if (context.depth < min) {
+        output.push(...this[_renderAtDepth](root, context.children, depth, 0, min, max, titleMap));
+      } else if (max === -1 || context.depth <= max) {
         if (context.title) {
-          output.push(this[_renderTOCRow](root, context, depth, index));
-          output.push(...this[_renderAtDepth](root, context.children, depth + 1, min, max));
+          output.push(this[_renderTOCRow](root, context, depth, ++index, titleMap));
         }
-      });
+
+        output.push(...this[_renderAtDepth](root, context.children, depth + 1, 0, min, max, titleMap));
+      }
     }
 
     return output;
   }
 
-  [_renderTOCRow](root, context, depth, index) {
+  [_renderTOCRow](root, context, depth, index, titleMap) {
     const { title } = context;
-    const url = context.config.docURL(root.file.relative, !context.isRoot() ? title : null);
+    let titleFragment;
 
-    return `${' '.repeat(depth * 4)}${index + 1}. [${title}](${url})`;
+    if (!context.isRoot()) {
+      let titleCount = titleMap.get(title) || 0;
+      titleCount++;
+
+      titleMap.set(title, titleCount);
+
+      if (titleCount > 1) {
+        titleFragment = `${title}-${titleCount}`;
+      } else {
+        titleFragment = title;
+      }
+    }
+
+    const url = context.config.docURL(root.file.relative, titleFragment);
+
+    return `${' '.repeat(depth * 4)}${index}. [${title}](${url})`;
   }
 
 }
