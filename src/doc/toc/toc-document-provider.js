@@ -63,6 +63,7 @@ class TOCDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
+    // FIXME: Not currently rendering correctly (indices wrong, indentation wrong)
     const maxDepth = context.get('maxDepth', -1);
     const minDepth = context.get('minDepth', 1);
     const output = [];
