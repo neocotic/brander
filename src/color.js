@@ -98,7 +98,12 @@ Object.keys(convert).forEach((format) => {
         throw new Error(`Unsupported color format: ${format}`);
       }
 
-      return convert[this.format][format](...this.value);
+      let value = convert[this.format][format](...this.value);
+      if (format === 'hex' && !value.startsWith('#')) {
+        value = `#${value}`;
+      }
+
+      return value;
     }
   });
 });
