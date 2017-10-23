@@ -127,10 +127,13 @@ class Config {
   assetURL(paths) {
     paths = _.castArray(paths);
 
-    const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
-    const fileUrl = this.option('assets.url');
+    const assetURL = this.option('assets.url');
+    let filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
+    if (filePath.startsWith('/')) {
+      filePath = filePath.substring(1);
+    }
 
-    return fileUrl ? this.evaluate(fileUrl, { file: filePath }) : this.repository.rawFileURL(filePath);
+    return assetURL ? this.evaluate(assetURL, { file: filePath }) : this.repository.rawFileURL(filePath);
   }
 
   /**
@@ -166,10 +169,13 @@ class Config {
   docURL(paths, fragment) {
     paths = _.castArray(paths);
 
-    const filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
-    const fileUrl = this.option('docs.url');
+    const docURL = this.option('docs.url');
+    let filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
+    if (filePath.startsWith('/')) {
+      filePath = filePath.substring(1);
+    }
 
-    return fileUrl ? this.evaluate(fileUrl, { file: filePath, fragment }) : this.repository.fileURL(filePath, fragment);
+    return docURL ? this.evaluate(docURL, { file: filePath, fragment }) : this.repository.fileURL(filePath, fragment);
   }
 
   /**
