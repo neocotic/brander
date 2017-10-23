@@ -26,7 +26,6 @@
 
 const _ = require('lodash');
 const fs = require('fs');
-const path = require('path');
 const util = require('util');
 
 const writeFile = util.promisify(fs.writeFile);
@@ -55,7 +54,7 @@ class RootDocumentProvider extends DocumentProvider {
       throw new Error('"root" document cannot have parent');
     }
 
-    const dirPath = config.docPath(_.trim(data.dir) || '.');
+    const dirPath = config.resolve(_.trim(data.dir) || config.docsDir);
     const fileName = _.trim(data.doc);
     if (!fileName) {
       throw new Error('"doc" configuration is required');
