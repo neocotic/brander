@@ -40,20 +40,15 @@ class DocumentContextRunner extends ContextRunner {
    * @override
    */
   async runContext(context) {
-    const { title, type } = context;
-    const output = [];
-
+    const { type } = context;
     const documentService = DocumentService.getInstance();
     const documentProvider = await documentService.findByType(type);
     if (!documentProvider) {
       throw new Error(`Unable to find provider for type: ${type}`);
     }
 
-    if (title) {
-      output.push(`${'#'.repeat(context.depth + 1)} ${title}`);
-      output.push('');
-    }
-
+    const title = documentProvider.renderTitle(context);
+    const output = title ? [ title ] : [];
     const result = await documentProvider.render(context);
 
     if (result) {
