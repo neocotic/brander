@@ -55,11 +55,11 @@ const _name = Symbol('name');
 class File {
 
   /**
-   * TODO: document
+   * A convenient shorthand for <code>fs.access</code> wrapped in a <code>Promise</code>.
    *
-   * @param {string} filePath -
-   * @param {number} [mode] -
-   * @return {Promise.<void, Error>}
+   * @param {string} filePath - the path of the file to be checked
+   * @param {number} [mode] - the mode to be used
+   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>fs.access</code>.
    * @public
    */
   static access(filePath, mode) {
@@ -67,11 +67,11 @@ class File {
   }
 
   /**
-   * TODO: document
+   * A convenient shorthand for <code>rimraf</code> wrapped in a <code>Promise</code>.
    *
-   * @param {string} filePath -
-   * @param {Object} [options] -
-   * @return {Promise.<void, Error>}
+   * @param {string} filePath - the path of the file to be deleted
+   * @param {Object} [options] - the options to be used
+   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>rimraf</code>.
    * @public
    */
   static deleteFile(filePath, options) {
@@ -103,11 +103,11 @@ class File {
   }
 
   /**
-   * TODO: document
+   * A convenient shorthand for <code>glob</code> wrapped in a <code>Promise</code>.
    *
-   * @param {string} pattern -
-   * @param {Object} [options] -
-   * @return {Promise.<string[], Error>}
+   * @param {string} pattern - the pattern for the files to be found
+   * @param {Object} [options] - the options to be used
+   * @return {Promise.<string[], Error>} A <code>Promise</code> wrapper for <code>glob</code>.
    * @public
    */
   static findFiles(pattern, options) {
@@ -115,11 +115,11 @@ class File {
   }
 
   /**
-   * TODO: document
+   * A convenient shorthand for <code>fs.readFile</code> wrapped in a <code>Promise</code>.
    *
-   * @param {string} filePath -
-   * @param {Object|string} [options] -
-   * @return {Promise.<Buffer|string, Error>}
+   * @param {string} filePath - the path of the file to be read
+   * @param {Object|string} [options] - the options to be used
+   * @return {Promise.<Buffer|string, Error>} A <code>Promise</code> wrapper for <code>fs.readFile</code>.
    * @public
    */
   static readFile(filePath, options) {
@@ -127,12 +127,15 @@ class File {
   }
 
   /**
-   * TODO: document
+   * A convenient shorthand for <code>fs.writeFile</code> wrapped in a <code>Promise</code>.
    *
-   * @param {string} filePath -
-   * @param {Buffer|string|Uint8Array} data -
-   * @param {Object|string} [options] -
-   * @return {Promise.<void, Error>}
+   * This method also ensures that the parent directory for <code>filePath</code> exists before attempting to write to
+   * the file.
+   *
+   * @param {string} filePath - the path of the file to which <code>data</code> is to be written
+   * @param {Buffer|string|Uint8Array} data - the data to be written
+   * @param {Object|string} [options] - the options to be used
+   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>fs.writeFile</code>.
    * @public
    */
   static async writeFile(filePath, data, options) {
