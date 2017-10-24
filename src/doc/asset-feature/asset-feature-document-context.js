@@ -24,8 +24,6 @@
 
 /* eslint "max-params": "off" */
 
-// TODO: complete
-
 const DocumentContext = require('../document-context');
 
 const _dir = Symbol('dir');
@@ -33,7 +31,10 @@ const _fileGroups = Symbol('fileGroups');
 const _previewFile = Symbol('previewFile');
 
 /**
- * TODO: document
+ * An implementation of {@link DocumentContext} for asset feature documents.
+ *
+ * While it's possible to create an instance using the constructor, it's highly recommended that
+ * {@link DocumentContextParser} and/or {@link AssetFeatureDocumentProvider} is used instead.
  *
  * @public
  */
@@ -43,9 +44,9 @@ class AssetFeatureDocumentContext extends DocumentContext {
    * Creates an instance of {@link AssetFeatureDocumentContext}.
    *
    * @param {string} type - the type to be used
-   * @param {string} dir - TODO: document
-   * @param {AssetFeatureDocumentContext~FileGroup[]} fileGroups - TODO: document
-   * @param {?File} previewFile - TODO: document
+   * @param {string} dir - the directory to be used
+   * @param {AssetFeatureDocumentContext~FileGroup[]} fileGroups - the file groups to be used
+   * @param {?File} previewFile - the preview {@link File} to be used (may be <code>null</code>)
    * @param {Object} data - the data to be used
    * @param {?DocumentContext} parent - the parent {@link DocumentContext} to be used (may be <code>null</code> if there
    * is no parent)
@@ -61,9 +62,9 @@ class AssetFeatureDocumentContext extends DocumentContext {
   }
 
   /**
-   * TODO: document
+   * Returns the directory for this {@link AssetFeatureDocumentContext}.
    *
-   * @return {string}
+   * @return {string} The directory.
    * @public
    */
   get dir() {
@@ -71,9 +72,9 @@ class AssetFeatureDocumentContext extends DocumentContext {
   }
 
   /**
-   * TODO: document
+   * Returns the file groups for this {@link AssetFeatureDocumentContext}.
    *
-   * @return {AssetFeatureDocumentContext~FileGroup[]}
+   * @return {AssetFeatureDocumentContext~FileGroup[]} The file groups.
    * @public
    */
   get fileGroups() {
@@ -81,9 +82,9 @@ class AssetFeatureDocumentContext extends DocumentContext {
   }
 
   /**
-   * TODO: document
+   * Returns the preview {@link File} for this {@link AssetFeatureDocumentContext}.
    *
-   * @return {?File}
+   * @return {?File} The preview file or <code>null</code> if unavailable.
    * @public
    */
   get previewFile() {
@@ -111,17 +112,17 @@ class AssetFeatureDocumentContext extends DocumentContext {
 module.exports = AssetFeatureDocumentContext;
 
 /**
- * TODO: document
+ * Contains information on a group of files.
  *
  * @typedef {Object} AssetFeatureDocumentContext~FileGroup
- * @property {AssetFeatureDocumentContext~FileInfo[]} files -
- * @property {File} [optimized] -
+ * @property {AssetFeatureDocumentContext~FileInfo[]} files - The information for all of the files within the group.
+ * @property {File} [optimized] - The optimized {@link File} for the group (may be <code>null</code>).
  */
 
 /**
- * TODO: document
+ * Contains information for a specific file contained within a group.
  *
  * @typedef {Object} AssetFeatureDocumentContext~FileInfo
- * @property {File} file -
- * @property {Size[]} sizes -
+ * @property {File} file - The {@link File}.
+ * @property {Size[]} sizes - The {@link Size} instances based on the images contained within <code>file</code>.
  */
