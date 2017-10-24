@@ -79,7 +79,7 @@ class Brander {
 
       const taskContextParser = new TaskContextParser(config.tasks, config);
       taskContextParser.on('parsed', ({ contexts }) => scope.addAllTasks(contexts));
-      const taskContextRunner = new TaskContextRunner(taskContextParser);
+      const taskContextRunner = new TaskContextRunner(taskContextParser, config);
 
       await taskContextRunner.run();
     }
@@ -94,7 +94,7 @@ class Brander {
       const documentContextParser = new DocumentContextParser(config.docs, config, 'root');
       documentContextParser.on('parsed', ({ contexts }) => scope.addAllDocs(contexts));
       const documentContexts = await documentContextParser.parseRemaining();
-      const documentContextRunner = new DocumentContextRunner(documentContexts);
+      const documentContextRunner = new DocumentContextRunner(documentContexts, config);
 
       await documentContextRunner.run();
     }

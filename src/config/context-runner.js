@@ -25,8 +25,10 @@
 const { EventEmitter } = require('events');
 const pollock = require('pollock');
 
+const _config = Symbol('config');
 const _contextsOrParser = Symbol('contextsOrParser');
-const _forContexts = Symbol('forContexts');
+const _runContext = Symbol('runContext');
+const _runContexts = Symbol('runContexts');
 
 /**
  * Capable of running {@link Context} instances sequentially which can either be provided directly or extracted
@@ -42,12 +44,14 @@ class ContextRunner extends EventEmitter {
    *
    * @param {Context[]|ContextParser} contextsOrParser - the {@link Context} instances to be run or a
    * {@link ContextParser} to be used to extract them
+   * @param {Config} config - the {@link Config} to be used
    * @public
    */
-  constructor(contextsOrParser) {
+  constructor(contextsOrParser, config) {
     super();
 
     this[_contextsOrParser] = contextsOrParser;
+    this[_config] = config;
   }
 
   /**
@@ -64,30 +68,66 @@ class ContextRunner extends EventEmitter {
    * @fires ContextRunner#ran
    * @public
    */
-  run() {
-    return this[_forContexts](async(context) => {
-      const result = await this.runContext(context);
+  async run() {
+    let results;
 
-      /**
-       * The "ran" event is fired immediately after a context has ran.
-       *
-       * @event ContextRunner#ran
-       * @type {Object}
-       * @property {Context} context - The {@link Context} that has ran.
-       * @property {*} result - The result of running <code>context</code>.
-       */
-      this.emit('ran', { context, result });
+    await this.runBefore(this[_config]);
 
-      return result;
-    });
+    try {
+      results = await this[_runContexts]();
+    } finally {
+      await this.runAfter(this[_config]);
+    }
+
+    return results;
   }
 
-  async [_forContexts](func) {
+  /**
+   * Called after all contexts have been ran for the specified <code>config</code>, regardless of whether an error
+   * occurred while doing so.
+   *
+   * This method does nothing by default.
+   *
+   * @param {Config} config - the {@link Config} for which the contexts were ran
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after running all contexts.
+   * @protected
+   */
+  runAfter(config) {}
+
+  /**
+   * Called before any contexts are run for the specified <code>config</code>.
+   *
+   * This method does nothing by default.
+   *
+   * @param {Config} config - the {@link Config} for which the contexts are going to be run
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before running any
+   * contexts.
+   * @protected
+   */
+  runBefore(config) {}
+
+  async [_runContext](context) {
+    const result = await this.runContext(context);
+
+    /**
+     * The "ran" event is fired immediately after a context has ran.
+     *
+     * @event ContextRunner#ran
+     * @type {Object}
+     * @property {Context} context - The {@link Context} that has ran.
+     * @property {*} result - The result of running <code>context</code>.
+     */
+    this.emit('ran', { context, result });
+
+    return result;
+  }
+
+  async [_runContexts]() {
     const results = [];
 
     if (Array.isArray(this[_contextsOrParser])) {
       for (const context of this[_contextsOrParser]) {
-        const result = await func(context);
+        const result = await this[_runContext](context);
 
         results.push(result);
       }
@@ -96,7 +136,7 @@ class ContextRunner extends EventEmitter {
 
       while ((contexts = await this[_contextsOrParser].parseNext()) != null) {
         for (const context of contexts) {
-          const result = await func(context);
+          const result = await this[_runContext](context);
 
           results.push(result);
         }

@@ -24,7 +24,7 @@
 
 const _ = require('lodash');
 const chalk = require('chalk');
-const { convert } = require('convert-svg-to-png');
+const { createConverter } = require('convert-svg-to-png');
 const debug = require('debug')('brander:task:package');
 const pluralize = require('pluralize');
 const toIco = require('to-ico');
@@ -34,6 +34,7 @@ const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
 
+const _converter = Symbol('converter');
 const _readData = Symbol('readData');
 
 // TODO: Support resizing images with non-1:1 aspect ratios
@@ -49,6 +50,23 @@ const _readData = Symbol('readData');
  * @public
  */
 class PackageSVGToICOTask extends Task {
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  beforeAll(config) {
+    this[_converter] = createConverter();
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async afterAll(config) {
+    await this[_converter].destroy();
+    delete this[_converter];
+  }
 
   /**
    * @inheritdoc
@@ -108,7 +126,7 @@ class PackageSVGToICOTask extends Task {
 
       debug('Converting SVG file to PNG: %s', inputFilePath);
 
-      const pngInput = await convert(svgInput, Object.assign(size ? {
+      const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
         baseFile: inputFilePath,
         height: size.height,
         width: size.width

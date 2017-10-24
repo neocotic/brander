@@ -99,7 +99,7 @@ class RootDocumentProvider extends DocumentProvider {
    * @override
    */
   async render(context) {
-    const documentContextRunner = new DocumentContextRunner(context.children);
+    const documentContextRunner = new DocumentContextRunner(context.children, context.config);
     const results = await documentContextRunner.run();
     const output = [];
 

@@ -34,6 +34,54 @@ const pollock = require('pollock');
 class Task {
 
   /**
+   * Called immediately after this {@link Task} has executed the specified <code>context</code>, regardless of whether
+   * an error occurred while doing so.
+   *
+   * This method does nothing by default.
+   *
+   * @param {TaskContext} context - the {@link TaskContext} that was just executed
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after executing
+   * <code>context</code>.
+   * @public
+   */
+  after(context) {}
+
+  /**
+   * Called after all tasks have been executed for the specified <code>config</code>, regardless of whether an error
+   * occurred while doing so.
+   *
+   * This method does nothing by default.
+   *
+   * @param {Config} config - the {@link Config} for which the tasks were executed
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after executing all tasks.
+   * @public
+   */
+  afterAll(config) {}
+
+  /**
+   * Called immediately before this {@link Task} will execute the specified <code>context</code>.
+   *
+   * This method does nothing by default.
+   *
+   * @param {TaskContext} context - the {@link TaskContext} that is going to be executed
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before executing
+   * <code>context</code>.
+   * @public
+   */
+  before(context) {}
+
+  /**
+   * Called before any tasks are executed for the specified <code>config</code>.
+   *
+   * This method does nothing by default.
+   *
+   * @param {Config} config - the {@link Config} for which the tasks are going to be executed
+   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before executing any tasks.
+   * @public
+   */
+  beforeAll(config) {}
+
+  /**
    * @override
    */
   toString() {

@@ -41,6 +41,36 @@ class TaskContextRunner extends ContextRunner {
    * @inheritdoc
    * @override
    */
+  async runAfter(config) {
+    const taskService = TaskService.getInstance();
+    const tasks = await taskService.getAll();
+
+    for (const task of tasks) {
+      try {
+        await task.afterAll(config);
+      } catch (e) {
+        config.logger.warn('Task#afterAll failed for "%s" task: %s', task, e);
+      }
+    }
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async runBefore(config) {
+    const taskService = TaskService.getInstance();
+    const tasks = await taskService.getAll();
+
+    for (const task of tasks) {
+      await task.beforeAll(config);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
   async runContext(context) {
     const taskService = TaskService.getInstance();
     const { type } = context;
@@ -59,7 +89,13 @@ class TaskContextRunner extends ContextRunner {
 
     debug('Executing task: %s', supportingTask);
 
-    await supportingTask.execute(context);
+    await supportingTask.before(context);
+
+    try {
+      await supportingTask.execute(context);
+    } finally {
+      await supportingTask.after(context);
+    }
   }
 
 }
