@@ -120,7 +120,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       sortBy = data.sortBy;
     }
 
-    sortBy = _.trim(sortBy) || '<%= files[0].type %>';
+    sortBy = _.trim(sortBy) || '<%= files[0].file.type %>';
     sortOrder = _.trim(sortOrder).toLowerCase() || 'asc';
 
     return _.orderBy(fileGroups, (fileGroup) => config.evaluate(sortBy, fileGroup), sortOrder);
