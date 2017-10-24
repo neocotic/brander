@@ -60,13 +60,13 @@ class ConvertPNGToICOTask extends Task {
     const sizes = _.map(context.option('sizes', []), 'width');
 
     for (const inputFile of context.inputFiles) {
-      const { width } = await Size.fromImage(inputFile.absolute);
+      const [ realSize ] = await Size.fromImage(inputFile.absolute);
 
       if (_.isEmpty(sizes)) {
-        await this[_execute](inputFile, null, width, context);
+        await this[_execute](inputFile, null, realSize.width, context);
       } else {
         for (const size of sizes) {
-          await this[_execute](inputFile, size, width, context);
+          await this[_execute](inputFile, size, realSize.width, context);
         }
       }
     }

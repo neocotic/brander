@@ -113,7 +113,7 @@ class PackageSVGToICOTask extends Task {
         height: size.height,
         width: size.width
       } : null));
-      const realSize = await Size.fromImage(pngInput);
+      const [ realSize ] = await Size.fromImage(pngInput);
 
       inputs.push({ input: pngInput, size: realSize });
     }

@@ -123,5 +123,5 @@ module.exports = AssetFeatureDocumentContext;
  *
  * @typedef {Object} AssetFeatureDocumentContext~FileInfo
  * @property {File} file -
- * @property {Size} size -
+ * @property {Size[]} sizes -
  */

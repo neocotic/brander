@@ -97,9 +97,9 @@ class PackagePNGToICOTask extends Task {
     const sizes = _.map(context.option('sizes', []), 'width');
 
     for (const inputFile of inputFiles) {
-      const { width } = await Size.fromImage(inputFile.absolute);
+      const [ size ] = await Size.fromImage(inputFile.absolute);
 
-      realSizes.push(width);
+      realSizes.push(size.width);
     }
 
     const sizesLength = sizes.length;

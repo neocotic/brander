@@ -102,7 +102,7 @@ class ConvertSVGToICOTask extends Task {
 
     debug('Converting PNG to ICO');
 
-    const realSize = await Size.fromImage(pngInput);
+    const [ realSize ] = await Size.fromImage(pngInput);
     const output = await toIco([ pngInput ], { sizes: [ realSize.width ] });
 
     debug('Writing converted ICO file: %s', outputFilePath);

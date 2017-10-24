@@ -99,13 +99,16 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       const fileInfos = [];
 
       for (const file of files) {
-        const size = await Size.fromImage(file.absolute);
+        const sizes = await Size.fromImage(file.absolute);
 
-        fileInfos.push({ file, size });
+        fileInfos.push({
+          file,
+          sizes: _.sortBy(sizes, [ 'size.width', 'size.height' ])
+        });
       }
 
       fileGroups.push({
-        files: _.sortBy(fileInfos, [ 'size.width', 'size.height' ]),
+        files: _.sortBy(fileInfos, [ 'sizes[0].width', 'sizes[0].height' ]),
         optimized
       });
     }
@@ -172,7 +175,6 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       {
         header: 'Sizes',
         render(fileGroup) {
-          // FIXME: Support ICO files with multiple sizes per file
           const rowOutput = [];
 
           for (const file of fileGroup.files) {
@@ -181,7 +183,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
             }
 
             rowOutput.push('[');
-            rowOutput.push(file.size);
+            rowOutput.push(file.sizes.join('+'));
             rowOutput.push('](');
 
             const fileURL = context.config.assetURL(file.file.relative);

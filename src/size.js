@@ -44,19 +44,30 @@ const rSize = /^\s*(\d+)\s*([xX]\s*(\d+))?\s*$/;
 class Size {
 
   /**
-   * Creates an instance of {@link Size} with the dimensions read from the specified <code>image</code>.
+   * Creates instances of {@link Size} from the dimensions read from the specified <code>image</code>.
    *
-   * <code>image</code> can either be a <code>Buffer</code> containing image data or the path of an image file.
+   * <code>image</code> can either be a <code>Buffer</code> containing image data or the path of an image file. If
+   * <code>image</code> contains multiple images (e.g. ICO), the returned array will contain a {@link Size} for each
+   * image contained within.
    *
-   * @param {Buffer|string} image - the image whose dimensions are to be captured in the returned {@link Size}
-   * @return {Promise.<Size, Error>} A <code>Promise</code> for the asynchronous image parsing and file reading that is
-   * resolved with the <code>image</code> {@link Size}.
+   * @param {Buffer|string} image - the image whose dimensions are to be captured in the returned {@link Size} instances
+   * @return {Promise.<Size[], Error>} A <code>Promise</code> for the asynchronous image parsing and file reading that
+   * is resolved with a {@link Size} instance for each image contained within <code>image</code>.
    * @public
    */
   static async fromImage(image) {
-    const { height, width } = await sizeOf(image);
+    const { height, images, width } = await sizeOf(image);
+    const sizes = [];
 
-    return new Size(width, height);
+    if (images) {
+      for (const dimensions of images) {
+        sizes.push(new Size(dimensions.width, dimensions.height));
+      }
+    } else {
+      sizes.push(new Size(width, height));
+    }
+
+    return sizes;
   }
 
   /**
