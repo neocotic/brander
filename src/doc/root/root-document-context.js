@@ -22,14 +22,15 @@
 
 'use strict';
 
-// TODO: complete
-
 const DocumentContext = require('../document-context');
 
 const _file = Symbol('file');
 
 /**
- * TODO: document
+ * An implementation of {@link DocumentContext} for root documents.
+ *
+ * While it's possible to create an instance using the constructor, it's highly recommended that
+ * {@link DocumentContextParser} and/or {@link RootDocumentProvider} is used instead.
  *
  * @public
  */
@@ -39,7 +40,7 @@ class RootDocumentContext extends DocumentContext {
    * Creates an instance of {@link RootDocumentContext}.
    *
    * @param {string} type - the type to be used
-   * @param {File} file - TODO: document
+   * @param {File} file - the {@link File} to which the document output is to be written
    * @param {Object} data - the data to be used
    * @param {Config} config - the {@link Config} to be used
    * @public
@@ -59,9 +60,9 @@ class RootDocumentContext extends DocumentContext {
   }
 
   /**
-   * TODO: document
+   * Returns the {@link File} to which the output for this {@link RootDocumentContext} is to be written.
    *
-   * @return {File}
+   * @return {File} The file.
    * @public
    */
   get file() {
