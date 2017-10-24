@@ -56,7 +56,7 @@ const RootDocumentContext = require('./root-document-context');
  *     {
  *       "type": "template",
  *       "title": "Usage",
- *       "file": "_templates/guidelines/intro.md"
+ *       "file": "_templates/guidelines/usage.md"
  *     },
  *     ...
  *   ]
