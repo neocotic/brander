@@ -269,7 +269,8 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
 
   [_renderChild](context, columns) {
     const { fileGroups } = context;
-    const output = [];
+    const title = this.renderTitle(context);
+    const output = title ? [ title ] : [];
 
     if (context.previewFile) {
       debug('Rendering preview file for %s document: %s', context.type, chalk.blue(context.previewFile.relative));

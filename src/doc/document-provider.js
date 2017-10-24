@@ -34,6 +34,20 @@ const pollock = require('pollock');
 class DocumentProvider {
 
   /**
+   * Renders a title for the specified <code>context</code>, where possible.
+   *
+   * The title will only be rendered if <code>context</code> has one. Otherwise, this method will return an empty
+   * string.
+   *
+   * @param {DocumentContext} context - the {@link DocumentContext} whose title is to be rendered
+   * @return {string} The rendered title of <code>context</code> or an empty string if it has none.
+   * @public
+   */
+  renderTitle(context) {
+    return context.title ? `${'#'.repeat(context.depth + 1)} ${context.title}${context.config.lineSeparator}` : '';
+  }
+
+  /**
    * @override
    */
   toString() {

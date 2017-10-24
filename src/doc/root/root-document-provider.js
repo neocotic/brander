@@ -56,7 +56,7 @@ const RootDocumentContext = require('./root-document-context');
  *     {
  *       "type": "template",
  *       "title": "Usage",
- *       "file": "_templates/guidelines/intro.md"
+ *       "file": "_templates/guidelines/usage.md"
  *     },
  *     ...
  *   ]
@@ -149,12 +149,8 @@ class RootDocumentProvider extends DocumentProvider {
 
     const documentContextRunner = new DocumentContextRunner(context.children, config);
     const results = await documentContextRunner.run();
-    const output = [];
-
-    if (context.title) {
-      output.push(`# ${context.title}`);
-      output.push('');
-    }
+    const title = this.renderTitle(context);
+    const output = title ? [ title ] : [];
 
     output.push(..._.compact(results));
 
