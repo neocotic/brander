@@ -105,9 +105,10 @@ class RootDocumentProvider extends DocumentProvider {
 
     if (context.title) {
       output.push(`# ${context.title}`);
+      output.push('');
     }
 
-    output.push(...results);
+    output.push(..._.compact(results));
 
     await File.writeFile(context.file.absolute, output.join(context.config.lineSeparator));
 
