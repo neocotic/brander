@@ -22,8 +22,6 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
 const convert = require('color-convert');
 
@@ -32,28 +30,69 @@ const _name = Symbol('name');
 const _value = Symbol('value');
 
 /**
- * TODO: document
+ * Contains color information based on a specific value in a single color format and supports easy conversion to other
+ * formats.
+ *
+ * No validation is performed to ensure that the value conforms to the format, so it simply may not behave as expected
+ * in such cases.
  *
  * @public
  */
 class Color {
 
   /**
-   * TODO: document
+   * Creates an instance of {@link Color} using the <code>options</code> provided.
    *
-   * @param {Color~Options} options -
+   * An error will occur if the <code>format</code> option is not supported.
+   *
+   * @param {Color~Options} options - the options to be used
+   * @throws {Error} If the <code>format</code> option is not supported.
    * @public
    */
   constructor(options) {
-    this[_format] = _.trim(options.format).toLowerCase() || null;
-    this[_name] = _.trim(options.name) || null;
-    this[_value] = options.value != null ? _.castArray(options.value) : [];
+    const format = _.trim(options.format).toLowerCase();
+    if (!convert[format]) {
+      throw new Error(`Unsupported color format: ${format}`);
+    }
+
+    const name = _.trim(options.name) || null;
+    const value = options.value == null ? [] : _.chain(options.value)
+      .castArray()
+      .map((v) => {
+        return typeof v === 'string' ? _.trim(v) : v;
+      })
+      .value();
+
+    this[_format] = format;
+    this[_name] = name;
+    this[_value] = value;
   }
 
   /**
-   * TODO: document
+   * Converts this {@link Color} into the specified <code>format</code>.
    *
-   * @return {string}
+   * This method simply uses the handy conversion getter for <code>format</code> and creates a new instance of
+   * {@link Color} based on the converted value.
+   *
+   * An error will occur if <code>format</code> is not supported.
+   *
+   * @param {string} format - the format to which this {@link Color} is to be converted
+   * @return {Color} A {@link Color} instance containing the value converted into <code>format</code>.
+   * @throws {Error} If <code>format</code> is not supported.
+   * @public
+   */
+  convert(format) {
+    return new Color({
+      format,
+      name: this.name,
+      value: this[format]
+    });
+  }
+
+  /**
+   * Returns the format for this {@link Color}.
+   *
+   * @return {string} The format.
    * @public
    */
   get format() {
@@ -61,9 +100,12 @@ class Color {
   }
 
   /**
-   * TODO: document
+   * Returns the name of this {@link Color}.
    *
-   * @return {?string}
+   * The name is simply a user-defined identifier and is not necessarily a good/accurate indicator of this
+   * {@link Color}.
+   *
+   * @return {?string} The name or <code>null</code> if unavailable.
    * @public
    */
   get name() {
@@ -71,9 +113,9 @@ class Color {
   }
 
   /**
-   * TODO: document
+   * Returns the value for this {@link Color}.
    *
-   * @return {number[]|string}
+   * @return {number[]|string[]} The value.
    * @public
    */
   get value() {
@@ -87,18 +129,17 @@ Object.keys(convert).forEach((format) => {
     configurable: true,
     enumerable: true,
     get() {
+      // Return original value as color-convert does not expose convert methods for identical formats understandably
       if (this.format === format) {
         return this.value;
       }
 
-      if (!convert[this.format]) {
-        throw new Error(`Unsupported color format: ${this.format}`);
-      }
       if (typeof convert[this.format][format] !== 'function') {
         throw new Error(`Unsupported color format: ${format}`);
       }
 
       let value = convert[this.format][format](...this.value);
+      // Sometimes hex values don't contain hash prefix for some reason
       if (format === 'hex' && !value.startsWith('#')) {
         value = `#${value}`;
       }
@@ -111,10 +152,10 @@ Object.keys(convert).forEach((format) => {
 module.exports = Color;
 
 /**
- * TODO: document
+ * The options that can be passed to the {@link Color} constructor.
  *
  * @typedef {Object} Color~Options
- * @property {string} format -
- * @property {string} [name] -
- * @property {number[]|string} value -
+ * @property {string} format - The format.
+ * @property {string} [name] - A user-defined name.
+ * @property {number|number[]|string|string[]} value - The value.
  */
