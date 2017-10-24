@@ -24,4 +24,42 @@
 
 'use strict';
 
-// TODO: Complete
+/* eslint-disable no-process-exit */
+
+const debug = require('debug');
+const program = require('commander');
+
+const Brander = require('../src/brander');
+const ConfigLoader = require('../src/config/config-loader');
+const Logger = require('../src/logger');
+const { version } = require('../package.json');
+
+(async() => {
+  program
+    .version(version)
+    .usage('[options]')
+    .option('-c, --config <path>', 'use configuration from this file')
+    .option('-d, --debug', 'enable debug level logging')
+    .option('--no-color', 'disables color output')
+    .option('--only-assets', 'only generate assets')
+    .option('--only-docs', 'only generate documentation')
+    .on('option:debug', () => debug.enable('brander*'))
+    .parse(process.argv);
+
+  const logger = new Logger(process.stdout, process.stderr);
+
+  try {
+    const configLoader = new ConfigLoader({ logger });
+    const config = await configLoader.load(program.config);
+    const brander = new Brander(config);
+
+    await brander.generate({
+      skipAssets: program.onlyDocs,
+      skipDocs: program.onlyAssets
+    });
+  } catch (e) {
+    logger.error(e.stack);
+
+    process.exit(1);
+  }
+})();

@@ -7,17 +7,18 @@
     888   d88P 888    888  888 888  888 Y88b 888 Y8b.     888
     8888888P"  888    "Y888888 888  888  "Y88888  "Y8888  888
 
-[Brander](https://github.com/NotNinja/brander) is a tool for generating branding assets for your project or
-organisation.
+[Brander](https://github.com/NotNinja/brander) is a tool for generating branding assets and documentation for your
+project or organisation.
 
 [![Build Status](https://img.shields.io/travis/NotNinja/brander/develop.svg?style=flat-square)](https://travis-ci.org/NotNinja/brander)
+[![Coverage](https://img.shields.io/codecov/c/github/NotNinja/brander/develop.svg?style=flat-square)](https://codecov.io/gh/NotNinja/brander)
 [![Dependency Status](https://img.shields.io/david/NotNinja/brander.svg?style=flat-square)](https://david-dm.org/NotNinja/brander)
 [![Dev Dependency Status](https://img.shields.io/david/dev/NotNinja/brander.svg?style=flat-square)](https://david-dm.org/NotNinja/brander?type=dev)
 [![License](https://img.shields.io/npm/l/brander.svg?style=flat-square)](https://github.com/NotNinja/brander/blob/master/LICENSE.md)
 [![Release](https://img.shields.io/npm/v/brander.svg?style=flat-square)](https://www.npmjs.com/package/brander)
 
 * [Install](#install)
-* [API](#api)
+* [Usage](#usage)
 * [Bugs](#bugs)
 * [Contributors](#contributors)
 * [License](#license)
@@ -30,15 +31,24 @@ Install using [npm](https://www.npmjs.com):
 $ npm install --save brander
 ```
 
-## API
+Alternatively, if you're wanting to use `brander` command, you'll probably prefer to install it globally:
 
-TODO: Complete
+``` bash
+$ npm install --global brander
+```
+
+You'll need to have at least [Node.js](https://nodejs.org) 8 or newer.
+
+## Usage
+
+You can find all the documentation required to configure and use Brander to generate assets and docs below:
+
+https://github.com/NotNinja/brander/wiki
 
 ## Bugs
 
 If you have any problems with Brander or would like to see changes currently in development you can do so
 [here](https://github.com/NotNinja/brander/issues).
-
 
 ## Contributors
 

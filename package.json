@@ -21,28 +21,46 @@
     "url": "https://github.com/NotNinja/brander.git"
   },
   "dependencies": {
-    "async": "^2.5.0",
+    "archiver": "^2.1.0",
+    "chalk": "^2.3.0",
+    "color-convert": "^1.9.0",
     "commander": "^2.11.0",
-    "del": "^3.0.0",
+    "convert-svg-to-png": "^0.1.0",
+    "debug": "^3.1.0",
     "glob": "^7.1.2",
+    "hosted-git-info": "github:neocotic/hosted-git-info#browsefile",
+    "image-size": "^0.6.1",
+    "lodash": "^4.17.4",
+    "mime": "^2.0.3",
     "mkdirp": "^0.5.1",
-    "png-to-ico": "^1.0.3",
-    "svg2png": "^4.1.1",
-    "svgo": "^0.7.2"
+    "pkg-up": "^2.0.0",
+    "pluralize": "^7.0.0",
+    "pollock": "^0.1.0",
+    "rimraf": "^2.6.2",
+    "strip-json-comments": "^2.0.1",
+    "svgo": "^0.7.2",
+    "to-ico": "^1.1.5"
   },
   "devDependencies": {
-    "eslint": "^4.7.1",
-    "eslint-config-notninja": "^0.2.3"
+    "chai": "^4.1.2",
+    "codecov": "^3.0.0",
+    "eslint": "^4.9.0",
+    "eslint-config-notninja": "^0.2.3",
+    "istanbul": "^0.4.5",
+    "mocha": "^4.0.1",
+    "sinon": "^4.0.1"
   },
   "bin": {
     "brander": "bin/brander"
   },
   "main": "src/brander.js",
   "scripts": {
-    "ci": "npm run test",
-    "test": "eslint \"src/**/*.js\""
+    "report-coverage": "istanbul cover _mocha --report lcovonly -- -R list \"test/**/*.spec.js\" && codecov",
+    "pretest": "eslint \"src/**/*.js\" \"test/**/*.js\"",
+    "test": "istanbul cover _mocha -- -R list \"test/**/*.spec.js\"",
+    "posttest": "istanbul check-coverage"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   }
 }
