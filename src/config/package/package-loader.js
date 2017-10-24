@@ -22,6 +22,7 @@
 
 'use strict';
 
+const chalk = require('chalk');
 const debug = require('debug')('brander:config');
 const pkgUp = require('pkg-up');
 
@@ -69,13 +70,13 @@ class PackageLoader {
   async load(filePath) {
     const packageFilePath = await this[_getPackageFilePath](filePath);
     if (packageFilePath) {
-      debug('Loading package file found at path: %s', packageFilePath);
+      debug('Loading package file found at path: %s', chalk.blue(packageFilePath));
 
       try {
         const contents = await File.readFile(filePath, 'utf8');
         const data = JSON.parse(contents);
         if (!data) {
-          debug('Package file contains no data: %s', packageFilePath);
+          debug('Package file contains no data: %s', chalk.blue(packageFilePath));
         }
 
         return new Package({
@@ -87,7 +88,7 @@ class PackageLoader {
       }
     }
 
-    debug('Unable to find package file for path: %s', filePath);
+    debug('Unable to find package file for path: %s', chalk.blue(filePath));
 
     return null;
   }
@@ -97,7 +98,7 @@ class PackageLoader {
       return this[_cache].get(filePath);
     }
 
-    debug('Searching for package file for path: %s', filePath);
+    debug('Searching for package file for path: %s', chalk.blue(filePath));
 
     const packageFilePath = await pkgUp(filePath);
     this[_cache].set(filePath, packageFilePath);

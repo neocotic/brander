@@ -90,32 +90,33 @@ class RootDocumentProvider extends DocumentProvider {
       throw new Error(`"format" configuration unsupported: ${format}`);
     }
 
-    debug('Applying "%s" format to %s document: %s', format, type, fileName);
+    debug('Applying "%s" format to %s document: %s', format, type, chalk.blue(fileName));
 
     const file = new File(dirPath, fileName, format, config)
       .evaluate();
     const rootContext = new RootDocumentContext(type, file, data, config);
 
-    debug('Creating context for %s document: %s', type, fileName);
+    debug('Creating context for %s document: %s', type, chalk.blue(fileName));
 
     const footer = config.option('docs.footer');
     const header = config.option('docs.header');
     const sections = _.clone(rootContext.get('sections')) || [];
     if (header) {
-      debug('Header will be applied to %s document: %s', type, fileName);
+      debug('Header will be applied to %s document: %s', type, chalk.blue(fileName));
 
       sections.unshift(header);
     }
     if (footer) {
-      debug('Footer will be applied to %s document: %s', type, fileName);
+      debug('Footer will be applied to %s document: %s', type, chalk.blue(fileName));
 
       sections.push(footer);
     }
 
-    debug('%d %s found for %s document: %s', sections.length, pluralize('child', sections.length), type, fileName);
+    debug('%d %s found for %s document: %s', sections.length, pluralize('child', sections.length), type,
+      chalk.blue(fileName));
 
     if (!_.isEmpty(sections)) {
-      debug('Creating child contexts for %s document: %s', type, fileName);
+      debug('Creating child contexts for %s document: %s', type, chalk.blue(fileName));
 
       const documentContextParser = new DocumentContextParser(sections, config, null, rootContext);
       const childContexts = await documentContextParser.parseRemaining();
@@ -144,7 +145,7 @@ class RootDocumentProvider extends DocumentProvider {
 
     config.logger.log('Rendering %s document file: %s', type, chalk.blue(file.relative));
 
-    debug('Rendering child contexts for %s document: %s', type, file.name);
+    debug('Rendering child contexts for %s document: %s', type, chalk.blue(file.name));
 
     const documentContextRunner = new DocumentContextRunner(context.children, config);
     const results = await documentContextRunner.run();

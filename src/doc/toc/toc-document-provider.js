@@ -25,6 +25,7 @@
 /* eslint "max-params": "off" */
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:doc:toc');
 const pluralize = require('pluralize');
 
@@ -103,7 +104,7 @@ class TOCDocumentProvider extends DocumentProvider {
     const titleMap = new Map();
 
     for (const rootContext of this[_getDocumentContexts](context)) {
-      debug('Diving into %s document: %s', rootContext.type, rootContext.file.name);
+      debug('Diving into %s document: %s', rootContext.type, chalk.blue(rootContext.file.name));
 
       output.push(...this[_renderAtDepth](rootContext, [ rootContext ], 0, index++, minDepth, maxDepth, titleMap));
     }

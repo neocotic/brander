@@ -106,11 +106,11 @@ class ConvertSVGToICOTask extends Task {
       .evaluate({ file: inputFile, size });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading SVG file to be converted to ICO: %s', inputFilePath);
+    debug('Reading SVG file to be converted to ICO: %s', chalk.blue(inputFilePath));
 
     const svgInput = await File.readFile(inputFilePath);
 
-    debug('Converting SVG file to PNG: %s', inputFilePath);
+    debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
 
     const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
       baseFile: inputFilePath,
@@ -123,7 +123,7 @@ class ConvertSVGToICOTask extends Task {
     const [ realSize ] = await Size.fromImage(pngInput);
     const output = await toIco([ pngInput ], { sizes: [ realSize.width ] });
 
-    debug('Writing converted ICO file: %s', outputFilePath);
+    debug('Writing converted ICO file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 

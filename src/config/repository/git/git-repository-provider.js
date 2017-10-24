@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:config:repository:git');
 // TODO: Replace workaround using neocotic/hosted-git-info#browsefile once npm/hosted-git-info#28 has been implemented
 const hostedGitInfo = require('hosted-git-info');
@@ -88,11 +89,11 @@ class GitRepositoryProvider extends RepositoryProvider {
    * @override
    */
   async resolveURL(dirPath) {
-    debug('Resolving Git repository URL from directory: %s', dirPath);
+    debug('Resolving Git repository URL from directory: %s', chalk.blue(dirPath));
 
     const remotes = await this[_getRemoteNames](dirPath);
     if (_.isEmpty(remotes)) {
-      debug('No remotes found in Git repository at directory: %s', dirPath);
+      debug('No remotes found in Git repository at directory: %s', chalk.blue(dirPath));
 
       return null;
     }
@@ -109,7 +110,7 @@ class GitRepositoryProvider extends RepositoryProvider {
 
     const remoteUrl = await this[_getRemoteURL](remote, dirPath);
     if (remoteUrl) {
-      debug('Git repository URL resolved using "%s" remote: %s', remote, remoteUrl);
+      debug('Git repository URL resolved using "%s" remote: %s', remote, chalk.cyan(remoteUrl));
     }
 
     return remoteUrl;
@@ -117,7 +118,7 @@ class GitRepositoryProvider extends RepositoryProvider {
 
   [_execGit](dirPath, ...args) {
     return new Promise((resolve, reject) => {
-      debug('Executing git command with args %j in directory: %s', args, dirPath);
+      debug('Executing git command with args %j in directory: %s', args, chalk.blue(dirPath));
 
       const git = spawn('git', args, { cwd: dirPath });
       let err = '';

@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:doc:asset-feature');
 const path = require('path');
 const pluralize = require('pluralize');
@@ -271,7 +272,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     const output = [];
 
     if (context.previewFile) {
-      debug('Rendering preview file for %s document: %s', context.type, context.previewFile.relative);
+      debug('Rendering preview file for %s document: %s', context.type, chalk.blue(context.previewFile.relative));
 
       output.push(this[_renderPreview](context));
       output.push('');

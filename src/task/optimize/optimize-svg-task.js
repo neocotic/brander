@@ -86,11 +86,11 @@ class OptimizeSVGTask extends Task {
       .evaluate({ file: inputFile });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading SVG file to be optimized: %s', inputFilePath);
+    debug('Reading SVG file to be optimized: %s', chalk.blue(inputFilePath));
 
     const input = await File.readFile(inputFilePath, 'utf8');
 
-    debug('Optimizing SVG file: %s', inputFilePath);
+    debug('Optimizing SVG file: %s', chalk.blue(inputFilePath));
 
     const output = await new Promise((resolve, reject) => {
       this[_svgo].optimize(input, (result) => {
@@ -102,7 +102,7 @@ class OptimizeSVGTask extends Task {
       });
     });
 
-    debug('Writing optimized SVG file: %s', outputFilePath);
+    debug('Writing optimized SVG file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 

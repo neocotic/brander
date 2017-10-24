@@ -96,7 +96,7 @@ class PackageSVGToICOTask extends Task {
 
     const output = await toIco(inputs, { sizes });
 
-    debug('Writing packaged ICO file: %s', outputFilePath);
+    debug('Writing packaged ICO file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 
@@ -120,11 +120,11 @@ class PackageSVGToICOTask extends Task {
       const inputFilePath = inputFile.absolute;
       const size = _.nth(sizes, inputs.length);
 
-      debug('Reading SVG file to be packaged in ICO: %s', inputFilePath);
+      debug('Reading SVG file to be packaged in ICO: %s', chalk.blue(inputFilePath));
 
       const svgInput = await File.readFile(inputFilePath);
 
-      debug('Converting SVG file to PNG: %s', inputFilePath);
+      debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
 
       const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
         baseFile: inputFilePath,

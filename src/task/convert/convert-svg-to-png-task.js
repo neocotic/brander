@@ -100,11 +100,11 @@ class ConvertSVGToPNGTask extends Task {
       .evaluate({ file: inputFile, size });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading SVG file to be converted to PNG: %s', inputFilePath);
+    debug('Reading SVG file to be converted to PNG: %s', chalk.blue(inputFilePath));
 
     const input = await File.readFile(inputFilePath);
 
-    debug('Converting SVG file to PNG: %s', inputFilePath);
+    debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
 
     const output = await this[_converter].convert(input, Object.assign(size ? {
       baseFile: inputFilePath,
@@ -112,7 +112,7 @@ class ConvertSVGToPNGTask extends Task {
       width: size.width
     } : null));
 
-    debug('Writing converted PNG file: %s', outputFilePath);
+    debug('Writing converted PNG file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 

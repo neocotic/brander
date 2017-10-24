@@ -23,6 +23,7 @@
 'use strict';
 
 const _ = require('lodash');
+const chalk = require('chalk');
 const debug = require('debug')('brander:config:repository');
 
 const GitRepositoryProvider = require('./git/git-repository-provider');
@@ -136,13 +137,13 @@ class RepositoryService {
       return null;
     }
 
-    debug('Parsing "%s" repository URL: %s', type, url);
+    debug('Parsing "%s" repository URL: %s', type, chalk.cyan(url));
 
     const repository = provider.parseURL(url);
     if (repository) {
-      debug('Parsed "%s" repository from URL: %s', type, url);
+      debug('Parsed "%s" repository from URL: %s', type, chalk.cyan(url));
     } else {
-      debug('Repository unavailable as unable to parse "%s" repository from URL: %s', type, url);
+      debug('Repository unavailable as unable to parse "%s" repository from URL: %s', type, chalk.cyan(url));
     }
 
     return repository;
@@ -183,7 +184,7 @@ class RepositoryService {
     const { type, url } = info;
 
     if (url) {
-      debug('Configured repository URL found: %s', url);
+      debug('Configured repository URL found: %s', chalk.cyan(url));
 
       return info;
     }
@@ -198,13 +199,15 @@ class RepositoryService {
 
       const resolvedInfo = await this[_resolveInfo](provider, dirPath);
       if (!resolvedInfo) {
-        debug('Repository info unavailable as unable to resolve "%s" repository URL from directory: %s', type, dirPath);
+        debug('Repository info unavailable as unable to resolve "%s" repository URL from directory: %s', type,
+          chalk.blue(dirPath));
       }
 
       return resolvedInfo;
     }
 
-    debug('Attempting to resolve from all known types as repository type unknown for directory: %s', dirPath);
+    debug('Attempting to resolve from all known types as repository type unknown for directory: %s',
+      chalk.blue(dirPath));
 
     for (const provider of this[_providers]) {
       const resolvedInfo = await this[_resolveInfo](provider, dirPath);
@@ -213,7 +216,8 @@ class RepositoryService {
       }
     }
 
-    debug('Repository info unavailable as unable to resolve repository URL of any type from directory: %s', dirPath);
+    debug('Repository info unavailable as unable to resolve repository URL of any type from directory: %s',
+      chalk.blue(dirPath));
 
     return null;
   }
@@ -246,7 +250,7 @@ class RepositoryService {
     const type = provider.getType();
     let url;
 
-    debug('Resolving "%s" repository URL from directory: %s', type, dirPath);
+    debug('Resolving "%s" repository URL from directory: %s', type, chalk.blue(dirPath));
 
     try {
       url = await provider.resolveURL(dirPath);
@@ -255,12 +259,12 @@ class RepositoryService {
     }
 
     if (url) {
-      debug('Resolved "%s" repository URL: %s', type, url);
+      debug('Resolved "%s" repository URL: %s', type, chalk.cyan(url));
 
       return { type, url };
     }
 
-    debug('Unable to resolve "%s" repository URL from directory: %s', type, dirPath);
+    debug('Unable to resolve "%s" repository URL from directory: %s', type, chalk.blue(dirPath));
 
     return null;
   }

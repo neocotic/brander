@@ -87,18 +87,18 @@ class ConvertPNGToICOTask extends Task {
       .evaluate({ file: inputFile, size });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading PNG file to be converted to ICO: %s', inputFilePath);
+    debug('Reading PNG file to be converted to ICO: %s', chalk.blue(inputFilePath));
 
     const input = await File.readFile(inputFilePath);
 
-    debug('Converting PNG file to ICO: %s', inputFilePath);
+    debug('Converting PNG file to ICO: %s', chalk.blue(inputFilePath));
 
     const output = await toIco([ input ], {
       resize: size != null && size !== realSize,
       sizes: [ size != null ? size : realSize ]
     });
 
-    debug('Writing converted ICO file: %s', outputFilePath);
+    debug('Writing converted ICO file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 

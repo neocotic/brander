@@ -77,7 +77,7 @@ class PackageAnyToZIPTask extends Task {
     const level = context.option('compression', zlib.constants.Z_DEFAULT_COMPRESS);
     const outputFilePath = outputFile.absolute;
 
-    debug('Creating ZIP file for files: %s', outputFilePath);
+    debug('Creating ZIP file for files: %s', chalk.blue(outputFilePath));
 
     const output = fs.createWriteStream(outputFilePath);
     const archive = archiver('zip', {
@@ -89,11 +89,11 @@ class PackageAnyToZIPTask extends Task {
     for (const inputFile of inputFiles) {
       const inputFilePath = inputFile.absolute;
 
-      debug('Reading file to be packaged in ZIP: %s', inputFilePath);
+      debug('Reading file to be packaged in ZIP: %s', chalk.blue(inputFilePath));
 
       const input = await File.readFile(inputFilePath);
 
-      debug('Adding file to ZIP package: %s', inputFilePath);
+      debug('Adding file to ZIP package: %s', chalk.blue(inputFilePath));
 
       archive.append(input, { name: inputFile.relative });
     }

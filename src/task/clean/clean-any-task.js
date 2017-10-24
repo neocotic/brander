@@ -52,7 +52,7 @@ class CleanAnyTask extends Task {
     for (const inputFile of context.inputFiles) {
       const inputFilePath = inputFile.absolute;
 
-      debug('Removing file: %s', inputFilePath);
+      debug('Removing file: %s', chalk.blue(inputFilePath));
 
       await File.deleteFile(inputFilePath, { glob: false });
 

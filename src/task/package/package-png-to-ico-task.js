@@ -75,7 +75,7 @@ class PackagePNGToICOTask extends Task {
     const options = await this[_getOptions](context);
     const output = await toIco(inputs, options);
 
-    debug('Writing packaged ICO file: %s', outputFilePath);
+    debug('Writing packaged ICO file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 
@@ -118,7 +118,7 @@ class PackagePNGToICOTask extends Task {
     for (const inputFile of inputFiles) {
       const inputFilePath = inputFile.absolute;
 
-      debug('Reading PNG file to be packaged in ICO: %s', inputFilePath);
+      debug('Reading PNG file to be packaged in ICO: %s', chalk.blue(inputFilePath));
 
       const input = await File.readFile(inputFilePath);
 

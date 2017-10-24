@@ -22,6 +22,7 @@
 
 'use strict';
 
+const chalk = require('chalk');
 const debug = require('debug')('brander:config');
 const path = require('path');
 const stripJsonComments = require('strip-json-comments');
@@ -128,7 +129,7 @@ class ConfigLoader {
 
     filePath = path.resolve(this[_baseDir], filePath);
 
-    debug('Loading configuration file: %s', filePath);
+    debug('Loading configuration file: %s', chalk.blue(filePath));
 
     let data;
     if (this.isModule(filePath)) {
@@ -143,7 +144,7 @@ class ConfigLoader {
       throw new Error(`Configuration file contains no data: ${filePath}`);
     }
 
-    debug('Successfully loaded configuration file: %s', filePath);
+    debug('Successfully loaded configuration file: %s', chalk.blue(filePath));
 
     const pkg = await this[_packageLoader].load(filePath);
     const repositoryService = RepositoryService.getInstance();
@@ -175,7 +176,7 @@ class ConfigLoader {
    * @protected
    */
   parse(contents, filePath) {
-    debug('Parsing configuration file: %s', filePath);
+    debug('Parsing configuration file: %s', chalk.blue(filePath));
 
     const extension = path.extname(filePath) || '.json';
 
