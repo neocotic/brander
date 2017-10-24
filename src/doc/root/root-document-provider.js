@@ -104,8 +104,7 @@ class RootDocumentProvider extends DocumentProvider {
     const output = [];
 
     if (context.title) {
-      output.push(`${'#'.repeat(context.depth + 1)} ${context.title}`);
-      output.push('');
+      output.push(`# ${context.title}`);
     }
 
     output.push(...results);
