@@ -22,12 +22,11 @@
 
 'use strict';
 
-// TODO: complete
-
 const pollock = require('pollock');
 
 /**
- * TODO: document
+ * Responsible for creating {@link DocumentContext} instances of an associated type based on configuration data and
+ * rendering output based on those instances to generate documentation.
  *
  * @public
  * @abstract
@@ -44,14 +43,22 @@ class DocumentProvider {
 }
 
 /**
- * TODO: document
+ * Creates an instance of {@link DocumentContext} based on the information provided.
+ *
+ * It is <i>always</i> recommended that {@link DocumentProvider#getType} is called to be compared to the type of
+ * <code>context</code> before calling this method to ensure that this {@link DocumentProvider} supports the document
+ * type.
+ *
+ * An error will occur if there is a problem creating the {@link DocumentContext}.
  *
  * All implementations of {@link DocumentProvider} <b>must</b> override this method.
  *
- * @param {Object} data -
- * @param {?DocumentContext} parent -
- * @param {Config} config -
- * @return {Promise.<DocumentContext, Error>}
+ * @param {Object} data - the data to be used
+ * @param {?DocumentContext} parent - the parent {@link DocumentContext} to be used (may be <code>null</code> if there
+ * is no parent)
+ * @param {Config} config - the {@link Config} to be used
+ * @return {Promise.<DocumentContext, Error>} A <code>Promise</code> for any asynchronous work that is resolved with the
+ * newly created {@link DocumentContext}.
  * @public
  * @abstract
  * @memberof DocumentProvider#
@@ -60,11 +67,18 @@ class DocumentProvider {
 pollock(DocumentProvider, 'createContext', { promise: true });
 
 /**
- * TODO: document
+ * Returns the type of this {@link DocumentProvider}.
+ *
+ * The type is used to categorize documents so that they can be easily and quickly looked up. This
+ * {@link DocumentProvider} should only produce and render {@link DocumentContext} instances of the same type, however,
+ * they may contain children of varying types.
+ *
+ * It is <i>always</i> recommended to called this method before calling {@link DocumentProvider#createContext} and
+ * {@link DocumentProvider#render} to ensure that this {@link DocumentProvider} supports the document type.
  *
  * All implementations of {@link DocumentProvider} <b>must</b> override this method.
  *
- * @return {string}
+ * @return {string} The type.
  * @public
  * @abstract
  * @memberof DocumentProvider#
@@ -73,12 +87,22 @@ pollock(DocumentProvider, 'createContext', { promise: true });
 pollock(DocumentProvider, 'getType');
 
 /**
- * TODO: document
+ * Renders the specified <code>context</code>.
+ *
+ * If <code>context</code> has any children, this {@link DocumentProvider} is also responsible for ensuring that they
+ * are also rendered accordingly.
+ *
+ * It is <i>always</i> recommended that {@link DocumentProvider#getType} is called to be compared to the type of
+ * <code>context</code> before calling this method to ensure that this {@link DocumentProvider} supports the document
+ * type.
+ *
+ * An error will occur if a problem arises during rendering.
  *
  * All implementations of {@link DocumentProvider} <b>must</b> override this method.
  *
- * @param {DocumentContext} context -
- * @return {Promise.<string, Error>}
+ * @param {DocumentContext} context - the {@link DocumentContext} to be rendered
+ * @return {Promise.<string, Error>} A <code>Promise</code> for the asynchronous rendering that is resolved with the
+ * output string.
  * @public
  * @abstract
  * @memberof DocumentProvider#
