@@ -22,9 +22,10 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('brander:doc:root');
+const pluralize = require('pluralize');
 
 const DocumentContextParser = require('../document-context-parser');
 const DocumentContextRunner = require('../document-context-runner');
@@ -32,10 +33,35 @@ const DocumentProvider = require('../document-provider');
 const File = require('../../file');
 const RootDocumentContext = require('./root-document-context');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "root" type.
+ *
+ * <code>RootDocumentProvider</code> instances will handle creating and rendering all {@link DocumentContext} children
+ * and writing the rendered output to the configured file.
+ *
+ * Here's a basic example of the configuration for a root document:
+ *
+ * <pre>
+ * {
+ *   "doc": "guidelines.md",
+ *   "title": "Guidelines",
+ *   "sections": [
+ *     {
+ *       "type": "template",
+ *       "file": "_templates/guidelines/intro.md"
+ *     },
+ *     {
+ *       "type": "toc"
+ *     },
+ *     {
+ *       "type": "template",
+ *       "title": "Usage",
+ *       "file": "_templates/guidelines/intro.md"
+ *     },
+ *     ...
+ *   ]
+ * }
+ * </pre>
  *
  * @public
  */
@@ -46,8 +72,10 @@ class RootDocumentProvider extends DocumentProvider {
    * @override
    */
   async createContext(data, parent, config) {
+    const type = this.getType();
+
     if (parent) {
-      throw new Error('"root" document cannot have parent');
+      throw new Error(`"${type}" document cannot have parent`);
     }
 
     const dirPath = config.resolve(_.trim(data.dir) || config.docsDir);
@@ -62,21 +90,33 @@ class RootDocumentProvider extends DocumentProvider {
       throw new Error(`"format" configuration unsupported: ${format}`);
     }
 
+    debug('Applying "%s" format to %s document: %s', format, type, fileName);
+
     const file = new File(dirPath, fileName, format, config)
       .evaluate();
-    const rootContext = new RootDocumentContext(this.getType(), file, data, config);
+    const rootContext = new RootDocumentContext(type, file, data, config);
+
+    debug('Creating context for %s document: %s', type, fileName);
 
     const footer = config.option('docs.footer');
     const header = config.option('docs.header');
     const sections = _.clone(rootContext.get('sections')) || [];
     if (header) {
+      debug('Header will be applied to %s document: %s', type, fileName);
+
       sections.unshift(header);
     }
     if (footer) {
+      debug('Footer will be applied to %s document: %s', type, fileName);
+
       sections.push(footer);
     }
 
+    debug('%d %s found for %s document: %s', sections.length, pluralize('child', sections.length), type, fileName);
+
     if (!_.isEmpty(sections)) {
+      debug('Creating child contexts for %s document: %s', type, fileName);
+
       const documentContextParser = new DocumentContextParser(sections, config, null, rootContext);
       const childContexts = await documentContextParser.parseRemaining();
 
@@ -99,7 +139,14 @@ class RootDocumentProvider extends DocumentProvider {
    * @override
    */
   async render(context) {
-    const documentContextRunner = new DocumentContextRunner(context.children, context.config);
+    const { config, file } = context;
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document file: %s', type, chalk.blue(file.relative));
+
+    debug('Rendering child contexts for %s document: %s', type, file.name);
+
+    const documentContextRunner = new DocumentContextRunner(context.children, config);
     const results = await documentContextRunner.run();
     const output = [];
 
@@ -110,7 +157,9 @@ class RootDocumentProvider extends DocumentProvider {
 
     output.push(..._.compact(results));
 
-    await File.writeFile(context.file.absolute, output.join(context.config.lineSeparator));
+    config.logger.log('Writing rendered output to %s document file: %s', type, chalk.blue(file.relative));
+
+    await File.writeFile(file.absolute, output.join(config.lineSeparator));
 
     return output;
   }

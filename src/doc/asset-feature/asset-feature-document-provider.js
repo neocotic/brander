@@ -22,10 +22,10 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
+const debug = require('debug')('brander:doc:asset-feature');
 const path = require('path');
+const pluralize = require('pluralize');
 
 const AssetFeatureDocumentContext = require('./asset-feature-document-context');
 const DocumentContext = require('../document-context');
@@ -42,10 +42,31 @@ const _renderPreview = Symbol('renderPreview');
 const _renderRow = Symbol('renderRow');
 const _renderSeparator = Symbol('renderSeparator');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "asset-feature" type.
+ *
+ * One of the most complex and yet, hopefully, simple implementations to use that showcases brand assets.
+ *
+ * Here's a basic example of the configuration for a asset-feature document:
+ *
+ * <pre>
+ * {
+ *   "type": "asset-feature",
+ *   "dir": "logo/&#42;/",
+ *   "preview": "!(&#42;.min).svg",
+ *   "files": [
+ *     "&#42;.png",
+ *     [ "!(&#42;.min).svg", "&#42;.min.svg" ]
+ *   ],
+ *   "titles": {
+ *     "my-brand-logo.svg": "Logo",
+ *     "my-brand-logo-fill.svg": "Logo (Inverted)"
+ *   }
+ * }
+ * </pre>
+ *
+ * When an item within the "files" configuration is an array, the second item within that array is treated as an
+ * optimized version and its link is displayed in a separate column.
  *
  * @public
  */
@@ -134,14 +155,24 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
    * @override
    */
   async createContext(data, parent, config) {
+    const type = this.getType();
+
+    debug('Creating context for %s document...', type);
+
     const childContexts = [];
     const dirPaths = await AssetFeatureDocumentProvider[_getDirPaths](data, config);
-    const mainContext = new DocumentContext(this.getType(), data, parent, config);
+    const mainContext = new DocumentContext(type, data, parent, config);
+
+    debug('Creating child contexts for %s document...', type);
 
     for (const dirPath of dirPaths) {
       const [ previewFile ] = await AssetFeatureDocumentProvider[_findFiles](dirPath, data.preview, config);
       const fileGroups = await AssetFeatureDocumentProvider[_getFileGroups](dirPath, data, config);
-      const context = new AssetFeatureDocumentContext(`${this.getType()}#child`, dirPath, fileGroups, previewFile, data,
+
+      debug('Creating child context for %s document containing %d file %s', type, fileGroups.length, pluralize('group',
+        fileGroups.length));
+
+      const context = new AssetFeatureDocumentContext(`${type}#child`, dirPath, fileGroups, previewFile, data,
         mainContext, config);
 
       childContexts.push(context);
@@ -165,6 +196,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
+    const { config } = context;
     const columns = [
       {
         header: 'Type',
@@ -186,7 +218,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
             rowOutput.push(file.sizes.join('+'));
             rowOutput.push('](');
 
-            const fileURL = context.config.assetURL(file.file.relative);
+            const fileURL = config.assetURL(file.file.relative);
 
             rowOutput.push(fileURL);
             rowOutput.push(')');
@@ -206,7 +238,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
             rowOutput.push(optimized.base());
             rowOutput.push('](');
 
-            const fileURL = context.config.assetURL(optimized.relative);
+            const fileURL = config.assetURL(optimized.relative);
 
             rowOutput.push(fileURL);
             rowOutput.push(')');
@@ -217,6 +249,11 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       }
     ];
     const output = [];
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document...', type);
+
+    debug('Rendering child contexts for %s document...', type);
 
     for (const childContext of context.children) {
       if (!_.isEmpty(output)) {
@@ -226,21 +263,28 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       output.push(...this[_renderChild](childContext, columns));
     }
 
-    return output.join(context.config.lineSeparator);
+    return output.join(config.lineSeparator);
   }
 
   [_renderChild](context, columns) {
+    const { fileGroups } = context;
     const output = [];
 
     if (context.previewFile) {
+      debug('Rendering preview file for %s document: %s', context.type, context.previewFile.relative);
+
       output.push(this[_renderPreview](context));
       output.push('');
     }
 
+    debug('Rendering %d %s for %s document', columns.length, pluralize('header', columns.length), context.type);
+
     output.push(this[_renderHeaders](columns));
     output.push(this[_renderSeparator](columns));
 
-    for (const fileGroup of context.fileGroups) {
+    debug('Rendering %d %s for %s document', fileGroups.length, pluralize('row', fileGroups.length), context.type);
+
+    for (const fileGroup of fileGroups) {
       output.push(this[_renderRow](fileGroup, columns));
     }
 

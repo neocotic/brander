@@ -22,7 +22,8 @@
 
 'use strict';
 
-// TODO: complete
+const debug = require('debug')('brander:doc:table');
+const pluralize = require('pluralize');
 
 const Color = require('../../color');
 const DocumentContext = require('../document-context');
@@ -33,10 +34,59 @@ const _renderRow = Symbol('renderRow');
 const _renderSeparator = Symbol('renderSeparator');
 const _validateAndGet = Symbol('validateAndGet');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "color-table" type.
+ *
+ * This is very similar to {@link TableDocumentProvider} in output but just as simple in configuration for creating a
+ * table containing color information.
+ *
+ * Here's a basic example of the configuration for a color-table document:
+ *
+ * <pre>
+ * {
+ *   "type": "color-table",
+ *   "colors": [
+ *     {
+ *       "name": "Black",
+ *       "format": "hex",
+ *       "value": "#000000"
+ *     },
+ *     {
+ *       "name": "White",
+ *       "format": "hex",
+ *       "value": "#FFFFFF"
+ *     },
+ *     {
+ *       "name": "Primary",
+ *       "format": "cmyk",
+ *       "value": [ 42, 100, 0, 49 ]
+ *     },
+ *     {
+ *       "name": "Secondary",
+ *       "format": "rgb",
+ *       "value": [ 119, 0, 207 ]
+ *     }
+ *   ],
+ *   "columns": [
+ *     {
+ *       "header": "Color",
+ *       "content": "<%= color.name %>"
+ *     },
+ *     {
+ *       "header": "Hex",
+ *       "content": "<%= color.hex %>"
+ *     },
+ *     {
+ *       "header": "RGB",
+ *       "content": "<%= color.rgb %>"
+ *     },
+ *     {
+ *       "header": "CMYK",
+ *       "content": "<%= color.cmyk %>"
+ *     }
+ *   ]
+ * }
+ * </pre>
  *
  * @public
  */
@@ -47,7 +97,11 @@ class ColorTableDocumentProvider extends DocumentProvider {
    * @override
    */
   createContext(data, parent, config) {
-    return new DocumentContext(this.getType(), data, parent, config);
+    const type = this.getType();
+
+    debug('Creating context for %s document...', type);
+
+    return new DocumentContext(type, data, parent, config);
   }
 
   /**
@@ -62,20 +116,29 @@ class ColorTableDocumentProvider extends DocumentProvider {
    * @inheritdoc
    * @override
    */
-  async render(context) {
+  render(context) {
+    const { config } = context;
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document...', type);
+
     const colors = this[_validateAndGet](context, 'colors')
       .map((color) => new Color(color));
     const columns = this[_validateAndGet](context, 'columns');
     const output = [];
 
+    debug('Rendering %d %s for %s document', columns.length, pluralize('header', columns.length), type);
+
     output.push(this[_renderHeaders](columns));
     output.push(this[_renderSeparator](columns));
+
+    debug('Rendering %d %s for %s document', colors.length, pluralize('row', colors.length), type);
 
     for (const color of colors) {
       output.push(this[_renderRow](color, context, columns));
     }
 
-    return output.join(context.config.lineSeparator);
+    return output.join(config.lineSeparator);
   }
 
   [_renderHeaders](columns) {

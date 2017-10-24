@@ -22,18 +22,39 @@
 
 'use strict';
 
-// TODO: complete
-
 const _ = require('lodash');
+const chalk = require('chalk');
+const debug = require('debug')('brander:doc:template');
 
 const File = require('../../file');
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "template" type.
+ *
+ * A very useful implementation which can be used to output strings evaluated as an {@link Expression}. The expression
+ * string can be specified directly or read from a file.
+ *
+ * Here's a basic example of the configuration for a template document:
+ *
+ * <pre>
+ * {
+ *   "type": "template",
+ *   "content": "Hello, we are <%= config.title %>!"
+ * }
+ * </pre>
+ *
+ * Alternatively, here's an example of loading the template from a file:
+ *
+ * <pre>
+ * {
+ *   "type": "template",
+ *   "file": "_templates/greeting.md"
+ * }
+ * </pre>
+ *
+ * The extension/format of the file is ignored and the contents are simply read as plain text.
  *
  * @public
  */
@@ -44,7 +65,11 @@ class TemplateDocumentProvider extends DocumentProvider {
    * @override
    */
   createContext(data, parent, config) {
-    return new DocumentContext(this.getType(), data, parent, config);
+    const type = this.getType();
+
+    debug('Creating context for %s document...', type);
+
+    return new DocumentContext(type, data, parent, config);
   }
 
   /**
@@ -60,6 +85,11 @@ class TemplateDocumentProvider extends DocumentProvider {
    * @override
    */
   async render(context) {
+    const { config } = context;
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document...', type);
+
     let content = context.get('content');
     const file = _.trim(context.get('file'));
     if (content == null && !file) {
@@ -70,10 +100,14 @@ class TemplateDocumentProvider extends DocumentProvider {
     }
 
     if (file) {
-      content = await File.readFile(context.config.docPath(file), 'utf8');
+      const filePath = config.resolve(file);
+
+      config.logger.log('Reading %s document content from file: %s', type, chalk.blue(config.relative(filePath)));
+
+      content = await File.readFile(filePath, 'utf8');
     }
 
-    return context.config.evaluate(content);
+    return config.evaluate(content);
   }
 
 }

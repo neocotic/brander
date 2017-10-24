@@ -24,9 +24,9 @@
 
 /* eslint "max-params": "off" */
 
-// TODO: complete
-
 const _ = require('lodash');
+const debug = require('debug')('brander:doc:toc');
+const pluralize = require('pluralize');
 
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
@@ -35,10 +35,32 @@ const _getDocumentContexts = Symbol('getDocumentContexts');
 const _renderAtDepth = Symbol('renderAtDepth');
 const _renderTOCRow = Symbol('renderTOCRow');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "toc" type.
+ *
+ * Here's a basic example of the configuration for a toc document:
+ *
+ * <pre>
+ * {
+ *   "type": "toc",
+ *   "maxDepth": 1
+ * }
+ * </pre>
+ *
+ * Alternatively, here's an example of generating the TOC for multiple documents:
+ *
+ * <pre>
+ * {
+ *   "type": "toc",
+ *   "docs": [
+ *     "guidelines.md",
+ *     "colors.md",
+ *     "assets.md"
+ *   ],
+ *   "minDepth": 0,
+ *   "maxDepth": 1
+ * }
+ * </pre>
  *
  * @public
  */
@@ -49,7 +71,11 @@ class TOCDocumentProvider extends DocumentProvider {
    * @override
    */
   createContext(data, parent, config) {
-    return new DocumentContext(this.getType(), data, parent, config);
+    const type = this.getType();
+
+    debug('Creating context for %s document...', type);
+
+    return new DocumentContext(type, data, parent, config);
   }
 
   /**
@@ -65,6 +91,11 @@ class TOCDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
+    const { config } = context;
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document...', type);
+
     let index = 0;
     const maxDepth = context.get('maxDepth', -1);
     const minDepth = context.get('minDepth', 1);
@@ -72,10 +103,12 @@ class TOCDocumentProvider extends DocumentProvider {
     const titleMap = new Map();
 
     for (const rootContext of this[_getDocumentContexts](context)) {
+      debug('Diving into %s document: %s', rootContext.type, rootContext.file.name);
+
       output.push(...this[_renderAtDepth](rootContext, [ rootContext ], 0, index++, minDepth, maxDepth, titleMap));
     }
 
-    return output.join(context.config.lineSeparator);
+    return output.join(config.lineSeparator);
   }
 
   [_getDocumentContexts](context) {
@@ -94,6 +127,8 @@ class TOCDocumentProvider extends DocumentProvider {
       }
     }
 
+    debug('%d root %s found in configuration', rootMap.size, pluralize('document', rootMap.size));
+
     return docs.map((doc, index) => {
       doc = _.trim(doc);
 
@@ -108,16 +143,23 @@ class TOCDocumentProvider extends DocumentProvider {
 
   [_renderAtDepth](root, contexts, depth, index, min, max, titleMap) {
     const output = [];
+    const type = this.getType();
 
     for (const context of contexts) {
       if (context.depth < min) {
+        debug('Depth of %s context too low so diving into children: %d', context.type, context.depth);
+
         output.push(...this[_renderAtDepth](root, context.children, depth, 0, min, max, titleMap));
       } else if (max === -1 || context.depth <= max) {
         if (context.title) {
           output.push(this[_renderTOCRow](root, context, depth, ++index, titleMap));
+        } else {
+          debug('%s context has no title so excluding from %s document', context.type, type);
         }
 
         output.push(...this[_renderAtDepth](root, context.children, depth + 1, 0, min, max, titleMap));
+      } else {
+        debug('Depth of %s context too high so ignoring: %d', context.type, context.depth);
       }
     }
 

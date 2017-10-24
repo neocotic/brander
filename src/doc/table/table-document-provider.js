@@ -22,7 +22,8 @@
 
 'use strict';
 
-// TODO: complete
+const debug = require('debug')('brander:doc:table');
+const pluralize = require('pluralize');
 
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
@@ -31,10 +32,34 @@ const _renderRow = Symbol('renderRow');
 const _renderSeparator = Symbol('renderSeparator');
 const _validateAndGet = Symbol('validateAndGet');
 
-// TODO: Add debug logging
-
 /**
- * TODO: document
+ * An implementation of {@link DocumentProvider} that handles documents of the "table" type.
+ *
+ * Here's a basic example of the configuration for a table document:
+ *
+ * <pre>
+ * {
+ *   "type": "table",
+ *   "headers": [
+ *     "A",
+ *     "B",
+ *     "C"
+ *   ],
+ *   "rows": [
+ *     [
+ *       "A1",
+ *       "B1",
+ *       "C1"
+ *     ],
+ *     [
+ *       "A2",
+ *       "B2",
+ *       "C2"
+ *     ],
+ *     ...
+ *   ]
+ * }
+ * </pre>
  *
  * @public
  */
@@ -45,7 +70,11 @@ class TableDocumentProvider extends DocumentProvider {
    * @override
    */
   createContext(data, parent, config) {
-    return new DocumentContext(this.getType(), data, parent, config);
+    const type = this.getType();
+
+    debug('Creating context for %s document...', type);
+
+    return new DocumentContext(type, data, parent, config);
   }
 
   /**
@@ -61,20 +90,29 @@ class TableDocumentProvider extends DocumentProvider {
    * @override
    */
   render(context) {
+    const { config } = context;
+    const type = this.getType();
+
+    config.logger.log('Rendering %s document...', type);
+
     const headers = this[_validateAndGet](context, 'headers');
     const rows = this[_validateAndGet](context, 'rows', true);
     const output = [];
 
     if (headers) {
+      debug('Rendering %d %s for %s document', headers.length, pluralize('header', headers.length), type);
+
       output.push(this[_renderRow](headers));
       output.push(this[_renderSeparator](headers));
     }
+
+    debug('Rendering %d %s for %s document', rows.length, pluralize('row', rows.length), type);
 
     for (const columns of rows) {
       output.push(this[_renderRow](columns));
     }
 
-    return output.join(context.config.lineSeparator);
+    return output.join(config.lineSeparator);
   }
 
   [_renderRow](columns) {
