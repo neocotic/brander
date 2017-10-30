@@ -114,10 +114,13 @@ class PackageSVGToICOTask extends Task {
 
   async [_readData](inputFiles, context) {
     const inputs = [];
+    const baseUrl = context.option('baseUrl');
+    const scale = context.option('scale');
     const sizes = context.option('sizes');
 
     for (const inputFile of inputFiles) {
       const inputFilePath = inputFile.absolute;
+      const baseFile = context.option('baseFile') || !baseUrl ? inputFilePath : null;
       const size = _.nth(sizes, inputs.length);
 
       debug('Reading SVG file to be packaged in ICO: %s', chalk.blue(inputFilePath));
@@ -127,13 +130,18 @@ class PackageSVGToICOTask extends Task {
       debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
 
       const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
-        baseFile: inputFilePath,
+        baseFile,
+        baseUrl,
         height: size.height,
+        scale,
         width: size.width
       } : null));
       const [ realSize ] = await Size.fromImage(pngInput);
 
-      inputs.push({ input: pngInput, size: realSize });
+      inputs.push({
+        input: pngInput,
+        size: realSize
+      });
     }
 
     return inputs;
