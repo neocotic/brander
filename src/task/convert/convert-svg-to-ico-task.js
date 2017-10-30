@@ -100,10 +100,15 @@ class ConvertSVGToICOTask extends Task {
   }
 
   async [_execute](inputFile, size, context) {
+    const scale = context.option('scale');
     const inputFilePath = inputFile.absolute;
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
-      .evaluate({ file: inputFile, size });
+      .evaluate({
+        file: inputFile,
+        scale,
+        size
+      });
     const outputFilePath = outputFile.absolute;
 
     debug('Reading SVG file to be converted to ICO: %s', chalk.blue(inputFilePath));
@@ -115,6 +120,7 @@ class ConvertSVGToICOTask extends Task {
     const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
       baseFile: inputFilePath,
       height: size.height,
+      scale,
       width: size.width
     } : null));
 

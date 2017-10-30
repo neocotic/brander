@@ -114,6 +114,7 @@ class PackageSVGToICOTask extends Task {
 
   async [_readData](inputFiles, context) {
     const inputs = [];
+    const scale = context.option('scale');
     const sizes = context.option('sizes');
 
     for (const inputFile of inputFiles) {
@@ -129,11 +130,15 @@ class PackageSVGToICOTask extends Task {
       const pngInput = await this[_converter].convert(svgInput, Object.assign(size ? {
         baseFile: inputFilePath,
         height: size.height,
+        scale,
         width: size.width
       } : null));
       const [ realSize ] = await Size.fromImage(pngInput);
 
-      inputs.push({ input: pngInput, size: realSize });
+      inputs.push({
+        input: pngInput,
+        size: realSize
+      });
     }
 
     return inputs;
