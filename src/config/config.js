@@ -53,7 +53,7 @@ const _title = Symbol('title');
  * used instead.
  *
  * The <code>logger</code> option can be specified to control where output messages are written to. By default, a
- * {@link Logger} with no output streams will be used so that such messages are not written at all.
+ * disabled {@link Logger} will be used so that such messages are not written at all.
  *
  * The <code>pkg</code> and <code>repository</code> options can be specified to provide {@link Package} and repository
  * information respectively. If instantiating the constructor directly, it may be necessary to use {@link PackageLoader}
@@ -77,7 +77,7 @@ class Config {
 
     this[_filePath] = options.filePath;
     this[_data] = options.data;
-    this[_logger] = options.logger || new Logger();
+    this[_logger] = options.logger || new Logger({ enabled: false });
     this[_pkg] = options.pkg || new Package();
     this[_repository] = new Repo(repositoryService.getRepository(options.repository));
     this[_baseDir] = path.dirname(this[_filePath]);
@@ -195,8 +195,12 @@ class Config {
    */
   evaluate(expressionString, additionalData) {
     const expression = new Expression(expressionString);
+    const data = Object.assign({
+      config: this,
+      eol: this.lineSeparator
+    }, additionalData);
 
-    return expression.evaluate(Object.assign({ config: this }, additionalData));
+    return expression.evaluate(data);
   }
 
   /**

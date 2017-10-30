@@ -95,9 +95,18 @@ class ConvertSVGToPNGTask extends Task {
 
   async [_execute](inputFile, size, context) {
     const inputFilePath = inputFile.absolute;
+    const baseUrl = context.option('baseUrl');
+    const baseFile = context.option('baseFile') || !baseUrl ? inputFilePath : null;
+    const scale = context.option('scale');
     const outputFile = context.outputFile
       .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.png', inputFile.format)
-      .evaluate({ file: inputFile, size });
+      .evaluate({
+        baseFile,
+        baseUrl,
+        file: inputFile,
+        scale,
+        size
+      });
     const outputFilePath = outputFile.absolute;
 
     debug('Reading SVG file to be converted to PNG: %s', chalk.blue(inputFilePath));
@@ -107,8 +116,10 @@ class ConvertSVGToPNGTask extends Task {
     debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
 
     const output = await this[_converter].convert(input, Object.assign(size ? {
-      baseFile: inputFilePath,
+      baseFile,
+      baseUrl,
       height: size.height,
+      scale,
       width: size.width
     } : null));
 

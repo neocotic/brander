@@ -1,6 +1,6 @@
 {
   "name": "brander",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tool for generating branding assets",
   "homepage": "https://github.com/NotNinja/brander",
   "bugs": {
@@ -25,7 +25,7 @@
     "chalk": "^2.3.0",
     "color-convert": "^1.9.0",
     "commander": "^2.11.0",
-    "convert-svg-to-png": "^0.1.0",
+    "convert-svg-to-png": "^0.2.0",
     "debug": "^3.1.0",
     "glob": "^7.1.2",
     "hosted-git-info": "github:neocotic/hosted-git-info#browsefile",
@@ -44,11 +44,11 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "codecov": "^3.0.0",
-    "eslint": "^4.9.0",
+    "eslint": "^4.10.0",
     "eslint-config-notninja": "^0.2.3",
     "istanbul": "^0.4.5",
     "mocha": "^4.0.1",
-    "sinon": "^4.0.1"
+    "sinon": "^4.0.2"
   },
   "bin": {
     "brander": "bin/brander"

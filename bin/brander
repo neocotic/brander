@@ -43,10 +43,14 @@ const { version } = require('../package.json');
     .option('--no-color', 'disables color output')
     .option('--only-assets', 'only generate assets')
     .option('--only-docs', 'only generate documentation')
-    .on('option:debug', () => debug.enable('brander*'))
+    .option('-q, --quiet', 'disables all logging output')
     .parse(process.argv);
 
-  const logger = new Logger(process.stdout, process.stderr);
+  if (program.debug && !program.quiet) {
+    debug.enable('brander*');
+  }
+
+  const logger = new Logger({ enabled: !program.quiet });
 
   try {
     const configLoader = new ConfigLoader({ logger });
