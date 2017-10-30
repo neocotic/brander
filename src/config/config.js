@@ -195,8 +195,12 @@ class Config {
    */
   evaluate(expressionString, additionalData) {
     const expression = new Expression(expressionString);
+    const data = Object.assign({
+      config: this,
+      eol: this.lineSeparator
+    }, additionalData);
 
-    return expression.evaluate(Object.assign({ config: this }, additionalData));
+    return expression.evaluate(data);
   }
 
   /**
