@@ -26,6 +26,7 @@ const chalk = require('chalk');
 const { EOL } = require('os');
 const util = require('util');
 
+const _enabled = Symbol('enabled');
 const _errorStream = Symbol('errorStream');
 const _outputStream = Symbol('outputStream');
 const _writeln = Symbol('writeln');
@@ -33,7 +34,7 @@ const _writeln = Symbol('writeln');
 /**
  * Provides the ability to log messages to controllable streams.
  *
- * If not streams are provided, then any attempt to log a message will be ignored.
+ * When a logger is disabled, any attempt to log a message via that logger will be ignored.
  *
  * @public
  */
@@ -42,17 +43,15 @@ class Logger {
   /**
    * Creates an instance of {@link Logger}.
    *
-   * Optionally, <code>outputStream</code> and/or <code>errorStream</code> can be specified to control where
-   * output/error messages are written to respectively. If omitted/<code>null</code>, such messages will not be written
-   * at all.
+   * Optionally, <code>options</code> can be provided for more granular control.
    *
-   * @param {Writable} [outputStream] - the stream to which output messages are to be written
-   * @param {Writable} [errorStream] - the stream to which error messages are to be written
+   * @param {Logger~Options} [options] - the options to be used
    * @public
    */
-  constructor(outputStream, errorStream) {
-    this[_outputStream] = outputStream;
-    this[_errorStream] = errorStream;
+  constructor(options = {}) {
+    this[_enabled] = options.enabled !== false;
+    this[_errorStream] = options.errorStream || process.stderr;
+    this[_outputStream] = options.outputStream || process.stdout;
   }
 
   /**
@@ -62,7 +61,7 @@ class Logger {
    *
    * <code>message</code> will be preceded by an error indicator and proceeded with a new line character.
    *
-   * Nothing happens if this {@link Logger} has no error stream.
+   * Nothing happens if this {@link Logger} is disabled.
    *
    * @param {string} [message] - the error message to be logged
    * @param {...*} [args] - any arguments to be used to format <code>message</code>
@@ -70,6 +69,10 @@ class Logger {
    * @public
    */
   error(message, ...args) {
+    if (!this.enabled) {
+      return this;
+    }
+
     let formatMessage = chalk.red('Error!');
     if (message) {
       formatMessage += ` ${message}`;
@@ -85,7 +88,7 @@ class Logger {
    *
    * <code>message</code> will be proceeded with a new line character.
    *
-   * Nothing happens if this {@link Logger} has no output stream.
+   * Nothing happens if this {@link Logger} is disabled.
    *
    * @param {string} [message] - the output message to be logged
    * @param {...*} [args] - any arguments to be used to format <code>message</code>
@@ -93,6 +96,10 @@ class Logger {
    * @public
    */
   log(message, ...args) {
+    if (!this.enabled) {
+      return this;
+    }
+
     return this[_writeln](this[_outputStream], message || '', args);
   }
 
@@ -103,7 +110,7 @@ class Logger {
    *
    * <code>message</code> will be preceded by an warning indicator and proceeded with a new line character.
    *
-   * Nothing happens if this {@link Logger} has no output stream.
+   * Nothing happens if this {@link Logger} is disabled.
    *
    * @param {string} [message] - the warning message to be logged
    * @param {...*} [args] - any arguments to be used to format <code>message</code>
@@ -111,6 +118,10 @@ class Logger {
    * @public
    */
   warn(message, ...args) {
+    if (!this.enabled) {
+      return this;
+    }
+
     let formatMessage = chalk.yellow('Warning!');
     if (message) {
       formatMessage += ` ${message}`;
@@ -120,13 +131,31 @@ class Logger {
   }
 
   [_writeln](stream, message, args) {
-    if (stream) {
-      stream.write(`${util.format(message, ...args)}${EOL}`);
-    }
+    stream.write(`${util.format(message, ...args)}${EOL}`);
 
     return this;
+  }
+
+  /**
+   * Returns whether output for this {@link Logger} should be logged.
+   *
+   * @return {boolean} <code>true</code> if logger is enabled; otherwise <code>false</code>.
+   * @public
+   */
+  get enabled() {
+    return this[_enabled];
   }
 
 }
 
 module.exports = Logger;
+
+/**
+ * The options that can be passed to the {@link Logger} constructor.
+ *
+ * @typedef {Object} Logger~Options
+ * @property {boolean} [enabled=true] - <code>false</code> if no output should be logged; otherwise
+ * <code>true</code>.
+ * @property {Writable} [errorStream=process.stderr] - The stream to which error messages are to be written.
+ * @property {Writable} [outputStream=process.stdout] - The stream to which output messages are to be written.
+ */

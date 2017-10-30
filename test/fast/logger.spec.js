@@ -39,9 +39,43 @@ describe('Logger', () => {
     outputStreamStub = sinon.createStubInstance(stream.Writable);
   });
 
+  describe('#enabled', () => {
+    it('should should be true by default', () => {
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
+
+      expect(logger.enabled).to.be.true;
+    });
+
+    it('should should be true when "enabled" option is true', () => {
+      const logger = new Logger({
+        enabled: true,
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
+
+      expect(logger.enabled).to.be.true;
+    });
+
+    it('should should be false when "enabled" option is false', () => {
+      const logger = new Logger({
+        enabled: false,
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
+
+      expect(logger.enabled).to.be.false;
+    });
+  });
+
   describe('#error', () => {
     it('should write message to error stream with error indicator', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.error('foo')).to.equal(logger);
 
@@ -51,7 +85,10 @@ describe('Logger', () => {
     });
 
     it('should write formatted message to error stream with error indicator', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.error('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
 
@@ -62,7 +99,10 @@ describe('Logger', () => {
 
     context('when no message is specified', () => {
       it('should write only error indicator and new line to error stream', () => {
-        const logger = new Logger(outputStreamStub, errorStreamStub);
+        const logger = new Logger({
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
 
         expect(logger.error()).to.equal(logger);
 
@@ -73,8 +113,32 @@ describe('Logger', () => {
     });
 
     context('when no error stream was specified', () => {
+      beforeEach(() => {
+        sinon.stub(process.stderr, 'write');
+      });
+
+      afterEach(() => {
+        process.stderr.write.restore();
+      });
+
+      it('should write message to process.stderr', () => {
+        const logger = new Logger({ outputStream: outputStreamStub });
+
+        expect(logger.error('foo')).to.equal(logger);
+
+        expect(outputStreamStub.write.called).to.be.false;
+        expect(process.stderr.write.calledOnce).to.be.true;
+        expect(process.stderr.write.args[0]).to.deep.equal([ `${chalk.red('Error!')} foo${EOL}` ]);
+      });
+    });
+
+    context('when disabled', () => {
       it('should do nothing', () => {
-        const logger = new Logger();
+        const logger = new Logger({
+          enabled: false,
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
 
         expect(logger.error('foo')).to.equal(logger);
 
@@ -86,7 +150,10 @@ describe('Logger', () => {
 
   describe('#log', () => {
     it('should write message to output stream', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.log('foo')).to.equal(logger);
 
@@ -96,7 +163,10 @@ describe('Logger', () => {
     });
 
     it('should write formatted message to output stream', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.log('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
 
@@ -107,7 +177,10 @@ describe('Logger', () => {
 
     context('when no message is specified', () => {
       it('should write only a new line to output stream', () => {
-        const logger = new Logger(outputStreamStub, errorStreamStub);
+        const logger = new Logger({
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
 
         expect(logger.log()).to.equal(logger);
 
@@ -118,20 +191,47 @@ describe('Logger', () => {
     });
 
     context('when no output stream was specified', () => {
-      it('should do nothing', () => {
-        const logger = new Logger();
+      beforeEach(() => {
+        sinon.stub(process.stdout, 'write');
+      });
+
+      afterEach(() => {
+        process.stdout.write.restore();
+      });
+
+      it('should write message to process.stdout', () => {
+        const logger = new Logger({ errorStream: errorStreamStub });
 
         expect(logger.log('foo')).to.equal(logger);
 
         expect(errorStreamStub.write.called).to.be.false;
+        expect(process.stdout.write.calledOnce).to.be.true;
+        expect(process.stdout.write.args[0]).to.deep.equal([ `foo${EOL}` ]);
+      });
+    });
+
+    context('when disabled', () => {
+      it('should do nothing', () => {
+        const logger = new Logger({
+          enabled: false,
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
+
+        expect(logger.log('foo')).to.equal(logger);
+
         expect(outputStreamStub.write.called).to.be.false;
+        expect(errorStreamStub.write.called).to.be.false;
       });
     });
   });
 
   describe('#warn', () => {
     it('should write message to output stream with warning indicator', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.warn('foo')).to.equal(logger);
 
@@ -141,7 +241,10 @@ describe('Logger', () => {
     });
 
     it('should write formatted message to output stream with warning indicator', () => {
-      const logger = new Logger(outputStreamStub, errorStreamStub);
+      const logger = new Logger({
+        errorStream: errorStreamStub,
+        outputStream: outputStreamStub
+      });
 
       expect(logger.warn('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
 
@@ -152,7 +255,10 @@ describe('Logger', () => {
 
     context('when no message is specified', () => {
       it('should write only warning indicator and new line to output stream', () => {
-        const logger = new Logger(outputStreamStub, errorStreamStub);
+        const logger = new Logger({
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
 
         expect(logger.warn()).to.equal(logger);
 
@@ -163,13 +269,37 @@ describe('Logger', () => {
     });
 
     context('when no output stream was specified', () => {
-      it('should do nothing', () => {
-        const logger = new Logger();
+      beforeEach(() => {
+        sinon.stub(process.stdout, 'write');
+      });
+
+      afterEach(() => {
+        process.stdout.write.restore();
+      });
+
+      it('should write message to process.stdout', () => {
+        const logger = new Logger({ errorStream: errorStreamStub });
 
         expect(logger.warn('foo')).to.equal(logger);
 
         expect(errorStreamStub.write.called).to.be.false;
+        expect(process.stdout.write.calledOnce).to.be.true;
+        expect(process.stdout.write.args[0]).to.deep.equal([ `${chalk.yellow('Warning!')} foo${EOL}` ]);
+      });
+    });
+
+    context('when disabled', () => {
+      it('should do nothing', () => {
+        const logger = new Logger({
+          enabled: false,
+          errorStream: errorStreamStub,
+          outputStream: outputStreamStub
+        });
+
+        expect(logger.warn('foo')).to.equal(logger);
+
         expect(outputStreamStub.write.called).to.be.false;
+        expect(errorStreamStub.write.called).to.be.false;
       });
     });
   });
