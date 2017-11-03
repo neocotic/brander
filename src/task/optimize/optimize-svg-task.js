@@ -92,19 +92,11 @@ class OptimizeSVGTask extends Task {
 
     debug('Optimizing SVG file: %s', chalk.blue(inputFilePath));
 
-    const output = await new Promise((resolve, reject) => {
-      this[_svgo].optimize(input, (result) => {
-        if (result.error) {
-          reject(result.error);
-        } else {
-          resolve(result.data);
-        }
-      });
-    });
+    const output = await this[_svgo].optimize(input);
 
     debug('Writing optimized SVG file: %s', chalk.blue(outputFilePath));
 
-    await File.writeFile(outputFilePath, output);
+    await File.writeFile(outputFilePath, output.data);
 
     config.logger.log('Optimized SVG file: %s -> %s', chalk.blue(inputFile.relative), chalk.blue(outputFile.relative));
   }
