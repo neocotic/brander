@@ -24,29 +24,23 @@
 
 const _ = require('lodash');
 const chalk = require('chalk');
-const { createConverter } = require('convert-svg-to-png');
+const { createConverter } = require('convert-svg-to-jpeg');
 const debug = require('debug')('brander:task:convert');
-const toIco = require('to-ico');
 
 const File = require('../../file');
-const Size = require('../../size');
 const Task = require('../task');
 const TaskType = require('../task-type');
 
 const _converter = Symbol('converter');
 const _execute = Symbol('execute');
 
-// TODO: Support resizing images with non-1:1 aspect ratios
-
 /**
- * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple ICO files, if multiple
+ * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple JPEG files, if multiple
  * <code>sizes</code> are specified in the options.
- *
- * The SVG file is first converted into PNG format and it's the PNG data that is written to the ICO file(s).
  *
  * @public
  */
-class ConvertSVGToICOTask extends Task {
+class ConvertSVGToJPEGTask extends Task {
 
   /**
    * @inheritdoc
@@ -96,7 +90,7 @@ class ConvertSVGToICOTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'jpeg';
   }
 
   async [_execute](inputFile, size, context) {
@@ -104,48 +98,46 @@ class ConvertSVGToICOTask extends Task {
     const background = context.option('background');
     const baseUrl = context.option('baseUrl');
     const baseFile = context.option('baseFile') || !baseUrl ? inputFilePath : null;
+    const quality = context.option('quality');
     const scale = context.option('scale');
     const outputFile = context.outputFile
-      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.ico', inputFile.format)
+      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.jpeg', inputFile.format)
       .evaluate({
         background,
         baseFile,
         baseUrl,
         file: inputFile,
+        quality,
         scale,
         size
       });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading SVG file to be converted to ICO: %s', chalk.blue(inputFilePath));
+    debug('Reading SVG file to be converted to JPEG: %s', chalk.blue(inputFilePath));
 
-    const svgInput = await File.readFile(inputFilePath);
+    const input = await File.readFile(inputFilePath);
 
-    debug('Converting SVG file to PNG: %s', chalk.blue(inputFilePath));
+    debug('Converting SVG file to JPEG: %s', chalk.blue(inputFilePath));
 
-    const pngInput = await this[_converter].convert(svgInput, Object.assign({
+    const output = await this[_converter].convert(input, Object.assign({
       background,
       baseFile,
       baseUrl,
+      quality,
       scale
     }, !size ? null : {
       height: size.height,
       width: size.width
     }));
 
-    debug('Converting PNG to ICO');
-
-    const [ realSize ] = await Size.fromImage(pngInput);
-    const output = await toIco([ pngInput ], { sizes: [ realSize.width ] });
-
-    debug('Writing converted ICO file: %s', chalk.blue(outputFilePath));
+    debug('Writing converted JPEG file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 
-    context.config.logger.log('Converted SVG file to ICO file: %s -> %s', chalk.blue(inputFile.relative),
+    context.config.logger.log('Converted SVG file to JPEG file: %s -> %s', chalk.blue(inputFile.relative),
       chalk.blue(outputFile.relative));
   }
 
 }
 
-module.exports = ConvertSVGToICOTask;
+module.exports = ConvertSVGToJPEGTask;
