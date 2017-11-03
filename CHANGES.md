@@ -1,3 +1,9 @@
+## Version 0.1.3, 2017.11.03
+
+* Add background option for SVG conversions [#18](https://github.com/NotNinja/brander/issues/18)
+* Add task to convert SVG to JPEG [#20](https://github.com/NotNinja/brander/issues/20)
+* Update svgo to ^1.0.2 [#21](https://github.com/NotNinja/brander/issues/21)
+
 ## Version 0.1.2, 2017.10.30
 
 * Add default footer for docs [#7](https://github.com/NotNinja/brander/issues/7) [#12](https://github.com/NotNinja/brander/issues/12)
