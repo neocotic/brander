@@ -313,7 +313,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     output.push(')](');
 
     const filePath = config.relative(path.join(config.assetsDir, context.dir)).replace(/\\/g, '/');
-    const fileURL = config.repository.fileURL(filePath);
+    const fileURL = config.docURL(filePath);
 
     output.push(fileURL);
     output.push(')');
