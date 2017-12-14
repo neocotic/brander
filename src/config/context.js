@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _config = Symbol('config');
 
 /**

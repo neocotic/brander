@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _ = require('lodash');
 const { EOL } = require('os');
 const path = require('path');

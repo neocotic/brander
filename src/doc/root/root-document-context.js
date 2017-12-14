@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const DocumentContext = require('../document-context');
 
 const _file = Symbol('file');

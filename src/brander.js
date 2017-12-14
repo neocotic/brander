@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const chalk = require('chalk');
 
 const DocumentContextParser = require('./doc/document-context-parser');

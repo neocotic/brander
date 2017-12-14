@@ -23,6 +23,7 @@
 'use strict';
 
 /* eslint "max-params": "off" */
+/* istanbul ignore file */
 
 const _ = require('lodash');
 const chalk = require('chalk');

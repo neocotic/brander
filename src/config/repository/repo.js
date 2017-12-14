@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _get = Symbol('get');
 const _repository = Symbol('repository');
 

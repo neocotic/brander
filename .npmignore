@@ -4,5 +4,6 @@ test/
 *.log
 AUTHORS.md
 CHANGES.md
+codecov.yml
 CONTRIBUTING.md
 README.md

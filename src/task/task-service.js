@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const debug = require('debug')('brander:task');
 
 const File = require('../file');

@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const Repository = require('../repository');
 
 const _host = Symbol('host');
