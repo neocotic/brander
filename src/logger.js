@@ -22,8 +22,6 @@
 
 'use strict';
 
-/* istanbul ignore file */
-
 const chalk = require('chalk');
 const { EOL } = require('os');
 const util = require('util');
