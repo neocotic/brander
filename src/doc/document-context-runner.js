@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const ContextRunner = require('../config/context-runner');
 const DocumentService = require('./document-service');
 

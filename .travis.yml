@@ -2,12 +2,10 @@ sudo: false
 language: node_js
 node_js:
   - "8"
-before_script:
-  - npm install -g npm@latest
 script:
   - npm test
-after_script:
-  - npm run report-coverage
+after_success:
+  - npm run coverage
 notifications:
   slack:
     rooms:

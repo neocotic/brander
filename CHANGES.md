@@ -1,3 +1,8 @@
+## Version 0.1.4, 2017.12.14
+
+* Switch to latest version of istanbul [#22](https://github.com/NotNinja/brander/issues/22)
+* asset-feature preview should use not use Repository directly to generate link URL [#23](https://github.com/NotNinja/brander/issues/23)
+
 ## Version 0.1.3, 2017.11.03
 
 * Add background option for SVG conversions [#18](https://github.com/NotNinja/brander/issues/18)

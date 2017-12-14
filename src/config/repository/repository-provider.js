@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const pollock = require('pollock');
 
 const _type = Symbol('type');

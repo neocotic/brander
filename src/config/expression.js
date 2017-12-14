@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _ = require('lodash');
 
 const _compiled = Symbol('compiled');

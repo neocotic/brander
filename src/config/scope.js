@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _attributes = Symbol('attributes');
 const _docs = Symbol('docs');
 const _tasks = Symbol('tasks');

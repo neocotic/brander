@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const chalk = require('chalk');
 const debug = require('debug')('brander:config');
 const path = require('path');

@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const debug = require('debug')('brander:doc:table');
 const pluralize = require('pluralize');
 

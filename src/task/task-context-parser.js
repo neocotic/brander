@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _ = require('lodash');
 const debug = require('debug')('brander:task');
 const path = require('path');

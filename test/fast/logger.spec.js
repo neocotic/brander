@@ -41,10 +41,7 @@ describe('Logger', () => {
 
   describe('#enabled', () => {
     it('should should be true by default', () => {
-      const logger = new Logger({
-        errorStream: errorStreamStub,
-        outputStream: outputStreamStub
-      });
+      const logger = new Logger();
 
       expect(logger.enabled).to.be.true;
     });

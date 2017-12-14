@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:package');

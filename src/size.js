@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const imageSize = require('image-size');
 const util = require('util');
 

@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const { EventEmitter } = require('events');
 const pollock = require('pollock');
 

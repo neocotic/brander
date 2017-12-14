@@ -22,6 +22,8 @@
 
 'use strict';
 
+/* istanbul ignore file */
+
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:doc:asset-feature');
@@ -313,7 +315,7 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
     output.push(')](');
 
     const filePath = config.relative(path.join(config.assetsDir, context.dir)).replace(/\\/g, '/');
-    const fileURL = config.repository.fileURL(filePath);
+    const fileURL = config.docURL(filePath);
 
     output.push(fileURL);
     output.push(')');
