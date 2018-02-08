@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Alasdair Mercer, !ninja
+ * Copyright (C) 2018 Alasdair Mercer, !ninja
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,9 @@
 
 'use strict';
 
+const assert = require('assert');
 const chalk = require('chalk');
 const { EOL } = require('os');
-const { expect } = require('chai');
 const sinon = require('sinon');
 const stream = require('stream');
 
@@ -43,7 +43,7 @@ describe('Logger', () => {
     it('should should be true by default', () => {
       const logger = new Logger();
 
-      expect(logger.enabled).to.be.true;
+      assert.ok(logger.enabled);
     });
 
     it('should should be true when "enabled" option is true', () => {
@@ -53,7 +53,7 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.enabled).to.be.true;
+      assert.ok(logger.enabled);
     });
 
     it('should should be false when "enabled" option is false', () => {
@@ -63,7 +63,7 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.enabled).to.be.false;
+      assert.ok(!logger.enabled);
     });
   });
 
@@ -74,11 +74,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.error('foo')).to.equal(logger);
+      assert.strictEqual(logger.error('foo'), logger);
 
-      expect(outputStreamStub.write.called).to.be.false;
-      expect(errorStreamStub.write.calledOnce).to.be.true;
-      expect(errorStreamStub.write.args[0]).to.deep.equal([ `${chalk.red('Error!')} foo${EOL}` ]);
+      assert.ok(!outputStreamStub.write.called);
+      assert.ok(errorStreamStub.write.calledOnce);
+      assert.deepEqual(errorStreamStub.write.args, [
+        [ `${chalk.red('Error!')} foo${EOL}` ]
+      ]);
     });
 
     it('should write formatted message to error stream with error indicator', () => {
@@ -87,11 +89,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.error('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
+      assert.strictEqual(logger.error('foo %d %j', 123, [ 'bar' ]), logger);
 
-      expect(outputStreamStub.write.called).to.be.false;
-      expect(errorStreamStub.write.calledOnce).to.be.true;
-      expect(errorStreamStub.write.args[0]).to.deep.equal([ `${chalk.red('Error!')} foo 123 ["bar"]${EOL}` ]);
+      assert.ok(!outputStreamStub.write.called);
+      assert.ok(errorStreamStub.write.calledOnce);
+      assert.deepEqual(errorStreamStub.write.args, [
+        [ `${chalk.red('Error!')} foo 123 ["bar"]${EOL}` ]
+      ]);
     });
 
     context('when no message is specified', () => {
@@ -101,11 +105,13 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.error()).to.equal(logger);
+        assert.strictEqual(logger.error(), logger);
 
-        expect(outputStreamStub.write.called).to.be.false;
-        expect(errorStreamStub.write.calledOnce).to.be.true;
-        expect(errorStreamStub.write.args[0]).to.deep.equal([ `${chalk.red('Error!')}${EOL}` ]);
+        assert.ok(!outputStreamStub.write.called);
+        assert.ok(errorStreamStub.write.calledOnce);
+        assert.deepEqual(errorStreamStub.write.args, [
+          [ `${chalk.red('Error!')}${EOL}` ]
+        ]);
       });
     });
 
@@ -121,11 +127,13 @@ describe('Logger', () => {
       it('should write message to process.stderr', () => {
         const logger = new Logger({ outputStream: outputStreamStub });
 
-        expect(logger.error('foo')).to.equal(logger);
+        assert.strictEqual(logger.error('foo'), logger);
 
-        expect(outputStreamStub.write.called).to.be.false;
-        expect(process.stderr.write.calledOnce).to.be.true;
-        expect(process.stderr.write.args[0]).to.deep.equal([ `${chalk.red('Error!')} foo${EOL}` ]);
+        assert.ok(!outputStreamStub.write.called);
+        assert.ok(process.stderr.write.calledOnce);
+        assert.deepEqual(process.stderr.write.args, [
+          [ `${chalk.red('Error!')} foo${EOL}` ]
+        ]);
       });
     });
 
@@ -137,10 +145,10 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.error('foo')).to.equal(logger);
+        assert.strictEqual(logger.error('foo'), logger);
 
-        expect(outputStreamStub.write.called).to.be.false;
-        expect(errorStreamStub.write.called).to.be.false;
+        assert.ok(!outputStreamStub.write.called);
+        assert.ok(!errorStreamStub.write.called);
       });
     });
   });
@@ -152,11 +160,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.log('foo')).to.equal(logger);
+      assert.strictEqual(logger.log('foo'), logger);
 
-      expect(errorStreamStub.write.called).to.be.false;
-      expect(outputStreamStub.write.calledOnce).to.be.true;
-      expect(outputStreamStub.write.args[0]).to.deep.equal([ `foo${EOL}` ]);
+      assert.ok(!errorStreamStub.write.called);
+      assert.ok(outputStreamStub.write.calledOnce);
+      assert.deepEqual(outputStreamStub.write.args, [
+        [ `foo${EOL}` ]
+      ]);
     });
 
     it('should write formatted message to output stream', () => {
@@ -165,11 +175,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.log('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
+      assert.strictEqual(logger.log('foo %d %j', 123, [ 'bar' ]), logger);
 
-      expect(errorStreamStub.write.called).to.be.false;
-      expect(outputStreamStub.write.calledOnce).to.be.true;
-      expect(outputStreamStub.write.args[0]).to.deep.equal([ `foo 123 ["bar"]${EOL}` ]);
+      assert.ok(!errorStreamStub.write.called);
+      assert.ok(outputStreamStub.write.calledOnce);
+      assert.deepEqual(outputStreamStub.write.args, [
+        [ `foo 123 ["bar"]${EOL}` ]
+      ]);
     });
 
     context('when no message is specified', () => {
@@ -179,11 +191,13 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.log()).to.equal(logger);
+        assert.strictEqual(logger.log(), logger);
 
-        expect(errorStreamStub.write.called).to.be.false;
-        expect(outputStreamStub.write.calledOnce).to.be.true;
-        expect(outputStreamStub.write.args[0]).to.deep.equal([ EOL ]);
+        assert.ok(!errorStreamStub.write.called);
+        assert.ok(outputStreamStub.write.calledOnce);
+        assert.deepEqual(outputStreamStub.write.args, [
+          [ EOL ]
+        ]);
       });
     });
 
@@ -199,11 +213,13 @@ describe('Logger', () => {
       it('should write message to process.stdout', () => {
         const logger = new Logger({ errorStream: errorStreamStub });
 
-        expect(logger.log('foo')).to.equal(logger);
+        assert.strictEqual(logger.log('foo'), logger);
 
-        expect(errorStreamStub.write.called).to.be.false;
-        expect(process.stdout.write.calledOnce).to.be.true;
-        expect(process.stdout.write.args[0]).to.deep.equal([ `foo${EOL}` ]);
+        assert.ok(!errorStreamStub.write.called);
+        assert.ok(process.stdout.write.calledOnce);
+        assert.deepEqual(process.stdout.write.args, [
+          [ `foo${EOL}` ]
+        ]);
       });
     });
 
@@ -215,10 +231,10 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.log('foo')).to.equal(logger);
+        assert.strictEqual(logger.log('foo'), logger);
 
-        expect(outputStreamStub.write.called).to.be.false;
-        expect(errorStreamStub.write.called).to.be.false;
+        assert.ok(!outputStreamStub.write.called);
+        assert.ok(!errorStreamStub.write.called);
       });
     });
   });
@@ -230,11 +246,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.warn('foo')).to.equal(logger);
+      assert.strictEqual(logger.warn('foo'), logger);
 
-      expect(errorStreamStub.write.called).to.be.false;
-      expect(outputStreamStub.write.calledOnce).to.be.true;
-      expect(outputStreamStub.write.args[0]).to.deep.equal([ `${chalk.yellow('Warning!')} foo${EOL}` ]);
+      assert.ok(!errorStreamStub.write.called);
+      assert.ok(outputStreamStub.write.calledOnce);
+      assert.deepEqual(outputStreamStub.write.args, [
+        [ `${chalk.yellow('Warning!')} foo${EOL}` ]
+      ]);
     });
 
     it('should write formatted message to output stream with warning indicator', () => {
@@ -243,11 +261,13 @@ describe('Logger', () => {
         outputStream: outputStreamStub
       });
 
-      expect(logger.warn('foo %d %j', 123, [ 'bar' ])).to.equal(logger);
+      assert.strictEqual(logger.warn('foo %d %j', 123, [ 'bar' ]), logger);
 
-      expect(errorStreamStub.write.called).to.be.false;
-      expect(outputStreamStub.write.calledOnce).to.be.true;
-      expect(outputStreamStub.write.args[0]).to.deep.equal([ `${chalk.yellow('Warning!')} foo 123 ["bar"]${EOL}` ]);
+      assert.ok(!errorStreamStub.write.called);
+      assert.ok(outputStreamStub.write.calledOnce);
+      assert.deepEqual(outputStreamStub.write.args, [
+        [ `${chalk.yellow('Warning!')} foo 123 ["bar"]${EOL}` ]
+      ]);
     });
 
     context('when no message is specified', () => {
@@ -257,11 +277,13 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.warn()).to.equal(logger);
+        assert.strictEqual(logger.warn(), logger);
 
-        expect(errorStreamStub.write.called).to.be.false;
-        expect(outputStreamStub.write.calledOnce).to.be.true;
-        expect(outputStreamStub.write.args[0]).to.deep.equal([ `${chalk.yellow('Warning!')}${EOL}` ]);
+        assert.ok(!errorStreamStub.write.called);
+        assert.ok(outputStreamStub.write.calledOnce);
+        assert.deepEqual(outputStreamStub.write.args, [
+          [ `${chalk.yellow('Warning!')}${EOL}` ]
+        ]);
       });
     });
 
@@ -277,11 +299,13 @@ describe('Logger', () => {
       it('should write message to process.stdout', () => {
         const logger = new Logger({ errorStream: errorStreamStub });
 
-        expect(logger.warn('foo')).to.equal(logger);
+        assert.strictEqual(logger.warn('foo'), logger);
 
-        expect(errorStreamStub.write.called).to.be.false;
-        expect(process.stdout.write.calledOnce).to.be.true;
-        expect(process.stdout.write.args[0]).to.deep.equal([ `${chalk.yellow('Warning!')} foo${EOL}` ]);
+        assert.ok(!errorStreamStub.write.called);
+        assert.ok(process.stdout.write.calledOnce);
+        assert.deepEqual(process.stdout.write.args, [
+          [ `${chalk.yellow('Warning!')} foo${EOL}` ]
+        ]);
       });
     });
 
@@ -293,10 +317,10 @@ describe('Logger', () => {
           outputStream: outputStreamStub
         });
 
-        expect(logger.warn('foo')).to.equal(logger);
+        assert.strictEqual(logger.warn('foo'), logger);
 
-        expect(outputStreamStub.write.called).to.be.false;
-        expect(errorStreamStub.write.called).to.be.false;
+        assert.ok(!outputStreamStub.write.called);
+        assert.ok(!errorStreamStub.write.called);
       });
     });
   });

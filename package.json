@@ -1,6 +1,6 @@
 {
   "name": "brander",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Tool for generating branding assets",
   "homepage": "https://github.com/NotNinja/brander",
   "bugs": {
@@ -21,35 +21,34 @@
     "url": "https://github.com/NotNinja/brander.git"
   },
   "dependencies": {
-    "archiver": "^2.1.0",
+    "archiver": "^2.1.1",
     "chalk": "^2.3.0",
     "color-convert": "^1.9.1",
-    "commander": "^2.11.2",
-    "convert-svg-to-jpeg": "^0.3.3",
-    "convert-svg-to-png": "^0.3.3",
+    "commander": "^2.14.1",
+    "convert-svg-to-jpeg": "^0.4.0",
+    "convert-svg-to-png": "^0.4.0",
     "debug": "^3.1.0",
     "glob": "^7.1.2",
     "hosted-git-info": "github:neocotic/hosted-git-info#browsefile",
-    "image-size": "^0.6.1",
-    "lodash": "^4.17.4",
-    "mime": "^2.0.3",
+    "image-size": "^0.6.2",
+    "lodash": "^4.17.5",
+    "mime": "^2.2.0",
     "mkdirp": "^0.5.1",
     "pkg-up": "^2.0.0",
     "pluralize": "^7.0.0",
     "pollock": "^0.1.0",
     "rimraf": "^2.6.2",
     "strip-json-comments": "^2.0.1",
-    "svgo": "^1.0.3",
+    "svgo": "^1.0.4",
     "to-ico": "^1.1.5"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
     "codecov": "^3.0.0",
-    "eslint": "^4.13.1",
+    "eslint": "^4.17.0",
     "eslint-config-notninja": "^0.2.3",
-    "mocha": "^4.0.1",
-    "nyc": "^11.3.0",
-    "sinon": "^4.1.3"
+    "mocha": "^5.0.0",
+    "nyc": "^11.4.1",
+    "sinon": "^4.2.2"
   },
   "bin": {
     "brander": "bin/brander"
