@@ -1,3 +1,8 @@
+## Version 0.1.5, 2018.02.08
+
+* Replace chai with assert [#26](https://github.com/NotNinja/brander/issues/26)
+* Update convert-svg-to-* to ^0.4.0 [#27](https://github.com/NotNinja/brander/issues/27)
+
 ## Version 0.1.4, 2017.12.14
 
 * Switch to latest version of istanbul [#22](https://github.com/NotNinja/brander/issues/22)
