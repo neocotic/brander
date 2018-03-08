@@ -1,3 +1,7 @@
+## Version 0.1.6, 2018.03.08
+
+* Use hosted-git-info@^2.6.0 [#29](https://github.com/NotNinja/brander/issues/29)
+
 ## Version 0.1.5, 2018.02.08
 
 * Replace chai with assert [#26](https://github.com/NotNinja/brander/issues/26)
