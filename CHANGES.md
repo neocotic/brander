@@ -1,3 +1,7 @@
+## Version 0.1.7, 2018.03.09
+
+* Easy multi-line doc templates using array [#31](https://github.com/NotNinja/brander/issues/31)
+
 ## Version 0.1.6, 2018.03.08
 
 * Use hosted-git-info@^2.6.0 [#29](https://github.com/NotNinja/brander/issues/29)
