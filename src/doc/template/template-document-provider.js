@@ -47,6 +47,19 @@ const DocumentProvider = require('../document-provider');
  * }
  * </pre>
  *
+ * Multi-line templates are really easy as well:
+ *
+ * <pre>
+ * {
+ *   "type": "template",
+ *   "content": [
+ *     "Hello,",
+ *     "",
+ *     "We are <%= config.title %>!"
+ *   ]
+ * }
+ * </pre>
+ *
  * Alternatively, here's an example of loading the template from a file:
  *
  * <pre>
@@ -107,6 +120,8 @@ class TemplateDocumentProvider extends DocumentProvider {
       config.logger.log('Reading %s document content from file: %s', type, chalk.blue(config.relative(filePath)));
 
       content = await File.readFile(filePath, 'utf8');
+    } else if (Array.isArray(content)) {
+      content.join(config.lineSeparator);
     }
 
     return config.evaluate(content);
