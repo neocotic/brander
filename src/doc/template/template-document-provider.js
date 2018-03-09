@@ -121,7 +121,7 @@ class TemplateDocumentProvider extends DocumentProvider {
 
       content = await File.readFile(filePath, 'utf8');
     } else if (Array.isArray(content)) {
-      content.join(config.lineSeparator);
+      content = content.join(config.lineSeparator);
     }
 
     return config.evaluate(content);
