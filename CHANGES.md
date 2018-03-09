@@ -1,3 +1,7 @@
+## Version 0.1.8, 2018.03.09
+
+* Multi-line template support not working correctly [#33](https://github.com/NotNinja/brander/issues/33)
+
 ## Version 0.1.7, 2018.03.09
 
 * Easy multi-line doc templates using array [#31](https://github.com/NotNinja/brander/issues/31)
