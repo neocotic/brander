@@ -1,3 +1,8 @@
+## Version 0.1.9, 2018.03.19
+
+* Fails when repository info is not available or recognized [#35](https://github.com/NotNinja/brander/issues/35)
+* Pass puppeteer options to tasks using convert-svg packages [#36](https://github.com/NotNinja/brander/issues/36)
+
 ## Version 0.1.8, 2018.03.09
 
 * Multi-line template support not working correctly [#33](https://github.com/NotNinja/brander/issues/33)
