@@ -112,14 +112,18 @@ class RepositoryService {
    * suitable provider is found, it will return <code>null</code>. Otherwise, the provider will be used to parse
    * <code>info.url</code> and the result will be returned.
    *
-   * @param {RepositoryService~RepositoryInfo} info - the VCS repository information on which the {@link Repository} is
-   * to be based
-   * @return {?Repository} A {@link Repository} based on <code>info</code> or <code>null</code> if a suitable
-   * {@link RepositoryProvider} could not be found for <code>info.type</code> or <code>info.url</code> is unavailable or
-   * could not be parsed.
+   * @param {?RepositoryService~RepositoryInfo} info - the VCS repository information on which the {@link Repository} is
+   * to be based (may be <code>null</code>)
+   * @return {?Repository} A {@link Repository} based on <code>info</code> or <code>null</code> if <code>info</code> is
+   * <code>null</code> or a suitable {@link RepositoryProvider} could not be found for <code>info.type</code> or
+   * <code>info.url</code> is unavailable or could not be parsed.
    * @public
    */
   getRepository(info) {
+    if (!info) {
+      return null;
+    }
+
     let { type } = info;
     const { url } = info;
 
