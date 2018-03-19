@@ -58,7 +58,9 @@ class PackageSVGToICOTask extends Task {
    * @override
    */
   beforeAll(config) {
-    this[_converter] = createConverter();
+    const puppeteer = config.option('puppeteer');
+
+    this[_converter] = createConverter({ puppeteer });
   }
 
   /**
