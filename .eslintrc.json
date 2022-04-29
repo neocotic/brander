@@ -4,6 +4,7 @@
     "node": true
   },
   "rules": {
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "no-unused-vars": ["error", { "args": "none" }]
   }
 }
