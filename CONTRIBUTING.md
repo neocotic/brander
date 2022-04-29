@@ -1,9 +1,9 @@
 # Contributing
 
-If you have any questions about [Brander](https://github.com/NotNinja/brander) please feel free to
-[raise an issue](https://github.com/NotNinja/brander/issues/new).
+If you have any questions about [Brander](https://github.com/neocotic/brander) please feel free to
+[raise an issue](https://github.com/neocotic/brander/issues/new).
 
-Please [search existing issues](https://github.com/NotNinja/brander/issues) for the same feature and/or issue before
+Please [search existing issues](https://github.com/neocotic/brander/issues) for the same feature and/or issue before
 raising a new issue. Commenting on an existing issue is usually preferred over raising duplicate issues.
 
 Please ensure that all files conform to the coding standards, using the same coding style as the rest of the code base.
@@ -16,9 +16,9 @@ $ npm install
 $ npm test
 ```
 
-You must have at least [Node.js](https://nodejs.org) version 8 or newer installed.
+You must have at least [Node.js](https://nodejs.org) version 12.20.0 or newer installed.
 
 All pull requests should be made to the `develop` branch.
 
-Don't forget to add your details to the list of [AUTHORS.md](https://github.com/NotNinja/brander/blob/master/AUTHORS.md)
+Don't forget to add your details to the list of [AUTHORS.md](https://github.com/neocotic/brander/blob/master/AUTHORS.md)
 if you want your contribution to be recognized by others.
