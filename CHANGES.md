@@ -1,3 +1,9 @@
+## Version 0.2.0, 2022.04.29
+
+* **Breaking Change:** Require Node.js version 12.20.0 or newer
+* Move from !ninja to neocotic
+* Bump dependencies & devDependencies
+
 ## Version 0.1.9, 2018.03.19
 
 * Fails when repository info is not available or recognized [#35](https://github.com/neocotic/brander/issues/35)
