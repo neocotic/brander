@@ -2,53 +2,63 @@
   "name": "brander",
   "version": "0.1.9",
   "description": "Tool for generating branding assets",
-  "homepage": "https://github.com/NotNinja/brander",
+  "homepage": "https://github.com/neocotic/brander",
   "bugs": {
-    "url": "https://github.com/NotNinja/brander/issues"
+    "url": "https://github.com/neocotic/brander/issues"
   },
   "author": {
-    "name": "Alasdair Mercer",
-    "email": "mercer.alasdair@gmail.com",
-    "url": "https://not.ninja"
+    "name": "neocotic",
+    "url": "https://github.com/neocotic"
   },
+  "funding": [
+    {
+      "type": "individual",
+      "url": "https://github.com/sponsors/neocotic"
+    },
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/neocotic"
+    }
+  ],
   "license": "MIT",
   "keywords": [
+    "asset",
     "brand",
-    "tool"
+    "branding",
+    "documentation"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/NotNinja/brander.git"
+    "url": "https://github.com/neocotic/brander.git"
   },
   "dependencies": {
-    "archiver": "^2.1.1",
-    "chalk": "^2.3.2",
-    "color-convert": "^1.9.1",
-    "commander": "^2.15.0",
-    "convert-svg-to-jpeg": "^0.4.0",
-    "convert-svg-to-png": "^0.4.0",
-    "debug": "^3.1.0",
-    "glob": "^7.1.2",
-    "hosted-git-info": "^2.6.0",
-    "image-size": "^0.6.2",
+    "archiver": "^5.3.1",
+    "chalk": "^4.1.2",
+    "color-convert": "^2.0.1",
+    "commander": "^9.2.0",
+    "convert-svg-to-jpeg": "^0.6.1",
+    "convert-svg-to-png": "^0.6.1",
+    "debug": "^4.3.4",
+    "glob": "^8.0.1",
+    "hosted-git-info": "^5.0.0",
+    "image-size": "^1.0.1",
     "lodash": "^4.17.5",
-    "mime": "^2.2.0",
-    "mkdirp": "^0.5.1",
-    "pkg-up": "^2.0.0",
-    "pluralize": "^7.0.0",
-    "pollock": "^0.1.0",
-    "rimraf": "^2.6.2",
-    "strip-json-comments": "^2.0.1",
-    "svgo": "^1.0.5",
+    "mime": "^3.0.0",
+    "mkdirp": "^1.0.4",
+    "pkg-up": "^4.0.0",
+    "pluralize": "^8.0.0",
+    "pollock": "^0.2.1",
+    "rimraf": "^3.0.2",
+    "strip-json-comments": "^4.0.0",
+    "svgo": "^2.8.0",
     "to-ico": "^1.1.5"
   },
   "devDependencies": {
-    "codecov": "^3.0.0",
-    "eslint": "^4.19.0",
-    "eslint-config-notninja": "^0.2.3",
-    "mocha": "^5.0.4",
-    "nyc": "^11.6.0",
-    "sinon": "^4.4.6"
+    "eslint": "^8.14.0",
+    "eslint-config-notninja": "^0.4.0",
+    "mocha": "^9.2.2",
+    "nyc": "^15.1.0",
+    "sinon": "^13.0.2"
   },
   "bin": {
     "brander": "bin/brander"
@@ -60,6 +70,6 @@
     "posttest": "nyc check-coverage && nyc report"
   },
   "engines": {
-    "node": ">=8"
+    "node": "^12.20.0 || >=14"
   }
 }
