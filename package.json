@@ -55,10 +55,9 @@
   },
   "main": "src/brander.js",
   "scripts": {
-    "coverage": "nyc report && codecov",
     "pretest": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\"",
     "test": "nyc mocha -R list \"test/**/*.spec.js\"",
-    "posttest": "nyc check-coverage"
+    "posttest": "nyc check-coverage && nyc report"
   },
   "engines": {
     "node": ">=8"
