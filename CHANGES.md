@@ -1,3 +1,7 @@
+## Version 0.2.2, 2022.05.04
+
+* Fix bug after upgrading svgo dependency
+
 ## Version 0.2.1, 2022.05.04
 
 * Downgrade dependencies using ES Modules
