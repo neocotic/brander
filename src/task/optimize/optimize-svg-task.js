@@ -27,14 +27,13 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 const debug = require('debug')('brander:task:optimize');
-const SVGO = require('svgo');
+const { optimize } = require('svgo');
 
 const File = require('../../file');
 const Task = require('../task');
 const TaskType = require('../task-type');
 
 const _execute = Symbol('execute');
-const _svgo = Symbol('svgo');
 
 /**
  * A {@link TaskType.OPTIMIZE} task that optimizes SVG files.
@@ -42,17 +41,6 @@ const _svgo = Symbol('svgo');
  * @public
  */
 class OptimizeSVGTask extends Task {
-
-  /**
-   * Creates an instance of {@link OptimizeSVGTask}.
-   *
-   * @public
-   */
-  constructor() {
-    super();
-
-    this[_svgo] = new SVGO();
-  }
 
   /**
    * @inheritdoc
@@ -94,7 +82,7 @@ class OptimizeSVGTask extends Task {
 
     debug('Optimizing SVG file: %s', chalk.blue(inputFilePath));
 
-    const output = await this[_svgo].optimize(input);
+    const output = optimize(input);
 
     debug('Writing optimized SVG file: %s', chalk.blue(outputFilePath));
 
