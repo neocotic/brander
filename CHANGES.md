@@ -1,3 +1,7 @@
+## Version 0.2.1, 2022.05.04
+
+* Downgrade dependencies using ES Modules
+
 ## Version 0.2.0, 2022.04.29
 
 * **Breaking Change:** Require Node.js version 12.20.0 or newer
