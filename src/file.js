@@ -25,7 +25,7 @@
 /* istanbul ignore file */
 
 const _ = require('lodash');
-const fs = require('fs');
+const { access, readFile, writeFile } = require('fs/promises');
 const glob = require('glob');
 const mime = require('mime');
 const mkdirp = require('mkdirp');
@@ -33,12 +33,8 @@ const path = require('path');
 const rimraf = require('rimraf');
 const util = require('util');
 
-const access = util.promisify(fs.access);
 const deleteFile = util.promisify(rimraf);
 const findFiles = util.promisify(glob);
-const makeDir = util.promisify(mkdirp);
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
 
 const _config = Symbol('config');
 const _dir = Symbol('dir');
@@ -142,7 +138,7 @@ class File {
    */
   static async writeFile(filePath, data, options) {
     const dirPath = path.dirname(filePath);
-    await makeDir(dirPath);
+    await mkdirp(dirPath);
 
     return writeFile(filePath, data, options);
   }
