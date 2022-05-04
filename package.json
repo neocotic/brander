@@ -45,11 +45,11 @@
     "lodash": "^4.17.5",
     "mime": "^3.0.0",
     "mkdirp": "^1.0.4",
-    "pkg-up": "^4.0.0",
+    "pkg-up": "^3.1.0",
     "pluralize": "^8.0.0",
     "pollock": "^0.2.1",
     "rimraf": "^3.0.2",
-    "strip-json-comments": "^4.0.0",
+    "strip-json-comments": "^3.1.1",
     "svgo": "^2.8.0",
     "to-ico": "^1.1.5"
   },
