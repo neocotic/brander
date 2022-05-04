@@ -1,3 +1,7 @@
+## Version 0.2.3, 2022.05.04
+
+* Fix bug after upgrading mkdirp dependency
+
 ## Version 0.2.2, 2022.05.04
 
 * Fix bug after upgrading svgo dependency
