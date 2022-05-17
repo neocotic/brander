@@ -39,7 +39,7 @@
     "convert-svg-to-jpeg": "^0.6.1",
     "convert-svg-to-png": "^0.6.1",
     "debug": "^4.3.4",
-    "glob": "^8.0.1",
+    "glob": "^8.0.3",
     "hosted-git-info": "^5.0.0",
     "image-size": "^1.0.1",
     "lodash": "^4.17.5",
@@ -54,18 +54,19 @@
     "to-ico": "^1.1.5"
   },
   "devDependencies": {
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "eslint-config-notninja": "^0.4.0",
-    "mocha": "^9.2.2",
+    "mocha": "^10.0.0",
     "nyc": "^15.1.0",
-    "sinon": "^13.0.2"
+    "sinon": "^14.0.0"
   },
   "bin": {
     "brander": "bin/brander"
   },
   "main": "src/brander.js",
   "scripts": {
-    "pretest": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\"",
+    "flint": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\" --fix",
+    "lint": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\"",
     "test": "nyc mocha -R list \"test/**/*.spec.js\"",
     "posttest": "nyc check-coverage && nyc report"
   },
