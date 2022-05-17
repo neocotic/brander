@@ -27,7 +27,7 @@
 /* eslint-disable no-process-exit */
 
 const debug = require('debug');
-const program = require('commander');
+const { program } = require('commander');
 
 const Brander = require('../src/brander');
 const ConfigLoader = require('../src/config/config-loader');
@@ -46,20 +46,26 @@ const { version } = require('../package.json');
     .option('-q, --quiet', 'disables all logging output')
     .parse(process.argv);
 
-  if (program.debug && !program.quiet) {
+  const configPath = program.getOptionValue('config');
+  const isDebugEnabled = program.getOptionValue('debug');
+  const isOnlyAssets = program.getOptionValue('onlyAssets');
+  const isOnlyDocs = program.getOptionValue('onlyDocs');
+  const isQuietEnabled = program.getOptionValue('quiet');
+
+  if (isDebugEnabled && !isQuietEnabled) {
     debug.enable('brander*');
   }
 
-  const logger = new Logger({ enabled: !program.quiet });
+  const logger = new Logger({ enabled: !isQuietEnabled });
 
   try {
     const configLoader = new ConfigLoader({ logger });
-    const config = await configLoader.load(program.config);
+    const config = await configLoader.load(configPath);
     const brander = new Brander(config);
 
     await brander.generate({
-      skipAssets: program.onlyDocs,
-      skipDocs: program.onlyAssets
+      skipAssets: isOnlyDocs,
+      skipDocs: isOnlyAssets
     });
   } catch (e) {
     logger.error(e.stack);
