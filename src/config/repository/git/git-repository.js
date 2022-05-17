@@ -54,7 +54,7 @@ class GitRepository extends Repository {
    * @override
    */
   getBranch() {
-    return this[_host].committish || 'master';
+    return this[_host].committish || 'main';
   }
 
   /**
