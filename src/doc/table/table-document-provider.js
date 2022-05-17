@@ -29,9 +29,8 @@ const pluralize = require('pluralize');
 
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
+const { createMarkdownTable } = require('../../markdown/table');
 
-const _renderRow = Symbol('renderRow');
-const _renderSeparator = Symbol('renderSeparator');
 const _validateAndGet = Symbol('validateAndGet');
 
 /**
@@ -97,46 +96,17 @@ class TableDocumentProvider extends DocumentProvider {
 
     config.logger.log('Rendering %s document...', type);
 
-    const headers = this[_validateAndGet](context, 'headers');
+    const headers = this[_validateAndGet](context, 'headers') || [];
     const rows = this[_validateAndGet](context, 'rows', true);
-    const output = [];
 
-    if (headers) {
-      debug('Rendering %d %s for %s document', headers.length, pluralize('header', headers.length), type);
+    debug('Rendering %d %s and %d %s for %s document', headers.length, pluralize('header', headers.length), rows.length,
+      pluralize('row', rows.length), type);
 
-      output.push(this[_renderRow](headers));
-      output.push(this[_renderSeparator](headers));
-    }
-
-    debug('Rendering %d %s for %s document', rows.length, pluralize('row', rows.length), type);
-
-    for (const columns of rows) {
-      output.push(this[_renderRow](columns));
-    }
-
-    return output.join(config.lineSeparator);
-  }
-
-  [_renderRow](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${column} `);
-    }
-
-    return `|${output.join('|')}|`;
-  }
-
-  [_renderSeparator](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      const columnStr = String(column);
-
-      output.push(` ${'-'.repeat(columnStr.length)} `);
-    }
-
-    return `|${output.join('|')}|`;
+    return createMarkdownTable({
+      headers,
+      lineSeparator: config.lineSeparator,
+      rows
+    });
   }
 
   [_validateAndGet](context, name, required) {

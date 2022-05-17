@@ -32,6 +32,7 @@ const pluralize = require('pluralize');
 
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
+const { createMarkdownLink } = require('../../markdown/link');
 
 const _getDocumentContexts = Symbol('getDocumentContexts');
 const _renderAtDepth = Symbol('renderAtDepth');
@@ -186,8 +187,12 @@ class TOCDocumentProvider extends DocumentProvider {
     }
 
     const url = context.config.docURL(root.file.relative, titleFragment);
+    const link = createMarkdownLink({
+      content: title,
+      url
+    });
 
-    return `${' '.repeat(depth * 4)}${index}. [${title}](${url})`;
+    return `${' '.repeat(depth * 4)}${index}. ${link}`;
   }
 
 }

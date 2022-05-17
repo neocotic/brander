@@ -34,16 +34,16 @@ const AssetFeatureDocumentContext = require('./asset-feature-document-context');
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
 const File = require('../../file');
+const { createMarkdownImage } = require('../../markdown/image');
+const { appendMarkdownLink, createMarkdownLink } = require('../../markdown/link');
+const { appendMarkdownTable } = require('../../markdown/table');
 const Size = require('../../size');
 
 const _findFiles = Symbol('findFiles');
 const _getDirPaths = Symbol('getDirPaths');
 const _getFileGroups = Symbol('getFileGroups');
 const _renderChild = Symbol('renderChild');
-const _renderHeaders = Symbol('renderHeaders');
 const _renderPreview = Symbol('renderPreview');
-const _renderRow = Symbol('renderRow');
-const _renderSeparator = Symbol('renderSeparator');
 
 /**
  * An implementation of {@link DocumentProvider} that handles documents of the "asset-feature" type.
@@ -217,14 +217,10 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
               rowOutput.push(' ');
             }
 
-            rowOutput.push('[');
-            rowOutput.push(file.sizes.join('+'));
-            rowOutput.push('](');
-
-            const fileURL = config.assetURL(file.file.relative);
-
-            rowOutput.push(fileURL);
-            rowOutput.push(')');
+            appendMarkdownLink(rowOutput, {
+              content: file.sizes.join('+'),
+              url: config.assetURL(file.file.relative)
+            });
           }
 
           return rowOutput.join('');
@@ -234,20 +230,11 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
         header: 'Optimized',
         render(fileGroup) {
           const { optimized } = fileGroup;
-          const rowOutput = [];
 
-          if (optimized) {
-            rowOutput.push('[');
-            rowOutput.push(optimized.base());
-            rowOutput.push('](');
-
-            const fileURL = config.assetURL(optimized.relative);
-
-            rowOutput.push(fileURL);
-            rowOutput.push(')');
-          }
-
-          return rowOutput.join('');
+          return optimized ? createMarkdownLink({
+            content: optimized.base(),
+            url: config.assetURL(optimized.relative)
+          }) : '';
         }
       }
     ];
@@ -281,66 +268,34 @@ class AssetFeatureDocumentProvider extends DocumentProvider {
       output.push('');
     }
 
-    debug('Rendering %d %s for %s document', columns.length, pluralize('header', columns.length), context.type);
+    const headers = columns.map((column) => column.header);
+    const rows = fileGroups.map((fileGroup) => columns.map((column) => column.render(fileGroup)));
 
-    output.push(this[_renderHeaders](columns));
-    output.push(this[_renderSeparator](columns));
+    debug('Rendering %d %s and %d %s for %s document', headers.length, pluralize('header', headers.length), rows.length,
+      pluralize('row', rows.length), context.type);
 
-    debug('Rendering %d %s for %s document', fileGroups.length, pluralize('row', fileGroups.length), context.type);
-
-    for (const fileGroup of fileGroups) {
-      output.push(this[_renderRow](fileGroup, columns));
-    }
+    appendMarkdownTable(output, {
+      headers,
+      rows
+    });
 
     return output;
   }
 
-  [_renderHeaders](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${column.header} `);
-    }
-
-    return `|${output.join('|')}|`;
-  }
-
   [_renderPreview](context) {
     const { config, previewFile } = context;
-    const output = [];
-    output.push('[![');
-    output.push(previewFile.base());
-    output.push('](');
-    output.push(config.assetURL(previewFile.relative));
-    output.push(')](');
+    const image = createMarkdownImage({
+      alt: previewFile.base(),
+      url: config.assetURL(previewFile.relative)
+    });
 
     const filePath = config.relative(path.join(config.assetsDir, context.dir)).replace(/\\/g, '/');
     const fileURL = config.docURL(filePath);
 
-    output.push(fileURL);
-    output.push(')');
-
-    return output.join('');
-  }
-
-  [_renderRow](fileGroup, columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${column.render(fileGroup)} `);
-    }
-
-    return `|${output.join('|')}|`;
-  }
-
-  [_renderSeparator](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${'-'.repeat(column.header.length)} `);
-    }
-
-    return `|${output.join('|')}|`;
+    return createMarkdownLink({
+      content: image,
+      url: fileURL
+    });
   }
 
 }

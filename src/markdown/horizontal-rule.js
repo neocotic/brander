@@ -22,62 +22,27 @@
 
 'use strict';
 
-/* istanbul ignore file */
-
-const debug = require('debug')('brander:doc:hr');
-
-const DocumentContext = require('../document-context');
-const DocumentProvider = require('../document-provider');
-const { createMarkdownHorizontalRule } = require('../../markdown/horizontal-rule');
-
 /**
- * An implementation of {@link DocumentProvider} that handles documents of the "hr" type.
+ * Appends the syntax for a Markdown horizontal rule to the specified <code>output</code>.
  *
- * Here's a basic example of the configuration for a hr document:
- *
- * <pre>
- * {
- *   "type": "hr"
- * }
- * </pre>
- *
+ * @param {string[]} output - the array to which the Markdown horizontal rule is to be appended
  * @public
  */
-class HRDocumentProvider extends DocumentProvider {
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  createContext(data, parent, config) {
-    const type = this.getType();
-
-    debug('Creating context for %s document...', type);
-
-    return new DocumentContext(type, data, parent, config);
-  }
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  getType() {
-    return 'hr';
-  }
-
-  /**
-   * @inheritdoc
-   * @override
-   */
-  render(context) {
-    const { config } = context;
-    const type = this.getType();
-
-    config.logger.log('Rendering %s document...', type);
-
-    return createMarkdownHorizontalRule();
-  }
-
+function appendMarkdownHorizontalRule(output) {
+  output.push(createMarkdownHorizontalRule());
 }
 
-module.exports = HRDocumentProvider;
+/**
+ * Creates the syntax for a Markdown horizontal rule.
+ *
+ * @return {string} The Markdown horizontal rule.
+ * @public
+ */
+function createMarkdownHorizontalRule() {
+  return '---';
+}
+
+module.exports = {
+  appendMarkdownHorizontalRule,
+  createMarkdownHorizontalRule
+};

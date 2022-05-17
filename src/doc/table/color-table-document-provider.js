@@ -30,10 +30,8 @@ const pluralize = require('pluralize');
 const Color = require('../../color');
 const DocumentContext = require('../document-context');
 const DocumentProvider = require('../document-provider');
+const { createMarkdownTable } = require('../../markdown/table');
 
-const _renderHeaders = Symbol('renderHeaders');
-const _renderRow = Symbol('renderRow');
-const _renderSeparator = Symbol('renderSeparator');
 const _validateAndGet = Symbol('validateAndGet');
 
 /**
@@ -124,53 +122,19 @@ class ColorTableDocumentProvider extends DocumentProvider {
 
     config.logger.log('Rendering %s document...', type);
 
-    const colors = this[_validateAndGet](context, 'colors')
-      .map((color) => new Color(color));
+    const colors = this[_validateAndGet](context, 'colors').map((color) => new Color(color));
     const columns = this[_validateAndGet](context, 'columns');
-    const output = [];
+    const headers = columns.map((column) => column.header);
+    const rows = colors.map((color) => columns.map((column) => context.config.evaluate(column.content, { color })));
 
-    debug('Rendering %d %s for %s document', columns.length, pluralize('header', columns.length), type);
+    debug('Rendering %d %s and %d %s for %s document', headers.length, pluralize('header', headers.length), rows.length,
+      pluralize('row', rows.length), type);
 
-    output.push(this[_renderHeaders](columns));
-    output.push(this[_renderSeparator](columns));
-
-    debug('Rendering %d %s for %s document', colors.length, pluralize('row', colors.length), type);
-
-    for (const color of colors) {
-      output.push(this[_renderRow](color, context, columns));
-    }
-
-    return output.join(config.lineSeparator);
-  }
-
-  [_renderHeaders](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${column.header} `);
-    }
-
-    return `|${output.join('|')}|`;
-  }
-
-  [_renderRow](color, context, columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${context.config.evaluate(column.content, { color })} `);
-    }
-
-    return `|${output.join('|')}|`;
-  }
-
-  [_renderSeparator](columns) {
-    const output = [];
-
-    for (const column of columns) {
-      output.push(` ${'-'.repeat(column.header.length)} `);
-    }
-
-    return `|${output.join('|')}|`;
+    return createMarkdownTable({
+      headers,
+      lineSeparator: config.lineSeparator,
+      rows
+    });
   }
 
   [_validateAndGet](context, name) {
