@@ -73,8 +73,8 @@ class ContextParser extends EventEmitter {
    *
    * An error will occur if the implementation is unable to parse the data, for whatever reason.
    *
-   * @return {Promise.<Context[], Error>} A <code>Promise</code> for asynchronous data parsing that is resolved with
-   * each parsed {@link Context} or <code>null</code> if there is no more available data.
+   * @return {Promise<Context[]>} A <code>Promise</code> for asynchronous data parsing that is resolved with each parsed
+   * {@link Context} or <code>null</code> if there is no more available data.
    * @fires ContextParser#parsed
    * @public
    */
@@ -120,8 +120,8 @@ class ContextParser extends EventEmitter {
    *
    * An error will occur if the implementation is unable to parse any of the remaining data, for whatever reason.
    *
-   * @return {Promise.<Context[], Error>} A <code>Promise</code> for asynchronous data parsing that is resolved with
-   * each parsed {@link Context}.
+   * @return {Promise<Context[]>} A <code>Promise</code> for asynchronous data parsing that is resolved with each parsed
+   * {@link Context}.
    * @fires ContextParser#parsed
    * @public
    */
@@ -184,8 +184,8 @@ class ContextParser extends EventEmitter {
  *
  * @param {Object} data - the data to be parsed
  * @param {number} index - the index of <code>data</code> within the original data set
- * @return {Promise.<Context[], Error>} A <code>Promise</code> for asynchronous data parsing that is resolved with
- * each {@link Context} derived from parsing <code>data</code>.
+ * @return {Promise<Context[]>} A <code>Promise</code> for asynchronous data parsing that is resolved with each
+ * {@link Context} derived from parsing <code>data</code>.
  * @protected
  * @abstract
  * @memberof ContextParser#

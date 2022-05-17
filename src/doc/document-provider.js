@@ -73,8 +73,8 @@ class DocumentProvider {
  * @param {?DocumentContext} parent - the parent {@link DocumentContext} to be used (may be <code>null</code> if there
  * is no parent)
  * @param {Config} config - the {@link Config} to be used
- * @return {Promise.<DocumentContext, Error>} A <code>Promise</code> for any asynchronous work that is resolved with the
- * newly created {@link DocumentContext}.
+ * @return {Promise<DocumentContext>} A <code>Promise</code> for any asynchronous work that is resolved with the newly
+ * created {@link DocumentContext}.
  * @public
  * @abstract
  * @memberof DocumentProvider#
@@ -117,8 +117,8 @@ pollock(DocumentProvider, 'getType');
  * All implementations of {@link DocumentProvider} <b>must</b> override this method.
  *
  * @param {DocumentContext} context - the {@link DocumentContext} to be rendered
- * @return {Promise.<string, Error>} A <code>Promise</code> for the asynchronous rendering that is resolved with the
- * output string.
+ * @return {Promise<string>} A <code>Promise</code> for the asynchronous rendering that is resolved with the output
+ * string.
  * @public
  * @abstract
  * @memberof DocumentProvider#

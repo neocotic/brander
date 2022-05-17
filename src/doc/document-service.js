@@ -93,7 +93,7 @@ class DocumentService {
    * which is only done once.
    *
    * @param {DocumentProvider} provider - the {@link DocumentProvider} to be added
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in
+   * @return {Promise<void>} A <code>Promise</code> for the asynchronous loading of any built-in
    * {@link DocumentProvider} implementations.
    * @public
    */
@@ -131,7 +131,7 @@ class DocumentService {
    * which is only done once.
    *
    * @param {string} type - the type whose associated {@link DocumentProvider} implementation is to be returned
-   * @return {Promise.<DocumentProvider, Error>} A <code>Promise</code> for the asynchronous loading of any built-in
+   * @return {Promise<DocumentProvider>} A <code>Promise</code> for the asynchronous loading of any built-in
    * {@link DocumentProvider} implementations that is resolved with the {@link DocumentProvider} associated with
    * <code>type</code> or <code>null</code> if none could be found.
    * @public
@@ -150,7 +150,7 @@ class DocumentService {
    * An error will occur if there is a problem while loading any built-in {@link DocumentProvider} implementations,
    * which is only done once.
    *
-   * @return {Promise.<DocumentProvider[], Error>} A <code>Promise</code> for the asynchronous loading of any built-in
+   * @return {Promise<DocumentProvider[]>} A <code>Promise</code> for the asynchronous loading of any built-in
    * {@link DocumentProvider} implementations that is resolved with each {@link DocumentProvider}.
    * @public
    */
@@ -167,7 +167,7 @@ class DocumentService {
    * is only done once.
    *
    * @param {DocumentProvider} provider - the {@link DocumentProvider} to be removed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in
+   * @return {Promise<void>} A <code>Promise</code> for the asynchronous loading of any built-in
    * {@link DocumentProvider} implementations.
    * @public
    */
@@ -188,7 +188,7 @@ class DocumentService {
    * which is only done once.
    *
    * @param {string} type - the type whose associated {@link DocumentProvider} implementation is to be removed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous loading of any built-in
+   * @return {Promise<void>} A <code>Promise</code> for the asynchronous loading of any built-in
    * {@link DocumentProvider} implementations.
    * @public
    */

@@ -53,8 +53,8 @@ class Size {
    * image contained within.
    *
    * @param {Buffer|string} image - the image whose dimensions are to be captured in the returned {@link Size} instances
-   * @return {Promise.<Size[], Error>} A <code>Promise</code> for the asynchronous image parsing and file reading that
-   * is resolved with a {@link Size} instance for each image contained within <code>image</code>.
+   * @return {Promise<Size[]>} A <code>Promise</code> for the asynchronous image parsing and file reading that is
+   * resolved with a {@link Size} instance for each image contained within <code>image</code>.
    * @public
    */
   static async fromImage(image) {

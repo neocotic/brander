@@ -194,7 +194,7 @@ class Scope {
   /**
    * Returns the document contexts stored within this {@link Scope}.
    *
-   * @return {Iterator.<DocumentContext>} An <code>Iterator</code> for the stored {@link DocumentContext} instances.
+   * @return {Iterator<DocumentContext>} An <code>Iterator</code> for the stored {@link DocumentContext} instances.
    * @public
    */
   get docs() {
@@ -204,7 +204,7 @@ class Scope {
   /**
    * Returns the task contexts stored within this {@link Scope}.
    *
-   * @return {Iterator.<TaskContext>} An <code>Iterator</code> for the stored {@link TaskContext} instances.
+   * @return {Iterator<TaskContext>} An <code>Iterator</code> for the stored {@link TaskContext} instances.
    * @public
    */
   get tasks() {

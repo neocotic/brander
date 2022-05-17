@@ -57,7 +57,7 @@ class File {
    *
    * @param {string} filePath - the path of the file to be checked
    * @param {number} [mode] - the mode to be used
-   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>fs.access</code>.
+   * @return {Promise<void>} A <code>Promise</code> wrapper for <code>fs.access</code>.
    * @public
    */
   static access(filePath, mode) {
@@ -69,7 +69,7 @@ class File {
    *
    * @param {string} filePath - the path of the file to be deleted
    * @param {Object} [options] - the options to be used
-   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>rimraf</code>.
+   * @return {Promise<void>} A <code>Promise</code> wrapper for <code>rimraf</code>.
    * @public
    */
   static deleteFile(filePath, options) {
@@ -105,7 +105,7 @@ class File {
    *
    * @param {string} pattern - the pattern for the files to be found
    * @param {Object} [options] - the options to be used
-   * @return {Promise.<string[], Error>} A <code>Promise</code> wrapper for <code>glob</code>.
+   * @return {Promise<string[]>} A <code>Promise</code> wrapper for <code>glob</code>.
    * @public
    */
   static findFiles(pattern, options) {
@@ -117,7 +117,7 @@ class File {
    *
    * @param {string} filePath - the path of the file to be read
    * @param {Object|string} [options] - the options to be used
-   * @return {Promise.<Buffer|string, Error>} A <code>Promise</code> wrapper for <code>fs.readFile</code>.
+   * @return {Promise<Buffer|string>} A <code>Promise</code> wrapper for <code>fs.readFile</code>.
    * @public
    */
   static readFile(filePath, options) {
@@ -133,7 +133,7 @@ class File {
    * @param {string} filePath - the path of the file to which <code>data</code> is to be written
    * @param {Buffer|string|Uint8Array} data - the data to be written
    * @param {Object|string} [options] - the options to be used
-   * @return {Promise.<void, Error>} A <code>Promise</code> wrapper for <code>fs.writeFile</code>.
+   * @return {Promise<void>} A <code>Promise</code> wrapper for <code>fs.writeFile</code>.
    * @public
    */
   static async writeFile(filePath, data, options) {
@@ -305,7 +305,7 @@ class File {
   /**
    * Returns the parent directory path of this {@link File}.
    *
-   * The diretory may be <code>null</code> if it is unavailable.
+   * The directory may be <code>null</code> if it is unavailable.
    *
    * @return {?string} The directory path or <code>null</code> if unavailable.
    * @public

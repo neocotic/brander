@@ -176,7 +176,7 @@ class RepositoryService {
    *
    * @param {string} dirPath - the path of the directory from which the repository information may be derived
    * @param {RepositoryService~GetRepositoryInfoOptions} [options] - the options to be used
-   * @return {Promise.<RepositoryService~RepositoryInfo>} A <code>Promise</code> that is resolved with the repository
+   * @return {Promise<RepositoryService~RepositoryInfo>} A <code>Promise</code> that is resolved with the repository
    * information or <code>null</code> if a suitable {@link RepositoryProvider} could not be found for the derived
    * repository type (where applicable) or the repository URL could not be derived.
    * @public

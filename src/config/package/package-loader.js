@@ -64,7 +64,7 @@ class PackageLoader {
    *
    * @param {string} filePath - the path of the file for which the related <code>package.json</code> file is to be found
    * and have their data loaded
-   * @return {Promise.<Package>} A <code>Promise</code> for the asynchronous <code>package.json</code> file reading and
+   * @return {Promise<Package>} A <code>Promise</code> for the asynchronous <code>package.json</code> file reading and
    * file traversal that is resolved with the {@link Package} loaded from the file or <code>null</code> if no
    * <code>package.json</code> file was found.
    * @public

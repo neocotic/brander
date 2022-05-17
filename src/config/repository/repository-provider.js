@@ -89,8 +89,8 @@ pollock(RepositoryProvider, 'parseURL');
  * All implementations of {@link RepositoryProvider} <b>must</b> override this method.
  *
  * @param {string} dirPath - the path of the directory from which the repository URL is to be resolved
- * @return {Promise.<string, Error>} A <code>Promise</code> that is resolved with the repository URL or
- * <code>null</code> if none could be found.
+ * @return {Promise<string>} A <code>Promise</code> that is resolved with the repository URL or <code>null</code> if
+ * none could be found.
  * @public
  * @abstract
  * @memberof RepositoryProvider#

@@ -42,7 +42,7 @@ class Task {
    * This method does nothing by default.
    *
    * @param {TaskContext} context - the {@link TaskContext} that was just executed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after executing
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed after executing
    * <code>context</code>.
    * @public
    */
@@ -55,7 +55,7 @@ class Task {
    * This method does nothing by default.
    *
    * @param {Config} config - the {@link Config} for which the tasks were executed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after executing all tasks.
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed after executing all tasks.
    * @public
    */
   afterAll(config) {}
@@ -66,7 +66,7 @@ class Task {
    * This method does nothing by default.
    *
    * @param {TaskContext} context - the {@link TaskContext} that is going to be executed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before executing
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed before executing
    * <code>context</code>.
    * @public
    */
@@ -78,7 +78,7 @@ class Task {
    * This method does nothing by default.
    *
    * @param {Config} config - the {@link Config} for which the tasks are going to be executed
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before executing any tasks.
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed before executing any tasks.
    * @public
    */
   beforeAll(config) {}
@@ -103,7 +103,7 @@ class Task {
  * All implementations of {@link Task} <b>must</b> override this method.
  *
  * @param {TaskContext} context - the {@link TaskContext} to be executed
- * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous execution.
+ * @return {Promise<void>} A <code>Promise</code> for the asynchronous execution.
  * @public
  * @abstract
  * @memberof Task#

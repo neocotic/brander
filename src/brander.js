@@ -60,7 +60,7 @@ class Brander {
    * An error will occur if a problem arises while generating the assets or documentation.
    *
    * @param {Brander~GenerateOptions} [options] - the options to be used
-   * @return {Promise.<void, Error>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
+   * @return {Promise<void>} A <code>Promise</code> for the asynchronous generation of assets and documentation.
    * @public
    */
   async generate(options = {}) {

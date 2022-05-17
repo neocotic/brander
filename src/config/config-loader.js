@@ -115,8 +115,8 @@ class ConfigLoader {
    * the configuration file, or the configuration file contained no data.
    *
    * @param {string} [filePath] - the path of the file whose configuration data is to be loaded
-   * @return {Promise.<Config, Error>} A <code>Promise</code> for the asynchronous file reading that is resolved with
-   * the {@link Config} loaded from the file.
+   * @return {Promise<Config>} A <code>Promise</code> for the asynchronous file reading that is resolved with the
+   * {@link Config} loaded from the file.
    * @public
    */
   async load(filePath) {

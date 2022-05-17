@@ -65,8 +65,8 @@ class ContextRunner extends EventEmitter {
    * to parse any data within the data set or if the implementation is unable to run any of the {@link Context}
    * instances.
    *
-   * @return {Promise.<Array, Error>} A <code>Promise</code> for the asynchronous running, and potentially parsing, of
-   * each {@link Context} that is resolved with an array containing their results.
+   * @return {Promise<Array>} A <code>Promise</code> for the asynchronous running, and potentially parsing, of each
+   * {@link Context} that is resolved with an array containing their results.
    * @fires ContextRunner#ran
    * @public
    */
@@ -91,7 +91,7 @@ class ContextRunner extends EventEmitter {
    * This method does nothing by default.
    *
    * @param {Config} config - the {@link Config} for which the contexts were ran
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed after running all contexts.
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed after running all contexts.
    * @protected
    */
   runAfter(config) {}
@@ -102,7 +102,7 @@ class ContextRunner extends EventEmitter {
    * This method does nothing by default.
    *
    * @param {Config} config - the {@link Config} for which the contexts are going to be run
-   * @return {Promise.<void, Error>} A <code>Promise</code> for any asynchronous work needed before running any
+   * @return {Promise<void>} A <code>Promise</code> for any asynchronous work needed before running any
    * contexts.
    * @protected
    */
@@ -160,8 +160,8 @@ class ContextRunner extends EventEmitter {
  * All implementations of {@link ContextRunner} <b>must</b> override this method.
  *
  * @param {Context} context - the {@link Context} to run
- * @return {Promise.<*, Error>} A <code>Promise</code> for the asynchronous running of <code>context</code> that is
- * resolved with its result.
+ * @return {Promise<*>} A <code>Promise</code> for the asynchronous running of <code>context</code> that is resolved
+ * with its result.
  * @protected
  * @abstract
  * @memberof ContextRunner#
