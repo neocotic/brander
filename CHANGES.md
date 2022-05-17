@@ -1,3 +1,7 @@
+## Version 0.3.2, 2022.05.17
+
+* Fix bug where Git repository branch was not being detected
+
 ## Version 0.3.1, 2022.05.17
 
 * Fix JSDoc syntax for Promise return types
