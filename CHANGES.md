@@ -1,3 +1,13 @@
+## Version 0.3.1, 2022.05.17
+
+* Fix JSDoc syntax for Promise return types
+* Remove branch name from Git repository URL
+* Fix handling of CLI options
+* Remove RawGit file URL generation
+* Consolidate the majority of Markdown generation logic
+* Remove redundant Todo comments
+* Use `eslint:recommended` ESLint configuration
+
 ## Version 0.3.0, 2022.05.17
 
 * **Breaking Change:** Change fallback Git repository branch to `main`
