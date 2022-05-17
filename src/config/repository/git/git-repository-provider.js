@@ -79,11 +79,6 @@ class GitRepositoryProvider extends RepositoryProvider {
       return null;
     }
 
-    // Use RawGit CDN for GitHub raw file URLs
-    if (info.type === 'github') {
-      info.filetemplate = 'https://cdn.rawgit.com/{user}/{project}/{committish}/{path}';
-    }
-
     return new GitRepository(info);
   }
 
