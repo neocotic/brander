@@ -73,7 +73,7 @@ class GitRepositoryProvider extends RepositoryProvider {
    * @override
    */
   parseURL(url) {
-    const info = hostedGitInfo.fromUrl(url, { noCommittish: true, noGitPlus: true });
+    const info = hostedGitInfo.fromUrl(url, { noGitPlus: true });
     if (!info) {
       return null;
     }

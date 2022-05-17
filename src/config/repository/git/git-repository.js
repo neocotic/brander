@@ -70,7 +70,7 @@ class GitRepository extends Repository {
    * @override
    */
   getHomepage() {
-    return this[_host].browse();
+    return this[_host].browse({ noCommittish: true });
   }
 
   /**
@@ -94,7 +94,7 @@ class GitRepository extends Repository {
    * @override
    */
   getURL() {
-    return this[_host].https();
+    return this[_host].https({ noCommittish: true });
   }
 
   /**
