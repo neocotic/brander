@@ -1,3 +1,10 @@
+## Version 0.3.0, 2022.05.17
+
+* **Breaking Change:** Change fallback Git repository branch to `main`
+* Fix bug where Git branches were never being resolved
+* Bump dependencies
+* Change default branch to `main`
+
 ## Version 0.2.3, 2022.05.04
 
 * Fix bug after upgrading mkdirp dependency
