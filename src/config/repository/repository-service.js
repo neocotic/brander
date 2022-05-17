@@ -95,7 +95,6 @@ class RepositoryService {
       throw new Error('RepositoryService constructor is private');
     }
 
-    // TODO: Support more VCS types
     this[_providers] = [
       new GitRepositoryProvider()
     ];

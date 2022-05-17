@@ -91,7 +91,6 @@ class RootDocumentProvider extends DocumentProvider {
     }
 
     const format = File.deriveFormat(fileName, data.format);
-    // TODO: Support more formats
     if (format !== 'md' && format !== 'markdown') {
       throw new Error(`"format" configuration unsupported: ${format}`);
     }
