@@ -18,7 +18,7 @@ $ npm test
 
 You must have at least [Node.js](https://nodejs.org) version 12.20.0 or newer installed.
 
-All pull requests should be made to the `develop` branch.
+All pull requests should be made to the `main` branch.
 
-Don't forget to add your details to the list of [AUTHORS.md](https://github.com/neocotic/brander/blob/master/AUTHORS.md)
+Don't forget to add your details to the list of [AUTHORS.md](https://github.com/neocotic/brander/blob/main/AUTHORS.md)
 if you want your contribution to be recognized by others.
