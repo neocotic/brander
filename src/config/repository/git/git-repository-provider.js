@@ -35,6 +35,7 @@ const GitRepository = require('./git-repository');
 const RepositoryProvider = require('../repository-provider');
 
 const _execGit = Symbol('execGit');
+const _getBranchName = Symbol('getBranchName');
 const _getRemoteNames = Symbol('getRemoteNames');
 const _getRemoteURL = Symbol('getRemoteURL');
 
@@ -110,8 +111,13 @@ class GitRepositoryProvider extends RepositoryProvider {
       debug('"%s" remote was not present so using first remote: %s', preferredRemote, remote);
     }
 
-    const remoteUrl = await this[_getRemoteURL](remote, dirPath);
+    let remoteUrl = await this[_getRemoteURL](remote, dirPath);
     if (remoteUrl) {
+      const branchName = await this[_getBranchName](dirPath);
+      if (branchName) {
+        remoteUrl += `#${branchName}`;
+      }
+
       debug('Git repository URL resolved using "%s" remote: %s', remote, chalk.cyan(remoteUrl));
     }
 
@@ -142,6 +148,12 @@ class GitRepositoryProvider extends RepositoryProvider {
       });
       git.on('error', reject);
     });
+  }
+
+  async [_getBranchName](dirPath) {
+    const output = await this[_execGit](dirPath, 'branch', '--show-current');
+
+    return _.trim(output) || null;
   }
 
   async [_getRemoteNames](dirPath) {
