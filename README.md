@@ -1,6 +1,6 @@
 # Brander
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/neocotic/brander/CI?style=flat-square)](https://github.com/neocotic/brander/actions/workflows/ci.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/neocotic/brander/ci.yml?style=flat-square)](https://github.com/neocotic/brander/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/neocotic/brander/develop.svg?style=flat-square)](https://codecov.io/gh/neocotic/brander)
 [![License](https://img.shields.io/npm/l/brander.svg?style=flat-square)](https://github.com/neocotic/brander/blob/main/LICENSE.md)
 [![Release](https://img.shields.io/npm/v/brander.svg?style=flat-square)](https://npmjs.com/package/brander)
