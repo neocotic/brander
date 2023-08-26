@@ -16,7 +16,7 @@ $ npm install
 $ npm test
 ```
 
-You must have at least [Node.js](https://nodejs.org) version 12.20.0 or newer installed.
+You must have at least [Node.js](https://nodejs.org) version 18 or newer installed.
 
 All pull requests should be made to the `main` branch.
 

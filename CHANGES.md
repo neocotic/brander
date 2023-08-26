@@ -1,3 +1,11 @@
+## Version 0.4.0, 2023.08.26
+
+* **Breaking Change:** Switch from CommonJS to ECMAScript modules
+* **Breaking Change:** Bump minimum supported Node.js version to LTS release 18
+* Replace `to-ico` package dependency with `png-to-ico` to avoid audit problems with transient dependencies
+* Replace broad use of Symbols with ES2022 private class fields
+* Bump dependencies
+
 ## Version 0.3.2, 2022.05.17
 
 * Fix bug where Git repository branch was not being detected

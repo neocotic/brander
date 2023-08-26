@@ -1,6 +1,6 @@
 # Brander
 
-[![Build Status](https://img.shields.io/github/workflow/status/neocotic/brander/CI/develop?style=flat-square)](https://github.com/neocotic/brander/actions/workflows/ci.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/neocotic/brander/CI?style=flat-square)](https://github.com/neocotic/brander/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/neocotic/brander/develop.svg?style=flat-square)](https://codecov.io/gh/neocotic/brander)
 [![License](https://img.shields.io/npm/l/brander.svg?style=flat-square)](https://github.com/neocotic/brander/blob/main/LICENSE.md)
 [![Release](https://img.shields.io/npm/v/brander.svg?style=flat-square)](https://npmjs.com/package/brander)
@@ -28,7 +28,7 @@ Alternatively, if you're wanting to use `brander` command, you'll probably prefe
 $ npm install --global brander
 ```
 
-You'll need to have at least [Node.js](https://nodejs.org) 12.20.0 or newer.
+You'll need to have at least [Node.js](https://nodejs.org) 18 or newer.
 
 ## Usage
 
@@ -51,6 +51,6 @@ A list of Brander contributors can be found in [AUTHORS.md](https://github.com/n
 
 ## License
 
-Copyright © 2022 neocotic
+Copyright © 2023 neocotic
 
 See [LICENSE.md](https://github.com/neocotic/brander/raw/main/LICENSE.md) for more information on our MIT license.
