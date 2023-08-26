@@ -32,44 +32,46 @@
     "url": "https://github.com/neocotic/brander.git"
   },
   "dependencies": {
-    "archiver": "^5.3.1",
-    "chalk": "^4.1.2",
+    "archiver": "^6.0.0",
+    "chalk": "^5.3.0",
     "color-convert": "^2.0.1",
-    "commander": "^9.2.0",
+    "commander": "^11.0.0",
     "convert-svg-to-jpeg": "^0.6.1",
     "convert-svg-to-png": "^0.6.1",
     "debug": "^4.3.4",
-    "glob": "^8.0.3",
-    "hosted-git-info": "^5.0.0",
+    "glob": "^10.3.3",
+    "hosted-git-info": "^7.0.0",
     "image-size": "^1.0.1",
     "lodash": "^4.17.5",
     "mime": "^3.0.0",
-    "mkdirp": "^1.0.4",
-    "pkg-up": "^3.1.0",
+    "mkdirp": "^3.0.1",
+    "pkg-up": "^4.0.0",
     "pluralize": "^8.0.0",
+    "png-to-ico": "^2.1.8",
+    "pngjs": "^7.0.0",
     "pollock": "^0.2.1",
-    "rimraf": "^3.0.2",
-    "strip-json-comments": "^3.1.1",
-    "svgo": "^2.8.0",
-    "to-ico": "^1.1.5"
+    "rimraf": "^5.0.1",
+    "strip-json-comments": "^5.0.1",
+    "svgo": "^3.0.2"
   },
   "devDependencies": {
+    "c8": "^8.0.1",
     "eslint": "^8.15.0",
     "mocha": "^10.0.0",
-    "nyc": "^15.1.0",
-    "sinon": "^14.0.0"
+    "sinon": "^15.2.0"
   },
   "bin": {
-    "brander": "bin/brander"
+    "brander": "./bin/brander.mjs"
   },
-  "main": "src/brander.js",
+  "type": "module",
+  "exports": "./src/brander.mjs",
   "scripts": {
-    "flint": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\" --fix",
-    "lint": "eslint \"bin/brander\" \"src/**/*.js\" \"test/**/*.js\"",
-    "test": "nyc mocha -R list \"test/**/*.spec.js\"",
-    "posttest": "nyc check-coverage && nyc report"
+    "flint": "eslint \"bin/**/*.mjs\" \"src/**/*.mjs\" \"test/**/*.mjs\" --fix",
+    "lint": "eslint \"bin/**/*.mjs\" \"src/**/*.mjs\" \"test/**/*.mjs\"",
+    "test": "c8 mocha -R list \"test/**/*.spec.mjs\"",
+    "posttest": "c8 check-coverage && c8 report"
   },
   "engines": {
-    "node": "^12.20.0 || >=14"
+    "node": ">=18"
   }
 }
