@@ -38,6 +38,7 @@
     "commander": "^11.0.0",
     "convert-svg-to-jpeg": "^0.6.4",
     "convert-svg-to-png": "^0.6.4",
+    "convert-svg-to-webp": "^0.6.4",
     "debug": "^4.3.4",
     "glob": "^10.3.3",
     "hosted-git-info": "^7.0.0",
