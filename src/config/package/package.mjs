@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { cloneDeep, get } from 'lodash-es';
 
 /**
  * Contains parsed package data that has been loaded from a single package file.
@@ -71,7 +71,7 @@ export class Package {
    * @public
    */
   get(name, defaultValue) {
-    return _.get(this.#data, name, defaultValue);
+    return get(this.#data, name, defaultValue);
   }
 
   /**
@@ -90,7 +90,7 @@ export class Package {
    * @public
    */
   get data() {
-    return this.#data ? _.cloneDeep(this.#data) : null;
+    return this.#data ? cloneDeep(this.#data) : null;
   }
 
   /**

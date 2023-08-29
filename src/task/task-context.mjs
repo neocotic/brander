@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { get } from 'lodash-es';
 
 import { Context } from '../config/context.mjs';
 
@@ -90,7 +90,7 @@ export class TaskContext extends Context {
    * @public
    */
   option(name, defaultValue) {
-    return _.get(this.#options, name, defaultValue);
+    return get(this.#options, name, defaultValue);
   }
 
   /**

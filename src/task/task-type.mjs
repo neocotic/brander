@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { trim } from 'lodash-es';
 
 /**
  * Describes a category for {@link Task} instances to help group and organize them.
@@ -100,7 +100,7 @@ export class TaskType {
    * @public
    */
   static valueOf(name) {
-    name = _.trim(name).toLowerCase();
+    name = trim(name).toLowerCase();
 
     for (const type of TaskType) {
       if (type.name === name) {

@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { castArray, isEmpty, orderBy, sortBy, trim } from 'lodash-es';
 import path from 'node:path';
 import pluralize from 'pluralize';
 
@@ -78,7 +78,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
    */
   static async #findFiles(dirPath, pattern, config) {
     dirPath = config.assetPath(dirPath);
-    pattern = _.trim(pattern);
+    pattern = trim(pattern);
 
     const filePaths = pattern ? await File.findFiles(pattern, { cwd: dirPath }) : [];
     return filePaths.map((filePath) => {
@@ -98,7 +98,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
    */
   static async #getDirPaths(data, config) {
     const assetsDir = config.resolve(config.assetsDir);
-    const dirPattern = _.trim(data.dir);
+    const dirPattern = trim(data.dir);
 
     return dirPattern ? File.findFiles(dirPattern, { cwd: assetsDir }) : [ assetsDir ];
   }
@@ -111,7 +111,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
    * @private
    */
   static async #getFileGroups(dirPath, data, config) {
-    const fileDescriptors = _.castArray(data.files) || [];
+    const fileDescriptors = castArray(data.files) || [];
     const fileGroups = [];
 
     for (const fileDescriptor of fileDescriptors) {
@@ -125,7 +125,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
       }
 
       const files = await AssetFeatureDocumentProvider.#findFiles(dirPath, mainFilePattern, config);
-      if (_.isEmpty(files)) {
+      if (isEmpty(files)) {
         continue;
       }
 
@@ -137,30 +137,29 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
 
         fileInfos.push({
           file,
-          sizes: _.sortBy(sizes, [ 'size.width', 'size.height' ])
+          sizes: sortBy(sizes, [ 'size.width', 'size.height' ])
         });
       }
 
       fileGroups.push({
-        files: _.sortBy(fileInfos, [ 'sizes[0].width', 'sizes[0].height' ]),
+        files: sortBy(fileInfos, [ 'sizes[0].width', 'sizes[0].height' ]),
         optimized
       });
     }
 
 
-    let sortBy;
-    let sortOrder;
+    let sortByValue, sortOrder;
 
     if (Array.isArray(data.sortBy)) {
-      [ sortBy, sortOrder ] = data.sortBy;
+      [ sortByValue, sortOrder ] = data.sortBy;
     } else {
-      sortBy = data.sortBy;
+      sortByValue = data.sortBy;
     }
 
-    sortBy = _.trim(sortBy) || '<%= files[0].file.type %>';
-    sortOrder = _.trim(sortOrder).toLowerCase() || 'asc';
+    sortByValue = trim(sortByValue) || '<%= files[0].file.type %>';
+    sortOrder = trim(sortOrder).toLowerCase() || 'asc';
 
-    return _.orderBy(fileGroups, (fileGroup) => config.evaluate(sortBy, fileGroup), sortOrder);
+    return orderBy(fileGroups, (fileGroup) => config.evaluate(sortByValue, fileGroup), sortOrder);
   }
 
   /**
@@ -191,7 +190,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
       childContexts.push(context);
     }
 
-    mainContext.children.push(..._.sortBy(childContexts, 'title'));
+    mainContext.children.push(...sortBy(childContexts, 'title'));
 
     return mainContext;
   }
@@ -223,7 +222,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
           const rowOutput = [];
 
           for (const file of fileGroup.files) {
-            if (!_.isEmpty(rowOutput)) {
+            if (!isEmpty(rowOutput)) {
               rowOutput.push(' ');
             }
 
@@ -256,7 +255,7 @@ export default class AssetFeatureDocumentProvider extends DocumentProvider {
     debug('Rendering child contexts for %s document...', type);
 
     for (const childContext of context.children) {
-      if (!_.isEmpty(output)) {
+      if (!isEmpty(output)) {
         output.push('');
       }
 

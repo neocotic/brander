@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { get, trim } from 'lodash-es';
 
 import { GitRepositoryProvider } from './git/git-repository-provider.mjs';
 
@@ -257,10 +257,10 @@ export class RepositoryService {
     let type, url;
 
     if (typeof info === 'string') {
-      url = _.trim(info) || null;
+      url = trim(info) || null;
     } else {
-      type = _.trim(_.get(info, 'type')).toLowerCase() || null;
-      url = _.trim(_.get(info, 'url')) || null;
+      type = trim(get(info, 'type')).toLowerCase() || null;
+      url = trim(get(info, 'url')) || null;
     }
 
     return { type, url };

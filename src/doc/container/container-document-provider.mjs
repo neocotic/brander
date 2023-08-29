@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import Debug from 'debug';
+import { compact, isEmpty } from 'lodash-es';
 import pluralize from 'pluralize';
 
 import { DocumentContext } from '../document-context.mjs';
@@ -77,11 +77,11 @@ export default class ContainerDocumentProvider extends DocumentProvider {
     debug('Creating context for %s document...', type);
 
     const mainContext = new DocumentContext(type, data, parent, config);
-    const sections = _.clone(mainContext.get('sections')) || [];
+    const sections = [...(mainContext.get('sections') || [])];
 
     debug('%d %s found for %s document', sections.length, pluralize('child', sections.length), type);
 
-    if (!_.isEmpty(sections)) {
+    if (!isEmpty(sections)) {
       debug('Creating child contexts for %s document', type);
 
       const documentContextParser = new DocumentContextParser(sections, config, null, mainContext);
@@ -115,7 +115,7 @@ export default class ContainerDocumentProvider extends DocumentProvider {
 
     const documentContextRunner = new DocumentContextRunner(context.children, config);
     const results = await documentContextRunner.run();
-    const output = _.compact(results);
+    const output = compact(results);
 
     return output.join(config.lineSeparator);
   }

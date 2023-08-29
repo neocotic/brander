@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { every, isEmpty, map, matchesProperty } from 'lodash-es';
 import pngToIco from 'png-to-ico';
 import sharp from 'sharp';
 
@@ -58,12 +58,12 @@ export default class ConvertPngToIcoTask extends Task {
    * @override
    */
   async execute(context) {
-    const sizes = _.map(context.option('sizes', []), 'width');
+    const sizes = map(context.option('sizes', []), 'width');
 
     for (const inputFile of context.inputFiles) {
       const [ realSize ] = Size.fromImage(inputFile.absolute);
 
-      if (_.isEmpty(sizes)) {
+      if (isEmpty(sizes)) {
         await this.#execute(inputFile, null, realSize.width, context);
       } else {
         for (const size of sizes) {
@@ -78,7 +78,7 @@ export default class ConvertPngToIcoTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'png')) && context.outputFile.format === 'ico';
+    return every(context.inputFiles, matchesProperty('format', 'png')) && context.outputFile.format === 'ico';
   }
 
   /**

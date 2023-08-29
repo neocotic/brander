@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { every, matchesProperty } from 'lodash-es';
 import { optimize } from 'svgo';
 
 import { File } from '../../file.mjs';
@@ -63,7 +63,7 @@ export default class OptimizeSvgTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'svg'));
+    return every(context.inputFiles, matchesProperty('format', 'svg'));
   }
 
   /**

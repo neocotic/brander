@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import { glob } from 'glob';
+import { trim } from 'lodash-es';
 import mime from 'mime';
 import { mkdirp } from 'mkdirp';
 import { access, readFile, writeFile } from 'node:fs/promises';
@@ -79,7 +79,7 @@ export class File {
    * @public
    */
   static deriveFormat(fileName, format) {
-    format = format ? _.trim(format).toLowerCase() : null;
+    format = format ? trim(format).toLowerCase() : null;
 
     if (!format && fileName) {
       format = path.extname(fileName).substring(1).toLowerCase() || null;

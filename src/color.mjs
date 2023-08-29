@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import convert from 'color-convert';
+import { chain, trim } from 'lodash-es';
 
 /**
  * Contains color information based on a specific value in a single color format and supports easy conversion to other
@@ -62,16 +62,16 @@ export class Color {
    * @public
    */
   constructor(options) {
-    const format = _.trim(options.format).toLowerCase();
+    const format = trim(options.format).toLowerCase();
     if (!convert[format]) {
       throw new Error(`Unsupported color format: ${format}`);
     }
 
     this.#format = format;
-    this.#name = _.trim(options.name) || null;
-    this.#value = options.value == null ? [] : _.chain(options.value)
+    this.#name = trim(options.name) || null;
+    this.#value = options.value == null ? [] : chain(options.value)
       .castArray()
-      .map((v) => typeof v === 'string' ? _.trim(v) : v)
+      .map((v) => typeof v === 'string' ? trim(v) : v)
       .value();
   }
 

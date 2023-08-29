@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { template } from 'lodash-es';
 
 /**
  * Compiles a raw expression string so that it can be evaluated, optionally using data passed in directly to it to
@@ -33,7 +33,7 @@ import _ from 'lodash';
 export class Expression {
 
   /**
-   * @type {TemplateExecutor}
+   * @type {Function}
    * @private
    */
   #compiled;
@@ -45,7 +45,7 @@ export class Expression {
    * @public
    */
   constructor(str) {
-    this.#compiled = _.template(str);
+    this.#compiled = template(str);
   }
 
   /**

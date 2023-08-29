@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { trim } from 'lodash-es';
 import pluralize from 'pluralize';
 
 import { DocumentProvider } from '../document-provider.mjs';
@@ -120,7 +120,7 @@ export default class TOCDocumentProvider extends DocumentProvider {
     debug('%d root %s found in configuration', rootMap.size, pluralize('document', rootMap.size));
 
     return docs.map((doc, index) => {
-      doc = _.trim(doc);
+      doc = trim(doc);
 
       const rootContext = rootMap.get(doc);
       if (!rootContext) {

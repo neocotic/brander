@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import Debug from 'debug';
+import { trim } from 'lodash-es';
 import { fileURLToPath } from 'node:url';
 
 import { DocumentProvider } from './document-provider.mjs';
@@ -151,7 +151,7 @@ export class DocumentService {
    * @public
    */
   async findByType(type) {
-    type = _.trim(type).toLowerCase();
+    type = trim(type).toLowerCase();
 
     await this.#addBuiltIns();
 
@@ -207,7 +207,7 @@ export class DocumentService {
    * @public
    */
   async removeByType(type) {
-    type = _.trim(type).toLowerCase();
+    type = trim(type).toLowerCase();
 
     await this.#addBuiltIns();
 
