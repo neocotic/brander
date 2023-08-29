@@ -26,7 +26,7 @@ import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
 import pngToIco from 'png-to-ico';
-import { readPNG, resize } from 'png-to-ico/lib/png.js';
+import sharp from 'sharp';
 
 import { File } from '../../file.mjs';
 import { Size } from '../../size.mjs';
@@ -103,10 +103,12 @@ export default class ConvertPngToIcoTask extends Task {
     if (size != null && size.width !== realSize) {
       debug('Resizing PNG to be converted to ICO: %s', chalk.blue(inputFilePath));
 
-      const original = await readPNG(input);
-      const resized = resize(original, size.width, size.height);
-
-      input = resized.data;
+      input = await sharp(input)
+        .resize(size.width, size.height, {
+          fit: sharp.fit.fill,
+          background: { r: 0, g: 0, b: 0, alpha: 0 }
+        })
+        .toBuffer();
     }
 
     debug('Converting PNG file to ICO: %s', chalk.blue(inputFilePath));

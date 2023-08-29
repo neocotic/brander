@@ -27,7 +27,7 @@ import chalk from 'chalk';
 import Debug from 'debug';
 import pluralize from 'pluralize';
 import pngToIco from 'png-to-ico';
-import { readPNG, resize } from 'png-to-ico/lib/png.js';
+import sharp from 'sharp';
 
 import { File } from '../../file.mjs';
 import { Size } from '../../size.mjs';
@@ -114,11 +114,15 @@ export default class PackagePngToIcoTask extends Task {
       if (size != null && size !== realSize.width) {
         debug('Resizing PNG to be packaged to ICO: %s', chalk.blue(inputFilePath));
 
-        const original = await readPNG(pngInput);
-        const resized = resize(original, size, size);
+        const resizedInput = await sharp(pngInput)
+          .resize(size, size, {
+            fit: sharp.fit.fill,
+            background: { r: 0, g: 0, b: 0, alpha: 0 }
+          })
+          .toBuffer();
 
         inputs.push({
-          input: resized.data,
+          input: resizedInput,
           size: new Size(size, size),
         });
       } else {
