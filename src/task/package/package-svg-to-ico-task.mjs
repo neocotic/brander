@@ -22,10 +22,10 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import svgToPng from 'convert-svg-to-png';
 import Debug from 'debug';
+import { every, map, matchesProperty, nth } from 'lodash-es';
 import pluralize from 'pluralize';
 import pngToIco from 'png-to-ico';
 
@@ -97,8 +97,8 @@ export default class PackageSvgToIcoTask extends Task {
     const outputFilePath = outputFile.absolute;
 
     const data = await this.#readData(inputFiles, context);
-    const inputs = _.map(data, 'input');
-    const sizes = _.map(data, 'size.width');
+    const inputs = map(data, 'input');
+    const sizes = map(data, 'size.width');
 
     debug('Creating ICO for PNGs converted from SVG files');
 
@@ -117,7 +117,7 @@ export default class PackageSvgToIcoTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
+    return every(context.inputFiles, matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
   }
 
   /**
@@ -136,7 +136,7 @@ export default class PackageSvgToIcoTask extends Task {
     for (const inputFile of inputFiles) {
       const inputFilePath = inputFile.absolute;
       const baseFile = context.option('baseFile') || !baseUrl ? inputFilePath : null;
-      const size = _.nth(sizes, inputs.length);
+      const size = nth(sizes, inputs.length);
 
       debug('Reading SVG file to be packaged in ICO: %s', chalk.blue(inputFilePath));
 

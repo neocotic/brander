@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { every, map, matchesProperty, nth } from 'lodash-es';
 import pluralize from 'pluralize';
 import pngToIco from 'png-to-ico';
 import sharp from 'sharp';
@@ -69,8 +69,8 @@ export default class PackagePngToIcoTask extends Task {
     const outputFilePath = outputFile.absolute;
 
     const data = await this.#readData(inputFiles, context);
-    const inputs = _.map(data, 'input');
-    const sizes = _.map(data, 'size.width');
+    const inputs = map(data, 'input');
+    const sizes = map(data, 'size.width');
 
     debug('Creating ICO for PNG files');
 
@@ -89,7 +89,7 @@ export default class PackagePngToIcoTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'png')) && context.outputFile.format === 'ico';
+    return every(context.inputFiles, matchesProperty('format', 'png')) && context.outputFile.format === 'ico';
   }
 
   /**
@@ -100,11 +100,11 @@ export default class PackagePngToIcoTask extends Task {
    */
   async #readData(inputFiles, context) {
     const inputs = [];
-    const sizes = _.map(context.option('sizes', []), 'width');
+    const sizes = map(context.option('sizes', []), 'width');
 
     for (const inputFile of inputFiles) {
       const inputFilePath = inputFile.absolute;
-      const size = _.nth(sizes, inputs.length);
+      const size = nth(sizes, inputs.length);
 
       debug('Reading PNG file to be packaged in ICO: %s', chalk.blue(inputFilePath));
 

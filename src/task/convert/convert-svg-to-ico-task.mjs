@@ -22,11 +22,11 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
-import Debug from 'debug';
-import pngToIco from 'png-to-ico';
 import svgToPng from 'convert-svg-to-png';
+import Debug from 'debug';
+import { every, isEmpty, matchesProperty } from 'lodash-es';
+import pngToIco from 'png-to-ico';
 
 import { File } from '../../file.mjs';
 import { Task } from '../task.mjs';
@@ -88,7 +88,7 @@ export default class ConvertSvgToIcoTask extends Task {
     const sizes = context.option('sizes');
 
     for (const inputFile of context.inputFiles) {
-      if (_.isEmpty(sizes)) {
+      if (isEmpty(sizes)) {
         await this.#execute(inputFile, null, context);
       } else {
         for (const size of sizes) {
@@ -103,7 +103,7 @@ export default class ConvertSvgToIcoTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
+    return every(context.inputFiles, matchesProperty('format', 'svg')) && context.outputFile.format === 'ico';
   }
 
   /**

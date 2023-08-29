@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { get, trim } from 'lodash-es';
 
 import { Context } from '../config/context.mjs';
 
@@ -79,7 +79,7 @@ export class DocumentContext extends Context {
     this.#type = type;
     this.#data = data;
     this.#parent = parent;
-    this.#title = _.trim(data.title) || null;
+    this.#title = trim(data.title) || null;
   }
 
   /**
@@ -95,7 +95,7 @@ export class DocumentContext extends Context {
    * @public
    */
   get(name, defaultValue) {
-    return _.get(this.#data, name, defaultValue);
+    return get(this.#data, name, defaultValue);
   }
 
   /**

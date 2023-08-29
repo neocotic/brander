@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { castArray, cloneDeep, get, trim } from 'lodash-es';
 import { EOL } from 'node:os';
 import path from 'node:path';
 
@@ -129,10 +129,10 @@ export class Config {
     this.#pkg = options.pkg || new Package();
     this.#repository = new Repo(repositoryService.getRepository(options.repository));
     this.#baseDir = path.dirname(this.#filePath);
-    this.#email = _.trim(this.#data.email) || null;
-    this.#homepage = _.trim(this.#data.homepage) || _.trim(this.#pkg.get('homepage')) || this.#repository.homepage;
-    this.#name = _.trim(this.#data.name) || _.trim(this.#pkg.get('name')) || this.#repository.name;
-    this.#title = _.trim(this.#data.title) || this.#name;
+    this.#email = trim(this.#data.email) || null;
+    this.#homepage = trim(this.#data.homepage) || trim(this.#pkg.get('homepage')) || this.#repository.homepage;
+    this.#name = trim(this.#data.name) || trim(this.#pkg.get('name')) || this.#repository.name;
+    this.#title = trim(this.#data.title) || this.#name;
     this.#lineSeparator = ((lineSeparator) => {
       switch (lineSeparator) {
       case 'crlf':
@@ -142,7 +142,7 @@ export class Config {
       default:
         return EOL;
       }
-    })(_.trim(this.option('lineSeparator')).toLowerCase());
+    })(trim(this.option('lineSeparator')).toLowerCase());
   }
 
   /**
@@ -172,7 +172,7 @@ export class Config {
    * @public
    */
   assetURL(paths) {
-    paths = _.castArray(paths);
+    paths = castArray(paths);
 
     const assetURL = this.option('assets.url');
     let filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
@@ -214,7 +214,7 @@ export class Config {
    * @public
    */
   docURL(paths, fragment) {
-    paths = _.castArray(paths);
+    paths = castArray(paths);
 
     const docURL = this.option('docs.url');
     let filePath = paths.map((p) => p.replace(/\\/g, '/')).join('/');
@@ -264,7 +264,7 @@ export class Config {
    * @public
    */
   option(name, defaultValue) {
-    return _.get(this.#data.options, name, defaultValue);
+    return get(this.#data.options, name, defaultValue);
   }
 
   /**
@@ -342,7 +342,7 @@ export class Config {
       throw new TypeError('"docs" configuration can only be an array');
     }
 
-    return _.cloneDeep(docs);
+    return cloneDeep(docs);
   }
 
   /**
@@ -490,7 +490,7 @@ export class Config {
       throw new TypeError('"tasks" configuration can only be an array');
     }
 
-    return _.cloneDeep(tasks);
+    return cloneDeep(tasks);
   }
 
   /**

@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import Debug from 'debug';
+import { cloneDeep } from 'lodash-es';
 import { EventEmitter } from 'node:events';
 import pollock from 'pollock';
 
@@ -97,7 +97,7 @@ export class ContextParser extends EventEmitter {
       return null;
     }
 
-    const data = _.cloneDeep(this.#dataSet[index]);
+    const data = cloneDeep(this.#dataSet[index]);
     if (!data) {
       debug('No data found at index: %d', index);
 

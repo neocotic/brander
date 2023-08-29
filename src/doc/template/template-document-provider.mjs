@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
+import { trim } from 'lodash-es';
 
 import { File } from '../../file.mjs';
 import { DocumentProvider } from '../document-provider.mjs';
@@ -90,7 +90,7 @@ export default class TemplateDocumentProvider extends DocumentProvider {
     config.logger.log('Rendering %s document...', type);
 
     let content = context.get('content');
-    const file = _.trim(context.get('file'));
+    const file = trim(context.get('file'));
     if (content == null && !file) {
       throw new Error('"content" or "file" configuration is required');
     }

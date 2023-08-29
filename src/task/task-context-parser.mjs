@@ -22,8 +22,8 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import Debug from 'debug';
+import { castArray, cloneDeep, groupBy, trim } from 'lodash-es';
 import path from 'path';
 
 import { ContextParser } from '../config/context-parser.mjs';
@@ -61,19 +61,19 @@ export class TaskContextParser extends ContextParser {
     }
 
     const { config } = this;
-    const typeName = _.trim(data.task);
+    const typeName = trim(data.task);
     if (!typeName) {
       throw new Error('"task" configuration is required');
     }
 
     const type = TaskType.valueOf(typeName);
-    const { groupBy } = options;
-    const groups = _.groupBy(inputFiles, (file) => {
-      switch (typeof groupBy) {
+    const { groupBy: groupByValue } = options;
+    const groups = groupBy(inputFiles, (file) => {
+      switch (typeof groupByValue) {
       case 'function':
-        return groupBy({ config, file });
+        return groupByValue({ config, file });
       case 'string':
-        return config.evaluate(groupBy, { file });
+        return config.evaluate(groupByValue, { file });
       default:
         return null;
       }
@@ -112,8 +112,8 @@ export class TaskContextParser extends ContextParser {
         `(${typeof input.files})`);
     }
 
-    const dir = config.assetPath(config.evaluate(_.trim(input.dir)));
-    const files = _.castArray(input.files);
+    const dir = config.assetPath(config.evaluate(trim(input.dir)));
+    const files = castArray(input.files);
     const inputFiles = [];
 
     for (let pattern of files) {
@@ -121,7 +121,7 @@ export class TaskContextParser extends ContextParser {
         throw new Error(`"input.files" configuration can only contain strings: ${pattern} (${typeof pattern})`);
       }
 
-      pattern = _.trim(pattern);
+      pattern = trim(pattern);
       if (!pattern) {
         throw new Error('"input.files" configuration cannot contain null or empty patterns');
       }
@@ -157,7 +157,7 @@ export class TaskContextParser extends ContextParser {
       throw new Error(`"output.files" configuration can only be a string: ${output.files} (${typeof output.files})`);
     }
 
-    let dirPath = _.trim(output.dir);
+    let dirPath = trim(output.dir);
     dirPath = dirPath ? config.assetPath(dirPath) : null;
 
     return this.#createFile(dirPath, output.files, output.format, false);
@@ -172,8 +172,8 @@ export class TaskContextParser extends ContextParser {
    * @private
    */
   #createFile(dirPath, fileName, format, evaluated) {
-    dirPath = _.trim(dirPath) || null;
-    fileName = _.trim(fileName) || null;
+    dirPath = trim(dirPath) || null;
+    fileName = trim(fileName) || null;
     format = File.deriveFormat(fileName, format);
 
     if (!(dirPath || fileName || format)) {
@@ -189,7 +189,7 @@ export class TaskContextParser extends ContextParser {
    * @private
    */
   #parseOptions(data) {
-    const options = data.options ? _.cloneDeep(data.options) : {};
+    const options = data.options ? cloneDeep(data.options) : {};
     if (Array.isArray(options.sizes)) {
       options.sizes = options.sizes.map(Size.parse);
     }

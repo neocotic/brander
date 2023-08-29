@@ -22,7 +22,7 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
+import { trim } from 'lodash-es';
 
 import { ContextParser } from '../config/context-parser.mjs';
 import { DocumentService } from './document-service.mjs';
@@ -80,7 +80,7 @@ export class DocumentContextParser extends ContextParser {
    * @override
    */
   async parseData(data) {
-    const type = _.trim(data.type) || this.#defaultType;
+    const type = trim(data.type) || this.#defaultType;
     if (!type) {
       throw new Error('"type" configuration is required');
     }

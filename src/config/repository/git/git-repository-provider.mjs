@@ -22,10 +22,10 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
 import hostedGitInfo from 'hosted-git-info';
+import { chain, isEmpty, trim } from 'lodash-es';
 import { spawn } from 'node:child_process';
 
 import { GitRepository } from './git-repository.mjs';
@@ -88,7 +88,7 @@ export class GitRepositoryProvider extends RepositoryProvider {
     debug('Resolving Git repository URL from directory: %s', chalk.blue(dirPath));
 
     const remotes = await this.#getRemoteNames(dirPath);
-    if (_.isEmpty(remotes)) {
+    if (isEmpty(remotes)) {
       debug('No remotes found in Git repository at directory: %s', chalk.blue(dirPath));
 
       return null;
@@ -157,7 +157,7 @@ export class GitRepositoryProvider extends RepositoryProvider {
   async #getBranchName(dirPath) {
     const output = await this.#execGit(dirPath, 'branch', '--show-current');
 
-    return _.trim(output) || null;
+    return trim(output) || null;
   }
 
   /**
@@ -168,9 +168,9 @@ export class GitRepositoryProvider extends RepositoryProvider {
   async #getRemoteNames(dirPath) {
     const output = await this.#execGit(dirPath, 'remote', 'show');
 
-    return _.chain(output)
+    return chain(output)
       .split(/\n/)
-      .map(_.trim)
+      .map(trim)
       .compact()
       .value();
   }
@@ -184,7 +184,7 @@ export class GitRepositoryProvider extends RepositoryProvider {
   async #getRemoteURL(name, dirPath) {
     const output = await this.#execGit(dirPath, 'remote', 'get-url', name);
 
-    return _.trim(output) || null;
+    return trim(output) || null;
   }
 
 }

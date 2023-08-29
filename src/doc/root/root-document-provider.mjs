@@ -22,9 +22,9 @@
 
 /* istanbul ignore file */
 
-import _ from 'lodash';
 import chalk from 'chalk';
 import Debug from 'debug';
+import { compact, isEmpty, trim } from 'lodash-es';
 import pluralize from 'pluralize';
 
 import { DocumentContextParser } from '../document-context-parser.mjs';
@@ -82,8 +82,8 @@ export default class RootDocumentProvider extends DocumentProvider {
       throw new Error(`"${type}" document cannot have parent`);
     }
 
-    const dirPath = config.resolve(_.trim(data.dir) || config.docsDir);
-    const fileName = _.trim(data.doc);
+    const dirPath = config.resolve(trim(data.dir) || config.docsDir);
+    const fileName = trim(data.doc);
     if (!fileName) {
       throw new Error('"doc" configuration is required');
     }
@@ -103,7 +103,7 @@ export default class RootDocumentProvider extends DocumentProvider {
 
     const footer = config.option('docs.footer') || this.#getDefaultFooter(config);
     const header = config.option('docs.header');
-    const sections = _.clone(rootContext.get('sections')) || [];
+    const sections = [...(rootContext.get('sections') || [])];
     if (header) {
       debug('Header will be applied to %s document: %s', type, chalk.blue(fileName));
 
@@ -118,7 +118,7 @@ export default class RootDocumentProvider extends DocumentProvider {
     debug('%d %s found for %s document: %s', sections.length, pluralize('child', sections.length), type,
       chalk.blue(fileName));
 
-    if (!_.isEmpty(sections)) {
+    if (!isEmpty(sections)) {
       debug('Creating child contexts for %s document: %s', type, chalk.blue(fileName));
 
       const documentContextParser = new DocumentContextParser(sections, config, null, rootContext);
@@ -155,7 +155,7 @@ export default class RootDocumentProvider extends DocumentProvider {
     const title = this.renderTitle(context);
     const output = title ? [ title ] : [];
 
-    output.push(..._.compact(results));
+    output.push(...compact(results));
 
     config.logger.log('Writing rendered output to %s document file: %s', type, chalk.blue(file.relative));
 
