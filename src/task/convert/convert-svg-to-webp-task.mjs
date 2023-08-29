@@ -24,7 +24,7 @@
 
 import _ from 'lodash';
 import chalk from 'chalk';
-import svgToJpeg from 'convert-svg-to-jpeg';
+import svgToWebp from 'convert-svg-to-webp';
 import Debug from 'debug';
 
 import { File } from '../../file.mjs';
@@ -34,12 +34,12 @@ import { TaskType } from '../task-type.mjs';
 const debug = Debug('brander:task:convert');
 
 /**
- * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple JPEG files, if multiple
+ * A {@link TaskType.CONVERT} task that can convert a SVG file to potentially multiple WEBP files, if multiple
  * <code>sizes</code> are specified in the options.
  *
  * @public
  */
-export default class ConvertSvgToJpegTask extends Task {
+export default class ConvertSvgToWebpTask extends Task {
 
   /**
    * TODO: Fix type
@@ -55,7 +55,7 @@ export default class ConvertSvgToJpegTask extends Task {
   beforeAll(config) {
     const puppeteer = config.option('puppeteer');
 
-    this.#converter = svgToJpeg.createConverter({ puppeteer });
+    this.#converter = svgToWebp.createConverter({ puppeteer });
   }
 
   /**
@@ -98,7 +98,7 @@ export default class ConvertSvgToJpegTask extends Task {
    * @override
    */
   supports(context) {
-    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'jpeg';
+    return _.every(context.inputFiles, _.matchesProperty('format', 'svg')) && context.outputFile.format === 'webp';
   }
 
   /**
@@ -113,43 +113,40 @@ export default class ConvertSvgToJpegTask extends Task {
     const background = context.option('background');
     const baseUrl = context.option('baseUrl');
     const baseFile = context.option('baseFile') || !baseUrl ? inputFilePath : null;
-    const quality = context.option('quality');
     const scale = context.option('scale');
     const outputFile = context.outputFile
-      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.jpeg', inputFile.format)
+      .defaults(inputFile.dir, '<%= file.base(true) %><%= size ? "-" + size : "" %>.webp', inputFile.format)
       .evaluate({
         background,
         baseFile,
         baseUrl,
         file: inputFile,
-        quality,
         scale,
         size
       });
     const outputFilePath = outputFile.absolute;
 
-    debug('Reading SVG file to be converted to JPEG: %s', chalk.blue(inputFilePath));
+    debug('Reading SVG file to be converted to WEBP: %s', chalk.blue(inputFilePath));
 
     const input = await File.readFile(inputFilePath);
 
-    debug('Converting SVG file to JPEG: %s', chalk.blue(inputFilePath));
+    debug('Converting SVG file to WEBP: %s', chalk.blue(inputFilePath));
 
     const output = await this.#converter.convert(input, Object.assign({
       background,
       baseFile,
       baseUrl,
-      quality,
       scale
     }, !size ? null : {
       height: size.height,
       width: size.width
     }));
 
-    debug('Writing converted JPEG file: %s', chalk.blue(outputFilePath));
+    debug('Writing converted WBP file: %s', chalk.blue(outputFilePath));
 
     await File.writeFile(outputFilePath, output);
 
-    context.config.logger.log('Converted SVG file to JPEG file: %s -> %s', chalk.blue(inputFile.relative),
+    context.config.logger.log('Converted SVG file to WEBP file: %s -> %s', chalk.blue(inputFile.relative),
       chalk.blue(outputFile.relative));
   }
 
