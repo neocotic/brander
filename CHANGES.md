@@ -1,3 +1,10 @@
+## Version 0.4.1, 2023.08.29
+
+* Add convert SVG to WEBP task
+* Use `sharp` package for PNG resizing to avoid errors converting/packaging to ICO files
+* Replace `lodash` package with `lodash-es` for better ESM support
+* Bump dependencies
+
 ## Version 0.4.0, 2023.08.26
 
 * **Breaking Change:** Switch from CommonJS to ECMAScript modules
